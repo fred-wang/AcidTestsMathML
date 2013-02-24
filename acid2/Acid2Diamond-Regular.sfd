@@ -1,0 +1,98 @@
+SplineFontDB: 3.0
+FontName: Acid2Diamond-Regular
+FullName: Acid2Diamond-Regular
+FamilyName: Acid2Diamond
+Weight: Regular
+Copyright: 
+Version: 001.000
+ItalicAngle: 0
+UnderlinePosition: -100
+UnderlineWidth: 50
+Ascent: 512
+Descent: 512
+sfntRevision: 0x00010000
+woffMajor: 1
+woffMinor: 0
+LayerCount: 2
+Layer: 0 0 "Arri+AOgA-re"  1
+Layer: 1 0 "Avant"  0
+NeedsXUIDChange: 1
+XUID: [1021 298 1341886361 11676389]
+FSType: 0
+OS2Version: 3
+OS2_WeightWidthSlopeOnly: 0
+OS2_UseTypoMetrics: 1
+CreationTime: 1360577129
+ModificationTime: 1361640505
+PfmFamily: 17
+TTFWeight: 500
+TTFWidth: 5
+LineGap: 92
+VLineGap: 0
+Panose: 2 0 6 9 0 0 0 0 0 0
+OS2TypoAscent: 0
+OS2TypoAOffset: 1
+OS2TypoDescent: 0
+OS2TypoDOffset: 1
+OS2TypoLinegap: 92
+OS2WinAscent: 0
+OS2WinAOffset: 1
+OS2WinDescent: 0
+OS2WinDOffset: 1
+HheadAscent: 0
+HheadAOffset: 1
+HheadDescent: 0
+HheadDOffset: 1
+OS2SubXSize: 665
+OS2SubYSize: 716
+OS2SubXOff: 0
+OS2SubYOff: 143
+OS2SupXSize: 665
+OS2SupYSize: 716
+OS2SupXOff: 0
+OS2SupYOff: 491
+OS2StrikeYSize: 51
+OS2StrikeYPos: 265
+OS2Vendor: 'PfEd'
+OS2CodePages: 00000001.00000000
+OS2UnicodeRanges: 00000001.00000000.00000000.00000000
+MarkAttachClasses: 1
+DEI: 91125
+LangName: 1033 "" "" "" "FontForge 2.0 : Acid2Diamond-Regular : 16-2-2013" 
+Encoding: UnicodeBmp
+UnicodeInterp: none
+NameList: Adobe Glyph List
+DisplaySize: -24
+AntiAlias: 1
+FitToEm: 1
+WinInfo: 64800 50 15
+BeginPrivate: 8
+BlueValues 15 [-20 0 524 524]
+BlueScale 8 0.039625
+BlueShift 1 0
+StdHW 4 [51]
+StdVW 4 [51]
+StemSnapH 4 [51]
+StemSnapV 4 [51]
+ExpansionFactor 4 0.06
+EndPrivate
+BeginChars: 65537 1
+
+StartChar: uni25C6
+Encoding: 9670 9670 0
+Width: 1048
+GlyphClass: 2
+Flags: MW
+HStem: 504 20G<512 512>
+LayerCount: 2
+Fore
+SplineSet
+1049 0 m 1
+ 512 -524 l 1
+ 0 0 l 1
+ 512 524 l 1
+ 1049 0 l 1
+EndSplineSet
+EndChar
+EndChars
+EndSplineFont

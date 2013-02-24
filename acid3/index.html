@@ -1,0 +1,4841 @@
+<!doctype html>
+<html>
+<head>
+<title>The Acid3 Test</title>
+<meta charset="utf-8"/>
+
+<script type="text/javascript">
+  var startTime = new Date();
+</script>
+ 
+<style type="text/css">
+  /* set some basic styles so that we can get reliably exact results */
+  * { margin: 0; border: 1px blue; padding: 0; border-spacing: 0;
+      font-family: inherit; line-height: 1.2; color: inherit; }
+  :link, :visited { color: blue; }
+
+  /* header and general layout */
+  html { font: 20px Arial, sans-serif; border: 2cm solid gray;
+         width: 32em; margin: 1em; }
+  :root { background: silver; color: black; border-width: 0 0.2em 0.2em 0; }
+  body { padding: 2em 2em 0; background: white;
+    border: solid 1px black; margin: -0.2em 0 0 -0.2em;
+    overflow:hidden; } 
+  h1:first-child { cursor: help; font-size: 5em; font-weight: bolder;
+    margin-bottom: -0.4em; text-shadow: rgba(192, 192, 192, 1.0) 3px 3px; }
+  #result { font-weight: bolder; width: 5.68em; text-align: right; }
+  #result { font-size: 5em; margin: -2.19em 0 0; }
+  .hidden { visibility: hidden; }
+  #slash { color: red; color: hsla(0, 0%, 0%, 1.0); }
+  #instructions { margin-top: 0; font-size: 0.8em; color: gray;
+                  height: 6.125em; }
+  #instructions { margin-right: -20px; padding-right: 20px;
+                  background: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAIAAAAC64paAAAABGdBTUEAAK%2FINwWK6QAAAAlwSFlzAAAASAAAAEgARslrPgAAABtJREFUOMtj%2FM9APmCiQO%2Bo5lHNo5pHNVNBMwAinAEnIWw89gAAACJ6VFh0U29mdHdhcmUAAHjac0zJT0pV8MxNTE8NSk1MqQQAL5wF1K4MqU0AAAAASUVORK5CYII%3D) no-repeat top right; }
+  #instructions span { float: right; width: 20px; margin-right: -20px;
+     background: white; height: 20px; }
+  @font-face {
+    font-family: "Acid3MathML";
+    src: url(Acid3MathML-Regular.woff);
+  }
+  @font-face {
+    font-family: "Acid3MathML";
+    font-style: italic;
+    src: url(Acid3MathML-Italic.woff);
+  }
+  @font-face {
+    font-family: "Acid3MathML";
+    font-weight: bold;
+    src: url(Acid3MathML-Bold.woff);
+  }
+  @font-face {
+    font-family: "Acid3MathML";
+    font-style: italic;
+    font-weight: bold;
+    src: url(Acid3MathML-BoldItalic.woff);
+  }
+
+  /* set the line height of the line of coloured boxes so we can add them
+     without the layout changing height */
+  .buckets { font: 0/0 Arial, sans-serif; }
+  .buckets { padding: 0 0 150px 3px; }
+
+  /* the next two rules give the six coloured blocks their default styles (they
+     match the same elements); the third hides them */
+  :first-child + * .buckets p { display: inline-block; vertical-align: 2em;
+                           border: 2em dotted red; padding: 1.0em 0 1.0em 2em; }
+  * + * > * > p { margin: 0; border: 1px solid ! important; }
+  .z { visibility: hidden; } /* only matches the buckets with no score */
+
+  /* sizes for the six buckets */
+  #bucket1 { font-size: 20px; margin-left: 0.2em; padding-left: 1.3em;
+             padding-right: 1.3em; margin-right: 0.0001px; }
+  #bucket2 { font-size: 24px; margin-left: 0.375em; padding-left: 30px;
+             padding-right: 32px; margin-right: 2px; }
+  #bucket3 { font-size: 28px; margin-left: 8.9999px; padding-left: 17px;
+             padding-right: 55px; margin-right: 12px; }
+  #bucket4 { font-size: 32px; margin-left: 0; padding-left: 84px;
+             padding-right: 0; margin-right: 0; }
+  #bucket5 { font-size: 36px; margin-left: 13px; padding-left: 0; 
+             padding-right: 94px; margin-right: 25px; }
+  #bucket6 { font-size: 40px; margin-left: -10px; padding-left: 104px; }
+
+  /* colours for them */
+  .z, .zP, .zPP, .zPPP, .zPPPP, .zPPPPP { background: black; }
+  .zPPPPPP, .zPPPPPPP, .zPPPPPPPP, .zPPPPPPPP, .zPPPPPPPPP,
+  .zPPPPPPPPPP { background: grey; }
+  .zPPPPPPPPPPP, .zPPPPPPPPPPPP, .zPPPPPPPPPPPPP,
+  .zPPPPPPPPPPPPPP, .zPPPPPPPPPPPPPPP { background: silver; }
+  #bucket1.zPPPPPPPPPPPPPPPP { background: red; }
+  #bucket2.zPPPPPPPPPPPPPPPP { background: orange; }
+  #bucket3.zPPPPPPPPPPPPPPPP { background: yellow; }
+  #bucket4.zPPPPPPPPPPPPPPPP { background: lime; }
+  #bucket5.zPPPPPPPPPPPPPPPP { background: blue; }
+  #bucket6.zPPPPPPPPPPPPPPPP { background: purple; }
+
+  /* the div for MathML tests */
+  #mathml {
+    position: absolute;
+
+    /* use the Acid3MathML font to get accurate sizes and to test mathvariant */
+    font-family: Acid3MathML;
+
+    /* large enough to ignore automatic linebreaking */
+    width: 10000px;
+
+    visibility: hidden;
+  }
+
+  /* used in test 99 */
+  math.test99 :first-child { font-size: 50px; }
+  #test99 > mn { font-size: 30px; }
+</style>
+
+<!-- main test body -->
+<script type="text/javascript">
+  var notifications = {};
+  function notify(file) {
+    // used in cross-file tests
+    notifications[file] = 1;
+  }
+  function fail(message) {
+    throw { message: message };
+  }
+  function assert(condition, message) {
+    if (!condition)
+      fail(message);
+  }
+  var kungFuDeathGrip = null; // used to hold things from test to test
+
+  var epsilon = .0001; // allow a small error
+
+  var tests = [
+
+    // there are 6 buckets with 16 tests each,
+    // plus four special tests (0, 97, 98, and 99).
+
+    // We use getBoundingClientRect and *ElementChild.
+    // Be aware of bug 109556 in Webkit and bug 491668 in Gecko.
+
+    function () {
+      // test 0: verify JS and test basic feature of the <math> element
+
+      // removing the "JS required" message
+      var last = document.getElementById('remove-last-child-test');
+      last.parentNode.removeChild(last);
+
+      // verify that the <math> element has the right namespace
+      assert(document.getElementById("test0").namespaceURI ==
+             "http://www.w3.org/1998/Math/MathML",
+             "The <math> element should have the MathML namespace");
+      
+      // verify inline <math>
+      assert(document.getElementById("test0_inline").firstElementChild.
+             getBoundingClientRect().bottom ==
+             document.getElementById("test0_inline").lastElementChild.
+             getBoundingClientRect().bottom,
+             "math@display = 'inline' should not break");
+
+      // verify block <math>
+      assert(document.getElementById("test0_block").firstElementChild.
+             getBoundingClientRect().bottom <=
+             document.getElementById("test0_block").lastElementChild.
+             getBoundingClientRect().top,
+             "math@display = 'block' should break");
+
+      return 7;
+    },
+
+    // bucket 1: basic presentation MathML elements
+    function () {
+    // test 1: simple script elements (size)
+    var mrowRect =
+      document.getElementById("test1_mrow").getBoundingClientRect();
+    var msubRect =
+      document.getElementById("test1_msub").getBoundingClientRect();
+    var msupRect =
+      document.getElementById("test1_msup").getBoundingClientRect()
+    var msubsupRect =
+      document.getElementById("test1_msubsup").getBoundingClientRect();
+    var munderRect =
+      document.getElementById("test1_munder").getBoundingClientRect();
+    var moverRect =
+      document.getElementById("test1_mover").getBoundingClientRect();
+    var munderoverRect =
+      document.getElementById("test1_munderover").getBoundingClientRect();
+
+    assert(mrowRect.height < msubRect.height,
+           "mrowRect.height should be less than msubRect.height");
+    assert(mrowRect.height < msupRect.height,
+           "mrowRect.height should be less than msupRect.height");
+    assert(msubRect.height < msubsupRect.height,
+           "msubRect.height should be less than msubsupRect.height");
+    assert(msupRect.height < msubsupRect.height,
+           "msupRect.height should be less than msubsupRect.height");
+
+    assert(mrowRect.width < msubRect.width,
+           "mrowRect.width should be less than msubRect.width");
+    assert(mrowRect.width < msupRect.width,
+           "mrowRect.width should be less than msupRect.width");
+    assert(mrowRect.width < msubsupRect.width,
+           "mrowRect.width should be less than msubsupRect.width");
+
+    assert(mrowRect.height < munderRect.height,
+           "mrowRect.height should be less than munderRect.height");
+    assert(mrowRect.height < moverRect.height,
+           "mrowRect.height should be less than moverRect.height");
+    assert(munderRect.height < munderoverRect.height,
+           "munderRect.height should be less than munderoverRect.height");
+    assert(moverRect.height < munderoverRect.height,
+           "moverRect.height should be less than munderoverRect.height");
+
+    assert(munderRect.width == mrowRect.width &&
+         moverRect.width == mrowRect.width &&
+         munderoverRect.width == mrowRect.width,
+        "the width of munderover, munder and mover should be the same as mrow");
+
+    return 1;
+    },
+    function () {
+    // test 2: simple scripts elements (position)
+
+    var msubBaseRect = document.getElementById("test1_msub").firstElementChild.
+      getBoundingClientRect();
+
+    var msubScriptRect = document.getElementById("test1_msub").
+      lastElementChild.getBoundingClientRect();
+
+    var msupBaseRect = document.getElementById("test1_msup").firstElementChild.
+      getBoundingClientRect();
+    var msupScriptRect = document.getElementById("test1_msup").
+      lastElementChild.getBoundingClientRect();
+
+    var msubsupBaseRect = document.getElementById("test1_msubsup").
+      firstElementChild.getBoundingClientRect();
+    var msubsupSubScriptRect = document.getElementById("test1_msubsup").
+      firstElementChild.nextElementSibling.getBoundingClientRect();
+    var msubsupSupScriptRect = document.getElementById("test1_msubsup").
+      lastElementChild.getBoundingClientRect();
+
+    var munderBaseRect = document.getElementById("test1_munder").
+      firstElementChild.getBoundingClientRect();
+    var munderScriptRect = document.getElementById("test1_munder").
+      lastElementChild.getBoundingClientRect();
+
+    var moverBaseRect = document.getElementById("test1_mover").
+      firstElementChild.getBoundingClientRect();
+    var moverScriptRect = document.getElementById("test1_mover").
+      lastElementChild.getBoundingClientRect();
+
+    var munderoverBaseRect = document.getElementById("test1_munderover").
+      firstElementChild.getBoundingClientRect();
+    var munderoverUnderScriptRect =
+      document.getElementById("test1_munderover").
+      firstElementChild.nextElementSibling.getBoundingClientRect();
+    var munderoverOverScriptRect =
+      document.getElementById("test1_munderover").
+      lastElementChild.getBoundingClientRect();
+
+    assert(msubBaseRect.top < msubScriptRect.top && 
+           msubBaseRect.bottom < msubScriptRect.bottom &&
+           msubsupBaseRect.top < msubsupSubScriptRect.top && 
+           msubsupBaseRect.bottom < msubsupSubScriptRect.bottom,
+           "the subscripts should be lower than the base"); 
+
+    assert(msupBaseRect.top > msupScriptRect.top && 
+           msupBaseRect.bottom > msupScriptRect.bottom &&
+           msubsupBaseRect.top > msubsupSupScriptRect.top && 
+           msubsupBaseRect.bottom > msubsupSupScriptRect.bottom,
+           "the supscripts should be higher than the base"); 
+
+    assert(msubBaseRect.right <= msubScriptRect.left &&
+           msupBaseRect.right <= msupScriptRect.left && 
+           msubsupBaseRect.right <= msubsupSubScriptRect.left &&
+           msubsupBaseRect.right <= msubsupSupScriptRect.left,
+           "the sub/super scripts should be placed on the right of the base"); 
+
+    assert(munderBaseRect.left < munderScriptRect.left &&
+           munderBaseRect.right > munderScriptRect.right &&
+           moverBaseRect.left < moverScriptRect.left &&
+           moverBaseRect.right > moverScriptRect.right &&
+           munderoverBaseRect.left < munderoverUnderScriptRect.left &&
+           munderoverBaseRect.right > munderoverUnderScriptRect.right &&
+           munderoverBaseRect.left < munderoverOverScriptRect.left &&
+           munderoverBaseRect.right > munderoverOverScriptRect.right,
+           "the under/over scripts should be placed between the left and " +
+           "right coordinates of the base.");
+ 
+    assert(munderBaseRect.top <= munderScriptRect.bottom &&
+           moverBaseRect.top >= moverScriptRect.bottom &&
+           munderoverBaseRect.top <= munderoverUnderScriptRect.bottom &&
+           munderoverBaseRect.top >= munderoverOverScriptRect.bottom,
+           "the under/over scripts should be placed above/below the base");
+
+    return 1;
+    },
+    function () {
+    // test 3: mfrac
+    
+    var mfracNum = document.getElementById("test3_mfrac").firstElementChild.
+      getBoundingClientRect();
+    var mfracDenum = document.getElementById("test3_mfrac").lastElementChild.
+      getBoundingClientRect();
+
+    assert(mfracNum.left == mfracDenum.left &&
+           mfracNum.right == mfracDenum.right,
+           "Numerator and denumerator should be vertical aligned");
+
+    assert(mfracNum.bottom <= mfracDenum.top+3,
+           "Numerator should be above denumerator, "+
+           "with enough space to draw the fraction bar");
+    
+    return 1;
+    },
+    function () {
+    // test 4: msqrt
+
+    var msqrt = document.getElementById("test4_msqrt").getBoundingClientRect();
+    var msqrtChild = document.getElementById("test4_msqrt").firstElementChild.
+      getBoundingClientRect();
+    
+    assert(msqrt.width >= msqrtChild.width+3 &&
+           msqrt.height >= msqrtChild.height+3,
+           "msqrt should be at least as large as msqrtChild, with enough " +
+           "space to draw the radical");
+
+    assert(msqrt.right - msqrtChild.right <
+           msqrtChild.left - msqrt.left,
+           "the square root should be placed on the left");
+
+    assert(msqrt.top <= msqrtChild.top &&
+           msqrt.bottom >= msqrtChild.bottom &&
+           msqrt.left <= msqrtChild.left &&
+           msqrt.right >= msqrtChild.right,
+           "msqrtChild should be inside the msqrt");
+
+    return 1;
+    },
+    function () {
+    // test 5: mroot
+
+    var mroot = document.getElementById("test5_mroot").getBoundingClientRect();
+    var mrootChild = document.getElementById("test5_mroot").firstElementChild.
+      getBoundingClientRect();
+    var mrootIndex = document.getElementById("test5_mroot").lastElementChild.
+      getBoundingClientRect();
+
+    assert(mrootIndex.top < mrootChild.top &&
+           mrootIndex.bottom < mrootChild.bottom,
+           "The index should be higher than the base");
+
+    assert(mrootIndex.right <= mrootChild.left,
+           "The index should be on the left of the base, with enough space " +
+           "to draw the radical");
+
+    return 1;
+    },
+    function () {
+    // test 6: menclose (longdiv, box, roundedbox, circle, madruwb)
+
+    var notations = ["longdiv", "box", "roundedbox", "circle", "madruwb"];
+    for (var i in notations) {
+      var menclose = document.getElementById("test6_menclose_" + notations[i]).
+        getBoundingClientRect();
+      var mencloseChild = document.getElementById("test6_menclose_" +
+        notations[i]).firstElementChild.getBoundingClientRect();
+
+      assert(menclose.top <= mencloseChild.top &&
+             menclose.bottom >= mencloseChild.bottom &&
+             menclose.left <= mencloseChild.left &&
+             menclose.right >= mencloseChild.right,
+             "mencloseChild should be inside menclose (" + notations[i] + ")");
+
+      assert(menclose.width > mencloseChild.width &&
+             menclose.height > mencloseChild.height,
+             "mencloseChild should at least as large as menclose, with " +
+             "enough space for the notation (" + notations[i] + ")");
+    }
+    return 1;
+    },
+    function () {
+    // test 7: menclose (equivalent constructions)
+
+    // just be sure that at least radical notation is really supported
+    // (if menclose and msqrt are not supported the test is trivial)
+    assert(document.getElementById("test7_radical").
+           getBoundingClientRect().width >
+           document.getElementById("test7_radical").firstElementChild.
+           getBoundingClientRect().width,
+           "bad size for menclose radical");
+
+    var notations = ["radical", "box", "actuarial"];
+    for (var i in notations) {
+      var menclose = document.getElementById("test7_"+notations[i]+"_ref").
+        getBoundingClientRect();
+      var mencloseRef = document.getElementById("test7_"+notations[i]+"_ref").
+        getBoundingClientRect();
+      assert(menclose.width == mencloseRef.width &&
+             menclose.height == mencloseRef.height,
+             "menclose equivalence ("+notations[i]+")");
+    }
+    return 1;
+    },
+    function () {
+    // test 8: semantics (do not display annotations)
+
+    var semantics = document.getElementById("test8_semantics").
+      getBoundingClientRect();
+    var semanticsAnnotatedChild = document.getElementById("test8_semantics").
+      firstElementChild.getBoundingClientRect();
+    assert(semantics.width == semanticsAnnotatedChild.width &&
+           semantics.height == semanticsAnnotatedChild.height,
+           "semantics size should be the one of the annotated child");
+    return 1;
+    },
+    function () {
+    // test 9: maction
+
+    var maction = document.getElementById("test9_maction1").
+      getBoundingClientRect();
+    var mactionVisibleChild = document.getElementById("test9_maction1").
+      firstElementChild.getBoundingClientRect();
+    assert(maction.width == mactionVisibleChild.width &&
+           maction.height == mactionVisibleChild.height,
+           "maction should have first child visible (tooltip)");
+
+    maction = document.getElementById("test9_maction2").getBoundingClientRect()
+    mactionVisibleChild = document.getElementById("test9_maction2").
+      firstElementChild.getBoundingClientRect()
+    assert(maction.width == mactionVisibleChild.width &&
+           maction.height == mactionVisibleChild.height,
+           "maction should have first child visible (statusline)");
+
+    maction = document.getElementById("test9_maction3").getBoundingClientRect()
+    mactionVisibleChild = document.getElementById("test9_maction3").
+      lastElementChild.getBoundingClientRect()
+    assert(maction.width == mactionVisibleChild.width &&
+           maction.height == mactionVisibleChild.height,
+           "maction should have second child visible (toggle)");
+    return 1;
+    },
+    function () {
+    // test 10: mrow, mstyle, mphantom
+
+    var elements = ["mrow", "mstyle", "mphantom"];
+    for (var i in elements) {
+      var elementRect = document.getElementById("test10_" + elements[i]).
+        getBoundingClientRect()
+      var childRect = document.getElementById("test10_" + elements[i]).
+        firstElementChild.getBoundingClientRect()
+      assert(elementRect.width == childRect.width &&
+             elementRect.height == childRect.height,
+            "element should have the same size as child (" + elements[i] + ")");
+    }
+
+    assert(document.getElementById("test10_error").
+           getBoundingClientRect().width !=
+           document.getElementById("test10_noerror").
+           getBoundingClientRect().width, 
+           "msub with three children should raise an error message ; but "+
+           "not when the two first are put in an mrow")
+
+    return 1;
+    },
+    function () {
+    // test 11: mtable (rows)
+
+    var rowRect1 = document.getElementById("test11_mtable").firstElementChild.
+      getBoundingClientRect();
+    var rowRect2 = document.getElementById("test11_mtable").firstElementChild.
+      nextElementSibling.getBoundingClientRect();
+    var rowRect3 = document.getElementById("test11_mtable").lastElementChild.
+      getBoundingClientRect();
+
+    assert(rowRect1.height == rowRect2.height &&
+           rowRect2.height == rowRect3.height,
+           "mtable rows should have same height");
+
+    assert(rowRect1.left == rowRect2.left && rowRect2.left == rowRect3.left &&
+           rowRect1.right == rowRect2.right && rowRect2.right == rowRect3.right,
+           "mtable rows should be aligned");
+
+    assert(rowRect1.bottom <= rowRect2.top &&
+           rowRect2.bottom <= rowRect3.top,
+           "row[i] should be above row[i+1]");
+    return 1;
+    },
+    function () {
+    // test 12: mtable (cells)
+
+    var rows = [document.getElementById("test11_mtable").firstElementChild,
+                document.getElementById("test11_mtable").firstElementChild.
+                         nextElementSibling,
+                document.getElementById("test11_mtable").lastElementChild];
+    var cellRect = [];
+    for (var i = 0; i < 3; i++) {
+      cellRect[i] = [rows[i].firstElementChild.getBoundingClientRect(),
+                 rows[i].firstElementChild.nextElementSibling.
+                 getBoundingClientRect(),
+                 rows[i].lastElementChild.getBoundingClientRect()];
+    }
+
+    for (var i = 0; i < 3; i++) {
+      assert(cellRect[0][i].left == cellRect[1][i].left &&
+             cellRect[1][i].left == cellRect[2][i].left &&
+             cellRect[0][i].right == cellRect[1][i].right &&
+             cellRect[1][i].right == cellRect[2][i].right,
+             "cellRects of column "+(i+1)+" should be aligned");
+    }
+
+    for (var i = 0; i < 3; i++) {
+      assert(cellRect[i][0].top == cellRect[i][1].top &&
+             cellRect[i][1].top == cellRect[i][2].top &&
+             cellRect[i][0].bottom == cellRect[i][1].bottom &&
+             cellRect[i][1].bottom == cellRect[i][2].bottom,
+             "cellRects of row "+(i+1)+" should be aligned");
+    }
+
+    assert(cellRect[0][0].right <= cellRect[0][1].left &&
+           cellRect[0][1].right <= cellRect[0][2].left,
+           "column[j] should be on the left of column[j+1]");
+
+    assert(cellRect[0][0].bottom <= cellRect[1][0].top &&
+           cellRect[1][0].bottom <= cellRect[2][0].top,
+           "row[i] should be above row[i+1]");
+
+    return 1;
+    },
+    function () {
+    // test 13: mmultiscripts
+
+    var child = document.getElementById("test13_mmultiscripts").
+      firstElementChild;
+    var base = child.getBoundingClientRect();
+    child = child.nextElementSibling;
+    var prescripts = [], postscripts = [];
+    for (var i = 0; i < 4; i++, child = child.nextElementSibling) {
+      postscripts[i] = child.getBoundingClientRect();
+    } 
+    child = child.nextElementSibling;
+    for (var i = 0; i < 4; i++, child = child.nextElementSibling) {
+      prescripts[i] = child.getBoundingClientRect();
+    } 
+
+    //      prescript[1]   none=prescript[3]    postscript[1] postscript[3]
+    //                                      base 
+    //      prescript[0]        prescript[2]    postscript[0] postscript[2]=none
+
+    assert(postscripts[2].width * postscripts[2].height == 0 &&
+           prescripts[3].width * prescripts[3].height == 0,
+           "<none/> scripts should be empty")
+
+    assert(postscripts[0].width == postscripts[1].width &&
+           postscripts[1].width == postscripts[3].width &&
+           postscripts[0].height == postscripts[1].height &&
+           postscripts[1].height == postscripts[3].height &&            
+           prescripts[0].width == prescripts[1].width &&
+           prescripts[1].width == prescripts[2].width &&
+           prescripts[0].height == prescripts[1].height &&
+           prescripts[1].height == prescripts[2].height &&
+           postscripts[0].width == prescripts[0].width &&
+           postscripts[0].height == prescripts[0].height,
+           "nonempty scripts should have the same size")
+
+    assert(prescripts[1].right <= base.left &&
+           base.right <= postscripts[1].left &&
+           postscripts[1].right <= postscripts[3].left &&
+           prescripts[0].right <= base.left &&
+           base.right <= postscripts[0].left &&
+           prescripts[0].right <= prescripts[2].left,
+           "incorrect horizontal positions of nonempty scripts")
+
+    assert(prescripts[0].left == prescripts[1].left &&
+           postscripts[0].left == postscripts[1].left,
+           "incorrect vertical alignment of nonempty scripts")
+
+    assert(prescripts[1].top == postscripts[1].top &&
+           postscripts[1].top == postscripts[3].top &&
+           prescripts[0].top == postscripts[0].top &&
+           "incorrect horizontal alignment of nonempty scripts")
+
+    assert(prescripts[0].bottom >= prescripts[1].top,
+           "subscripts should be above supscripts")
+
+    assert(prescripts[0].top > base.top && 
+           prescripts[0].bottom > base.bottom &&
+           prescripts[1].top < base.top && 
+           prescripts[1].bottom < base.bottom,
+           "subscripts/supscripts should be lower/higher than the base")
+
+    return 1;
+    },
+    function () {
+    // test 14: mspace
+
+    var space1 = document.getElementById("test14").firstElementChild.
+      getBoundingClientRect();
+    var space2 = document.getElementById("test14").lastElementChild.
+      getBoundingClientRect();
+
+    assert(space1.width == 50 &&
+           space1.height == 30+20 &&
+           space2.width == 150 &&
+           space2.height == 40+60,
+           "bad sizes of mspace elements");
+
+    assert(space2.bottom - space1.bottom == 60-20,
+           "bad alignment of mspace elements");
+    
+    return 1;
+    },
+    function () {
+    // test 15: mpadded
+
+    var mpadded1 = document.getElementById("test15").firstElementChild.
+      getBoundingClientRect();
+    var mpadded2 = document.getElementById("test15").lastElementChild.
+      getBoundingClientRect();
+
+    var mpadded3 = document.getElementById("test15_mpadded").
+      getBoundingClientRect();
+    var mpadded4 = document.getElementById("test15_mpadded").firstElementChild.
+      getBoundingClientRect();
+
+    assert(mpadded1.width == 50 &&
+           mpadded1.height == 30+20 &&
+           mpadded2.width == 150 &&
+           mpadded2.height == 40+60 &&
+           mpadded3.width == 100 &&
+           mpadded3.height == 200+100 &&
+           mpadded4.width == 30 &&
+           mpadded4.height == 15+10,
+           "bad sizes of mpadded elements");
+
+    assert(mpadded2.bottom - mpadded1.bottom == 60-20,
+           "bad alignment of mpadded elements");
+
+    assert(mpadded4.top - mpadded3.top == 200-15-25  &&
+           mpadded4.left - mpadded3.left == 20,
+           "bad position of inner mpadded element")
+
+    return 1;
+    },
+    function () {
+    // test 16: ms, mi, mn
+
+    var w = document.getElementById("test16").getBoundingClientRect().width;
+
+    var mrowRect = document.getElementById("test16mrow").
+      getBoundingClientRect();
+
+    assert(mrowRect.width == (3 + 1 + 2)*w,
+           "bad size of lquote/rquote")
+
+    var miRect = document.getElementById("test16mi").getBoundingClientRect();
+
+    assert(miRect.width == 3*w/4,
+           "single char mi should be slanted")
+
+    assert(document.getElementById("test16mi2").getBoundingClientRect().width ==
+          document.getElementById("test16mi2ref").getBoundingClientRect().width,
+           "multi char mi should not be slanted")
+
+    var mnRect = document.getElementById("test16mn").getBoundingClientRect();
+
+    assert(mnRect.width == w &&
+           mnRect.height == w,
+           "mn should have same size as mtext")
+
+    return 1;
+    },
+
+    // bucket 2: more advanced attributes
+    function () {
+    // test 17: mfrac attributes
+
+    var mfrac = document.getElementById("test17_linethickness").
+      getBoundingClientRect();
+    var num = document.getElementById("test17_linethickness").firstElementChild.
+      getBoundingClientRect();
+    var denum = document.getElementById("test17_linethickness").
+      lastElementChild.getBoundingClientRect();
+
+    assert(mfrac.height >= num.height + 20 + denum.height &&
+           num.bottom + 20 <= denum.top,
+           "numerator and denominator should be separated by linethickness")
+
+    num = document.getElementById("test17_numalign").firstElementChild.
+      getBoundingClientRect();
+    denum = document.getElementById("test17_numalign").
+      lastElementChild.getBoundingClientRect();
+
+    assert(num.left == denum.left,
+           "numerator and denominator should be aligned left")
+
+    num = document.getElementById("test17_denomalign").firstElementChild.
+      getBoundingClientRect();
+    denum = document.getElementById("test17_denomalign").
+      lastElementChild.getBoundingClientRect();
+
+    assert(num.right == denum.right,
+           "numerator and denominator should be aligned right")
+
+    num = document.getElementById("test17_bevelled").firstElementChild.
+      getBoundingClientRect();
+    denum = document.getElementById("test17_bevelled").
+      lastElementChild.getBoundingClientRect();
+
+    assert(num.left < denum.left &&
+           num.right < denum.right &&
+           num.top < denum.top &&
+           num.bottom < denum.bottom,
+           "incorrect position of mfrac children")
+
+    return 2;
+    },
+    function () {
+    // test 18: script shifts
+
+    assert(
+      document.getElementById("test18_msub").firstElementChild.
+        getBoundingClientRect().bottom + 10 <=
+      document.getElementById("test18_msub").lastElementChild.
+        getBoundingClientRect().top,
+      "bad subscriptshift (msub)")
+
+    assert(
+      document.getElementById("test18_msup").firstElementChild.
+        getBoundingClientRect().top - 10 >= 
+      document.getElementById("test18_msup").lastElementChild.
+        getBoundingClientRect().bottom,
+      "bad superscriptshift (msup)")
+
+    assert(
+      document.getElementById("test18_msubsup").firstElementChild.
+        getBoundingClientRect().bottom + 10 <=
+      document.getElementById("test18_msubsup").firstElementChild.
+        nextElementSibling.getBoundingClientRect().top &&
+      document.getElementById("test18_msubsup").firstElementChild.
+        getBoundingClientRect().top - 10 >= 
+      document.getElementById("test18_msubsup").lastElementChild.
+        getBoundingClientRect().bottom,
+      "bad script shifts (msubsup)")
+
+    return 2;
+    },
+    function () {
+    // test 19: munder/mover/munderover align
+
+    var elements = ["munder", "mover", "munderover"];
+    var align = ["left", "center", "right"];
+    for (var i in elements) {
+      for (var j in align) {
+       var e = document.getElementById("test19_" +
+                                       elements[i] + "_" + align[j])
+       var child = e.firstElementChild;
+        var baseRect = child.getBoundingClientRect();
+        for (child = child.nextElementSibling;
+             child; child = child.nextElementSibling) {
+          var b = child.getBoundingClientRect();
+          var success = false;
+          if (align[j] == "left") {
+            success = (baseRect.left == b.left);
+          } else if (align[j] == "right") {
+            success = (baseRect.right == b.right);
+          } else {
+            success = (baseRect.right + baseRect.left == b.right + b.left);
+          }
+          success = success && (baseRect.width > b.width);
+          assert(success,
+                 "bad alignment (" + elements[i] + "_" + align[j] + ")");
+        }
+      }
+    }
+    return 2;
+    },
+    function () {
+    // test 20: munder/mover/munderover: accent, accentunder (position)
+
+    assert(document.getElementById("test20_munder22").
+           getBoundingClientRect().top -
+           document.getElementById("test20_munder21").
+           getBoundingClientRect().bottom
+           < 
+           document.getElementById("test20_munder12").
+           getBoundingClientRect().top -
+           document.getElementById("test20_munder11").
+           getBoundingClientRect().bottom,
+           "accent should be closer to the base than normal script (munder)")
+
+    assert(document.getElementById("test20_mover21").
+           getBoundingClientRect().top -
+           document.getElementById("test20_mover22").
+           getBoundingClientRect().bottom
+           < 
+           document.getElementById("test20_mover11").
+           getBoundingClientRect().top -
+           document.getElementById("test20_mover12").
+           getBoundingClientRect().bottom,
+          "accent should be closer to the base than normal script (mover)")
+
+    assert(document.getElementById("test20_munderover22").
+           getBoundingClientRect().top -
+           document.getElementById("test20_munderover21").
+           getBoundingClientRect().bottom
+           < 
+           document.getElementById("test20_munderover12").
+           getBoundingClientRect().top -
+           document.getElementById("test20_munderover11").
+           getBoundingClientRect().bottom &&
+           document.getElementById("test20_munderover21").
+           getBoundingClientRect().top -
+           document.getElementById("test20_munderover23").
+           getBoundingClientRect().bottom
+           < 
+           document.getElementById("test20_munderover11").
+           getBoundingClientRect().top -
+           document.getElementById("test20_munderover13").
+           getBoundingClientRect().bottom,
+          "accent should be closer to the base than normal script (munderover)")
+
+    return 2;
+    },
+    function () {
+    // test 21: mtable align
+    var axis = document.getElementById("test21_axis").
+        getBoundingClientRect().bottom;
+
+    var table1align = document.getElementById("test21_table1").
+        getBoundingClientRect().top;
+
+    var table2align = document.getElementById("test21_table2").
+        getBoundingClientRect().bottom;
+
+    var row1align = document.getElementById("test21_row1").
+        getBoundingClientRect().bottom;
+
+    var row2align = document.getElementById("test21_row2").
+        getBoundingClientRect().top;
+
+    assert(Math.abs(table1align - axis) < epsilon,
+           "bad table alignment (table1align)");
+    assert(Math.abs(table2align - axis) < epsilon,
+           "bad table alignment (table2align)");
+    assert(Math.abs(row2align - axis) < epsilon,
+           "bad table alignment (row1align)");
+    assert(Math.abs(row1align - axis) < epsilon,
+          "bad table alignment (row2align)");
+
+    return 2;
+    },
+    function () {
+    // test 22: mtable rowalign, columnalign
+
+    var cells = [];
+    for (var i = 0; i < 4; i++) {
+      cells[i] = document.getElementById("test22_cell" + i).
+        getBoundingClientRect();
+    }
+
+    // just a test to verify that mspace is nonempty
+    // (if mspace is not supported, the test is trivial)
+    assert(cells[1].height >= 150, "bad size for mspace")
+
+    assert(cells[0].bottom == cells[1].bottom &&
+           cells[2].top == cells[3].top,
+           "bad row alignment")
+
+    assert(cells[0].left == cells[2].left &&
+           cells[1].right == cells[3].left,
+           "bad column alignment")
+
+    return 2;
+    },
+    function () {
+    // test 23: mtable columnwidth
+
+    assert(document.getElementById("test23_cell1").
+           getBoundingClientRect().width == 100 &&
+           document.getElementById("test23_cell2").
+           getBoundingClientRect().width == 200, 
+           "bad column width")
+
+    return 2;
+    },
+    function () {
+    // test 24: mtable width
+
+    assert(document.getElementById("test24").
+           getBoundingClientRect().width == 500, "bad mtable width")
+
+    return 2;
+    },
+    function () {
+    // test 25: mtable rowspacing, columnspacing
+
+    var table1 = document.getElementById("test25_1").
+      getBoundingClientRect();
+    var table2 = document.getElementById("test25_2").
+      getBoundingClientRect();
+
+    assert(table2.height - table1.height == 30+45+20 - (10+15+20),
+           "bad rowspacing")
+
+    assert(table2.width - table1.width == 35+55+70 - (15+25+30),
+           "bad columnspacing")
+
+    return 2;
+    },
+    function () {
+    // test 26: side
+
+    assert(
+      document.getElementById("test26_label").left >=
+      document.getElementById("test26_equation").right,
+      "bad label position")
+
+    return 2;
+    },
+    function () {
+    // test 27: minlabelspacing
+
+    assert(
+      document.getElementById("test27_label").right + 200 <=
+      document.getElementById("test27_equation").left,
+      "bad label spacing")
+
+    return 2;
+    },
+    function () {
+    // test 28: mtable framespacing
+    var table1 = document.getElementById("test28_framespacing1").
+      getBoundingClientRect();
+    var table2 = document.getElementById("test28_framespacing2").
+      getBoundingClientRect();
+
+    assert(table2.width - table1.width == (25 - 10) * 2,
+          "bad framespacing on the right and left")
+    assert(table2.height - table1.height == (40 - 15) * 2,
+          "bad framespacing above and below")
+
+    return 2;
+    },
+    function () {
+    // test 29: mtable equalrows, equalcolumns
+
+    var cells = [];
+    for (var i = 0; i < 4; i++) {
+      cells[i] = document.getElementById("test29_cell" + i).
+        getBoundingClientRect();
+    }
+
+    // just a test to verify that mspace is nonempty
+    // (if mspace is not supported, the test is trivial)
+    assert(cells[0].height >= 100, "bad size for mspace")
+
+    assert(cells[0].width == cells[1].width,
+           "equalcolumns not satisfied")
+
+    assert(cells[0].height == cells[2].height,
+           "equalrows not satisfied")
+
+    return 2;
+    },
+    function () {
+    // test 30: mtd rowspan, columnspan
+
+    var cells = [];
+    for (var i = 0; i < 4; i++) {
+      cells[i] = document.getElementById("test30_cell" + i).
+        getBoundingClientRect();
+    }
+
+    assert(cells[0].height == cells[1].height + cells[2].height,
+           "bad row span")
+
+    assert(cells[1].width == cells[2].width + cells[3].width,
+           "bad column span")
+
+    return 2;
+    },
+    function () {
+    // test 31: mathsize
+    var rect = document.getElementById("test31").getBoundingClientRect();
+
+    assert(rect.width == 3*20 &&
+           rect.height == 20, "bad mathsize")
+
+    return 2;
+    },
+    function () {
+    // test 32: mathvariant
+
+    var math = document.getElementById("test32");
+    var box = [];
+
+    for (var i = 0, child = math.firstElementChild; child ;
+         i++, child = child.nextElementSibling) {
+      box[i] = child.getBoundingClientRect();
+    }
+
+    assert(box[1].width == 512*box[0].width/1024,
+           "bad mathvariant (bold)")
+
+    assert(box[2].width == 1088*box[0].width/1024,
+           "bad mathvariant (script)")
+
+    assert(box[3].width == 1152*box[0].width/1024,
+           "bad mathvariant (fraktur)")
+
+    assert(box[4].width == 256*box[0].width/1024,
+           "bad mathvariant (bold-italic)")
+
+    assert(box[5].width == 576*box[0].width/1024,
+           "bad mathvariant (bold-script)")
+
+    assert(box[6].width == 640*box[0].width/1024,
+           "bad mathvariant (bold-fraktur)")
+
+    assert(box[7].width == 1216*box[0].width/1024,
+           "bad mathvariant (sans-serif)")
+
+    assert(box[8].width == 1280*box[0].width/1024,
+           "bad mathvariant (double-struck)")
+
+    assert(box[9].width == 704*box[0].width/1024,
+           "bad mathvariant (sans-serif-bxold)")
+
+    assert(box[10].width == 832*box[0].width/1024,
+           "bad mathvariant (sans-serif-italic)")
+
+    assert(box[11].width == 384*box[0].width/1024,
+           "bad mathvariant (sans-serif-bold-italic)")
+                        
+    assert(box[12].width == 896*box[0].width/1024,
+           "bad mathvariant (monospace)")
+
+    assert(box[13].width == 768*box[0].width/1024,
+           "bad mathvariant (italic)")
+
+    return 2;
+    },
+
+    // bucket 3: displaystyle, scriptlevel and operators
+    function () {
+    // test 33: munder/mover/munderover: accent, accentunder (size)
+
+    assert(
+      document.getElementById("test20_munder22").
+      getBoundingClientRect().width >
+      document.getElementById("test20_munder12").getBoundingClientRect().width,
+      "accent should be larger than normal script (munder)")
+
+    assert(
+      document.getElementById("test20_mover22").getBoundingClientRect().width >
+      document.getElementById("test20_mover12").getBoundingClientRect().width,
+      "accent should be larger than normal script (mover)")
+
+    assert(
+      document.getElementById("test20_munderover22").
+        getBoundingClientRect().width  >
+      document.getElementById("test20_munderover12").
+        getBoundingClientRect().width &&
+      document.getElementById("test20_munderover23").
+        getBoundingClientRect().width >
+      document.getElementById("test20_munderover13").
+        getBoundingClientRect().width,
+      "accent should be larger than normal script (munderover)")
+    
+    return 3;
+    },
+    function () {
+    // test 34: movablelimits
+    assert(
+      document.getElementById("test34_2").getBoundingClientRect().right <=
+      document.getElementById("test34_1").getBoundingClientRect().right,
+      "Bad position of scripts (displaystyle=true)")
+
+    assert(
+      document.getElementById("test34_3").getBoundingClientRect().right <=
+      document.getElementById("test34_4").getBoundingClientRect().left,
+      "Bad position of script (displaystyle=false)")
+
+    return 3;
+    },
+    function () {
+    // test 35: mfrac, scriptsizemultiplier
+
+    assert(
+      document.getElementById("test35_num").getBoundingClientRect().width ==
+      100/2,
+      "scriptlevel should be increased by 1 within numerator")
+
+    assert(
+      document.getElementById("test35_denum").getBoundingClientRect().width ==
+      100/2,
+      "scriptlevel should be increased by 1 within denumerator")
+
+    assert(
+      document.getElementById("test35_num1").getBoundingClientRect().right <=
+      document.getElementById("test35_num2").getBoundingClientRect().left,
+      "displaystyle should be reset within numerator")
+
+    assert(
+      document.getElementById("test35_denum1").getBoundingClientRect().right <=
+      document.getElementById("test35_denum2").getBoundingClientRect().left,
+      "displaystyle should be reset within denumerator")
+
+    return 3;
+    },
+    function () {
+    // test 36: mroot
+
+    var rect1 = document.getElementById("test36_1").getBoundingClientRect()
+    var rect2 = document.getElementById("test36_2").getBoundingClientRect()
+
+    assert(rect1.right <= rect2.left,
+      "displaystyle should be reset within the mroot index")
+
+    assert(rect1.width == 100/4,
+      "scriptlevel should be increased by 2 within the mroot index")
+
+    return 3;
+    },
+    function () {
+    // test 37: msub script
+
+    var rect1 = document.getElementById("test37_1").getBoundingClientRect()
+    var rect2 = document.getElementById("test37_2").getBoundingClientRect()
+
+    assert(rect1.right <= rect2.left,
+      "displaystyle should be reset within the sup script)")
+
+    assert(rect1.width == 100/2,
+      "scriptlevel should be increased by 1 within sup script")
+
+    return 3;
+    },
+    function () {
+    // test 38: munder script
+
+    var rect1 = document.getElementById("test38_1").getBoundingClientRect()
+    var rect2 = document.getElementById("test38_2").getBoundingClientRect()
+
+    assert(rect1.right <= rect2.left,
+      "displaystyle should be reset within the under script)")
+
+    assert(rect1.width == 100/2,
+      "scriptlevel should be increased by 1 within under script")
+
+    return 3;
+    },
+    function () {
+    // test 39: mo accent
+
+    assert(document.getElementById("test39").getBoundingClientRect().
+           width == 100,
+      "scriptlevel should not increase for accent operator")
+
+    return 3;
+    },
+    function () {
+    // test 40: mo largeop
+
+    var rect1 = document.getElementById("test40_sum1").getBoundingClientRect()
+    var rect2 = document.getElementById("test40_sum2").getBoundingClientRect()
+    var rect3 = document.getElementById("test40_sum3").getBoundingClientRect()
+
+    assert(rect1.height > rect2.height &&
+           rect2.height == rect3.height,
+           "bad size of sum")
+
+    return 3;
+    },
+    function () {
+    // test 41: scriptlevel
+
+    assert(document.getElementById("test41").
+           getBoundingClientRect().width == 16, "bad scriptlevel")
+
+    return 3;
+    },
+    function () {
+    // test 42: scriptminsize
+
+    assert(document.getElementById("test42").getBoundingClientRect().width == 8,
+           "scriptminsize not respected")
+
+    return 3;
+    },
+    function () {
+    // test 43: mo lspace, rspace
+    var math = document.getElementById("test43");
+    var rect1 = math.firstElementChild.getBoundingClientRect()
+    var rect2 = math.lastElementChild.getBoundingClientRect()
+
+    assert(rect2.left - rect1.right ==
+           35 + rect1.width + 40, "bad lspace/rspace")
+
+    return 3;
+    },
+    function () {
+    // test 44: mo stretchy
+
+    assert(document.getElementById("test44_1").
+           getBoundingClientRect().height < 30,
+           "parenthesis should not stretch")
+
+    assert(document.getElementById("test44_2").
+           getBoundingClientRect().height > 30,
+           "parenthesis should stretch")
+
+    return 3;
+    },
+    function () {
+    // test 45: mo symmetric
+
+    assert(document.getElementById("test45_1").
+           getBoundingClientRect().height > ((40+40) + (40+20))/2,
+           "parenthesis should stretch symmetrically")
+
+    assert(document.getElementById("test45_2").
+           getBoundingClientRect().height < ((40+40) + (40+20))/2,
+           "parenthesis should not stretch symmetrically")
+
+    return 3;
+    },
+    function () {
+    // test 46: mo maxsize
+
+    var h = document.getElementById("test46").getBoundingClientRect().height
+    assert(h > 50 && h < 190, "bad maxsize")
+
+    return 3;
+    },
+    function () {
+    // test 47: mo minsize
+
+    assert(document.getElementById("test47").
+           getBoundingClientRect().height > 30,
+           "bad minsize")
+
+    return 3;
+    },
+    function () {
+    // test 48: form
+
+    // be sure that at least mspace is supported
+    assert(document.getElementById("test48space").
+           getBoundingClientRect().width > 0 &&
+           document.getElementById("test48space2").
+           getBoundingClientRect().width == 0,
+           "bad mediumspace width")
+
+    assert(Math.abs(document.getElementById("test48_infix").
+           getBoundingClientRect().width -
+           document.getElementById("test48_infix_ref").
+           getBoundingClientRect().width) < epsilon,
+                 "bad lspace/rspace for minus sign (infix form)")
+
+    assert(Math.abs(document.getElementById("test48_prefix").
+                    getBoundingClientRect().width -
+                    document.getElementById("test48_prefix_ref").
+                    getBoundingClientRect().width) < epsilon,
+                 "bad lspace/rspace for minus sign (prefix form)")
+ 
+    return 3;
+    },
+
+    // bucket 4: more features for operators
+    function () {
+    // test 49: Default value of the form attribute
+
+    assert(Math.abs(document.getElementById("test49_1end").
+                    getBoundingClientRect().left -
+                    document.getElementById("test49_1start").
+                    getBoundingClientRect().right -
+                    document.getElementById("test49_1ref").
+                    getBoundingClientRect().width) < epsilon,
+                    "prefix form should be used")
+
+    assert(Math.abs(document.getElementById("test49_2end").
+                    getBoundingClientRect().left -
+                    document.getElementById("test49_2start").
+                    getBoundingClientRect().right -
+                    document.getElementById("test49_2ref").
+                    getBoundingClientRect().width) < epsilon,
+                    "postfix form should be used")
+
+    assert(
+     (document.getElementById("test49_3").getBoundingClientRect().width -
+      document.getElementById("test49_3ref").getBoundingClientRect().width)
+      < epsilon, "postfix for should be used")
+
+    assert(Math.abs(document.getElementById("test49_4end").
+           getBoundingClientRect().left -
+       document.getElementById("test49_4start").getBoundingClientRect().right
+       - document.getElementById("test49_4ref").getBoundingClientRect().width)
+       < epsilon, "infix for should be used")
+    
+    return 4;
+    },
+
+    function () {
+    // test 50: embellished operators
+
+    for (var i = 0; i < 14; i++) {
+      assert(document.getElementById("test50_mo"+i).
+             getBoundingClientRect().height > 30,
+             "mo"+i+" should stretch")
+    }
+
+    return 4;
+    },
+    function () {
+    // test 51: space-like elements
+
+    for (var i = 0; i < 9; i++) {
+      assert(document.getElementById("test51_mo"+i).
+             getBoundingClientRect().height > 30,
+             "mo"+i+" should stretch")
+    }
+
+    return 4;
+    },
+    function () {
+    // test 52: vertical stretching in implicit mrow
+
+    for (var i = 0; i < 3; i++) {
+
+      assert(document.getElementById("test52_mo"+i).
+             getBoundingClientRect().height > 90,
+             "bad size for mo"+i)
+    }
+
+    return 4;
+    },
+    function () {
+    // test 53: vertical stretching in mtd
+
+    for (var i = 0; i < 4; i++) {
+      assert(document.getElementById("test53_mo"+i).
+             getBoundingClientRect().height > 90,
+             "bad size for mo"+i+" (mtd)")
+    }
+
+    return 4;
+    },
+    function () {
+    // test 54: vertical stretching in mtd (symmetric)
+
+    assert(document.getElementById("test54_1").
+           getBoundingClientRect().height > ((40+40) + (40+20))/2,
+           "parenthesis should stretch symmetrically (mtd)")
+
+    assert(document.getElementById("test54_2").
+           getBoundingClientRect().height < ((40+40) + (40+20))/2,
+           "parenthesis should not stretch symmetrically (mtd)")
+
+    return 4;
+    },
+    function () {
+    // test 55: vertical stretching in mtd with rowspan
+
+    var h = document.getElementById("test55_mo").getBoundingClientRect().height
+    assert(h > 30 && h < 50,
+           "bad size for stretchy operator (mtd)")
+    return 4;
+    },
+    function () {
+    // test 56: horizontal stretching in munder/mover/munderover
+
+    for (var i = 0; i < 5; i++) {
+      assert(document.getElementById("test56_mo"+i).
+             getBoundingClientRect().width > 30,
+             "mo"+i+" should stretch (munder/mover/munderover)")
+    }
+
+    return 4;
+    },
+    function () {
+    // test 57: horizontal stretching in mtd
+
+    for (var i = 0; i < 4; i++) {
+      assert(document.getElementById("test57_mo"+i).
+             getBoundingClientRect().height > 90,
+             "bad size for mo"+i+" (mtd)")
+    }
+
+    return 4;
+    },
+    function () {
+    // test 58: vertical stretching in mtd with columnspan
+
+    var h = document.getElementById("test58_mo").getBoundingClientRect().width
+    assert(h > 30 && h < 50,
+           "bad size for stretchy operator (mtd)")
+
+    return 4;
+    },
+    function () {
+    // test 59: complex combination of vertical and horizontal stretching in mtd
+
+    var h1 =
+      document.getElementById("test59_mo1").getBoundingClientRect().width
+    var h2 =
+      document.getElementById("test59_mo2").getBoundingClientRect().height
+    var h3 =
+      document.getElementById("test59_mo3").getBoundingClientRect().height
+    var h4 =
+      document.getElementById("test59_mo4").getBoundingClientRect().width
+
+    assert(h1 > 50 && h2 > 50 && h3 > 50 && h4 > 50,
+           "bad size for stretchy operator (mtd)")
+
+    return 4;
+    },
+    function () {
+    // test 60: complex combination of space-like and embellished op
+
+    var h1 =
+      document.getElementById("test60_mo1").getBoundingClientRect().height
+    var h2 =
+      document.getElementById("test60_mo2").getBoundingClientRect().width
+
+    assert(h1 > 90 && h2 > 90,
+           "bad size for embellished op operators")
+
+    return 4;
+    },
+    function () {
+    // test 61: operator dictionary: large operators
+
+    var math = document.getElementById("test61");
+    var box = [];
+
+    for (var i = 0, child = math.firstElementChild; child ;
+         i++, child = child.nextElementSibling) {
+      box[i] = child.getBoundingClientRect();
+    }
+
+    for (var i = 1; i < box.length; i++) {
+      assert(box[i].height > box[0].height,
+             "largeop should be bigger (mo"+i+")")
+    }
+
+    return 4;
+    },
+    function () {
+    // test 62: operator dictionary: horizontal stretchy operators
+
+    var math = document.getElementById("test62");
+    var box = [];
+
+    for (var i = 0, child = math.firstElementChild; child ;
+         i++, child = child.nextElementSibling) {
+      box[i] = child.lastElementChild.getBoundingClientRect();
+    }
+
+    for (var i = 1; i < box.length; i++) {
+      assert(box[i].width > 30,
+             "mo"+i+" should stretch horizontally")
+    }
+
+    return 4;
+    },
+    function () {
+    // test 63: operator dictionary: vertical stretchy operators
+
+    var math = document.getElementById("test63");
+    var box = [];
+
+    for (var i = 0, child = math.firstElementChild; child;
+         i++, child = child.nextElementSibling) {
+      box[i] = child.getBoundingClientRect();
+    }
+
+    // be sure that the loop is nontrivial
+    assert(box.length > 1, "bad number of children")
+
+    for (var i = 1; i < box.length; i++) {
+      assert(box[i].height > 90,
+             "mo"+i+" should stretch vertically")
+    }
+
+    return 4;
+    },
+    function () {
+    // test 64: operator dictionary: various spacing
+
+    // be sure that at least spaces are supported
+    assert(document.getElementById("test64space").
+           getBoundingClientRect().width && 
+           document.getElementById("test64space2").
+           getBoundingClientRect().width == 0,
+           "bad space width")
+
+    var mstyle = document.getElementById("test64");
+
+    for (var i = 0, child = mstyle.firstElementChild; child ;
+         child = child.nextElementSibling, i++) {
+      assert(
+       Math.abs(child.firstElementChild.
+                  lastElementChild.getBoundingClientRect().left -
+                child.firstElementChild.
+                  firstElementChild.getBoundingClientRect().right -
+                (child.lastElementChild.
+                   lastElementChild.getBoundingClientRect().left -
+                 child.lastElementChild.
+                   firstElementChild.getBoundingClientRect().right)) < epsilon,
+      "bad spacing around operator "+i)
+    }
+
+    return 4;
+    },
+
+    // bucket 5: directionality and linebreaking
+    function () {
+    // test 65: mrow (RTL)
+                                                                           
+    for (var i = 0; i < 9; i++) {
+      var mrow = document.getElementById("test65_"+i);
+      assert(mrow.firstElementChild.getBoundingClientRect().left
+             >= mrow.lastElementChild.getBoundingClientRect().right,
+             "the element should be displayed RTL ("+i+")")
+    }
+
+    return 5;
+    },
+    function () {
+    // test 66: simple scripts elements (RTL)
+
+    var msubBaseRect = document.getElementById("test66_msub").firstElementChild.
+      getBoundingClientRect();
+
+    var msubScriptRect = document.getElementById("test66_msub").
+      lastElementChild.getBoundingClientRect();
+
+    var msupBaseRect = document.getElementById("test66_msup").firstElementChild.
+      getBoundingClientRect();
+    var msupScriptRect = document.getElementById("test66_msup").
+      lastElementChild.getBoundingClientRect();
+
+    var msubsupBaseRect = document.getElementById("test66_msubsup").
+      firstElementChild.getBoundingClientRect();
+    var msubsupSubScriptRect = document.getElementById("test66_msubsup").
+      firstElementChild.nextElementSibling.getBoundingClientRect();
+    var msubsupSupScriptRect = document.getElementById("test66_msubsup").
+      lastElementChild.getBoundingClientRect();
+
+    var munderBaseRect = document.getElementById("test66_munder").
+      firstElementChild.getBoundingClientRect();
+    var munderScriptRect = document.getElementById("test66_munder").
+      lastElementChild.getBoundingClientRect();
+
+    var moverBaseRect = document.getElementById("test66_mover").
+      firstElementChild.getBoundingClientRect();
+    var moverScriptRect = document.getElementById("test66_mover").
+      lastElementChild.getBoundingClientRect();
+
+    var munderoverBaseRect = document.getElementById("test66_munderover").
+      firstElementChild.getBoundingClientRect();
+    var munderoverUnderScriptRect =
+      document.getElementById("test66_munderover").
+      firstElementChild.nextElementSibling.getBoundingClientRect();
+    var munderoverOverScriptRect =
+      document.getElementById("test66_munderover").
+      lastElementChild.getBoundingClientRect();
+
+    assert(msubBaseRect.top < msubScriptRect.top && 
+           msubBaseRect.bottom < msubScriptRect.bottom &&
+           msubsupBaseRect.top < msubsupSubScriptRect.top && 
+           msubsupBaseRect.bottom < msubsupSubScriptRect.bottom,
+           "the subscripts should be lower than the base"); 
+
+    assert(msupBaseRect.top > msupScriptRect.top && 
+           msupBaseRect.bottom > msupScriptRect.bottom &&
+           msubsupBaseRect.top > msubsupSupScriptRect.top && 
+           msubsupBaseRect.bottom > msubsupSupScriptRect.bottom,
+           "the supscripts should be higher than the base"); 
+
+    assert(msubBaseRect.left >= msubScriptRect.right &&
+           msupBaseRect.left >= msupScriptRect.right && 
+           msubsupBaseRect.left >= msubsupSubScriptRect.right &&
+           msubsupBaseRect.left >= msubsupSupScriptRect.right,
+           "the sub/super scripts should be placed on the left of the base"); 
+
+    assert(munderBaseRect.left < munderScriptRect.left &&
+           munderBaseRect.right > munderScriptRect.right &&
+           moverBaseRect.left < moverScriptRect.left &&
+           moverBaseRect.right > moverScriptRect.right &&
+           munderoverBaseRect.left < munderoverUnderScriptRect.left &&
+           munderoverBaseRect.right > munderoverUnderScriptRect.right &&
+           munderoverBaseRect.left < munderoverOverScriptRect.left &&
+           munderoverBaseRect.right > munderoverOverScriptRect.right,
+           "the under/over scripts should be placed between the left and " +
+           "right coordinates of the base.");
+ 
+    assert(munderBaseRect.top <= munderScriptRect.bottom &&
+           moverBaseRect.top >= moverScriptRect.bottom &&
+           munderoverBaseRect.top <= munderoverUnderScriptRect.bottom &&
+           munderoverBaseRect.top >= munderoverOverScriptRect.bottom,
+           "the under/over scripts should be placed above/below the base");
+
+    return 5;
+    },
+    function () {
+    // test 67: mfrac (RTL)
+
+    num = document.getElementById("test67_numalign").firstElementChild.
+      getBoundingClientRect();
+    denum = document.getElementById("test67_numalign").
+      lastElementChild.getBoundingClientRect();
+
+    assert(num.left == denum.left,
+           "numerator and denominator should be aligned left")
+
+    num = document.getElementById("test67_denomalign").firstElementChild.
+      getBoundingClientRect();
+    denum = document.getElementById("test67_denomalign").
+      lastElementChild.getBoundingClientRect();
+
+    assert(num.right == denum.right,
+           "numerator and denominator should be aligned right")
+
+    num = document.getElementById("test67_bevelled").firstElementChild.
+      getBoundingClientRect();
+    denum = document.getElementById("test67_bevelled").
+      lastElementChild.getBoundingClientRect();
+
+    assert(num.left > denum.left &&
+           num.right > denum.right &&
+           num.top < denum.top &&
+           num.bottom < denum.bottom,
+           "incorrect position of mfrac children")
+
+    return 5;
+    },
+    function () {
+    // test 68: mmultiscripts (RTL)
+
+    //     postscript[1]       postscript[3]     prescript[1]  prescript[3]=none
+    //                                      base 
+    //     postscript[0]  none=postscript[2]     prescript[0]  prescript[2]
+
+    var child = document.getElementById("test68_mmultiscripts").
+      firstElementChild;
+    var base = child.getBoundingClientRect();
+    child = child.nextElementSibling;
+    var prescripts = [], postscripts = [];
+    for (var i = 0; i < 4; i++, child = child.nextElementSibling) {
+      postscripts[i] = child.getBoundingClientRect();
+    } 
+    child = child.nextElementSibling;
+    for (var i = 0; i < 4; i++, child = child.nextElementSibling) {
+      prescripts[i] = child.getBoundingClientRect();
+    } 
+
+    assert(postscripts[2].width * postscripts[2].height == 0 &&
+           prescripts[3].width * prescripts[3].height == 0,
+           "<none/> scripts should be empty")
+
+    assert(postscripts[0].width == postscripts[1].width &&
+           postscripts[1].width == postscripts[3].width &&
+           postscripts[0].height == postscripts[1].height &&
+           postscripts[1].height == postscripts[3].height &&            
+           prescripts[0].width == prescripts[1].width &&
+           prescripts[1].width == prescripts[2].width &&
+           prescripts[0].height == prescripts[1].height &&
+           prescripts[1].height == prescripts[2].height &&
+           postscripts[0].width == prescripts[0].width &&
+           postscripts[0].height == prescripts[0].height,
+           "nonempty scripts should have the same size")
+
+    assert(prescripts[1].left >= base.right &&
+           base.left >= postscripts[1].right &&
+           postscripts[1].left >= postscripts[3].right &&
+           prescripts[0].left >= base.right &&
+           base.left >= postscripts[0].right &&
+           prescripts[0].left >= prescripts[2].right,
+           "incorrect horizontal positions of nonempty scripts")
+
+    assert(prescripts[1].top == postscripts[1].top &&
+           postscripts[1].top == postscripts[3].top &&
+           prescripts[0].top == postscripts[0].top &&
+           "incorrect horizontal alignment of nonempty scripts")
+
+    assert(prescripts[0].bottom >= prescripts[1].top,
+           "subscripts should be above supscripts")
+
+    assert(prescripts[0].top > base.top && 
+           prescripts[0].bottom > base.bottom &&
+           prescripts[1].top < base.top && 
+           prescripts[1].bottom < base.bottom,
+           "subscripts/supscripts should be lower/higher than the base")
+
+    return 5;
+    },
+    function () {
+    // test 69: mpadded (RTL)
+
+    var math = document.getElementById("test69");
+
+    assert(math.firstElementChild.getBoundingClientRect().left - 
+           math.lastElementChild.firstElementChild.
+           getBoundingClientRect().right == 50,
+           "bad position of inner mpadded element")
+
+    return 5;
+    },
+    function () {
+    // test 70: msqrt (RTL)
+
+    var msqrt = document.getElementById("test70_msqrt").getBoundingClientRect();
+    var msqrtChild = document.getElementById("test70_msqrt").firstElementChild.
+      getBoundingClientRect();
+    
+    assert(msqrt.width >= msqrtChild.width+3 &&
+           msqrt.height >= msqrtChild.height+3,
+           "msqrt should be at least as large as msqrtChild, with enough " +
+           "space to draw the radical");
+
+    assert(msqrt.right - msqrtChild.right >
+           msqrtChild.left - msqrt.left,
+           "the square root should be placed on the right");
+
+    assert(msqrt.top <= msqrtChild.top &&
+           msqrt.bottom >= msqrtChild.bottom &&
+           msqrt.left <= msqrtChild.left &&
+           msqrt.right >= msqrtChild.right,
+           "msqrtChild should be inside the msqrt");
+
+    return 5;
+    },
+    function () {
+    // test 71: mroot (RTL)
+
+    var mroot = document.getElementById("test71_mroot").getBoundingClientRect();
+    var mrootChild = document.getElementById("test71_mroot").firstElementChild.
+      getBoundingClientRect();
+    var mrootIndex = document.getElementById("test71_mroot").lastElementChild.
+      getBoundingClientRect();
+
+    assert(mrootIndex.top < mrootChild.top &&
+           mrootIndex.bottom < mrootChild.bottom,
+           "The index should be higher than the base");
+
+    assert(mrootIndex.left-3 >= mrootChild.right,
+           "The index should be on the right of the base, with enough space " +
+           "to draw the radical");
+
+    return 5;
+    },
+    function () {
+    // test 72: mtable (RTL)
+
+    var rowRect1 = document.getElementById("test72_mtable").firstElementChild.
+      getBoundingClientRect();
+    var rowRect2 = document.getElementById("test72_mtable").firstElementChild.
+      nextElementSibling.getBoundingClientRect();
+    var rowRect3 = document.getElementById("test72_mtable").lastElementChild.
+      getBoundingClientRect();
+
+    assert(rowRect1.height == rowRect2.height &&
+           rowRect2.height == rowRect3.height,
+           "mtable rows should have same height");
+
+    assert(rowRect1.left == rowRect2.left && rowRect2.left == rowRect3.left &&
+           rowRect1.right == rowRect2.right && rowRect2.right == rowRect3.right,
+           "mtable rows should be aligned");
+
+    assert(rowRect1.bottom <= rowRect2.top &&
+           rowRect2.bottom <= rowRect3.top,
+           "row[i] should be above row[i+1]");
+
+    var rows = [document.getElementById("test72_mtable").firstElementChild,
+                document.getElementById("test72_mtable").firstElementChild.
+                         nextElementSibling,
+                document.getElementById("test72_mtable").lastElementChild];
+    var cellRect = [];
+    for (var i = 0; i < 3; i++) {
+      cellRect[i] = [rows[i].firstElementChild.getBoundingClientRect(),
+                 rows[i].firstElementChild.nextElementSibling.
+                 getBoundingClientRect(),
+                 rows[i].lastElementChild.getBoundingClientRect()];
+    }
+
+    for (var i = 0; i < 3; i++) {
+      assert(cellRect[0][i].left == cellRect[1][i].left &&
+             cellRect[1][i].left == cellRect[2][i].left &&
+             cellRect[0][i].right == cellRect[1][i].right &&
+             cellRect[1][i].right == cellRect[2][i].right,
+             "cellRects of column "+(i+1)+" should be aligned");
+    }
+
+    for (var i = 0; i < 3; i++) {
+      assert(cellRect[i][0].top == cellRect[i][1].top &&
+             cellRect[i][1].top == cellRect[i][2].top &&
+             cellRect[i][0].bottom == cellRect[i][1].bottom &&
+             cellRect[i][1].bottom == cellRect[i][2].bottom,
+             "cellRects of row "+(i+1)+" should be aligned");
+    }
+
+    assert(cellRect[0][0].left >= cellRect[0][1].right &&
+           cellRect[0][1].left >= cellRect[0][2].right,
+           "column[j] should be on the right of column[j+1]");
+
+    assert(cellRect[0][0].bottom <= cellRect[1][0].top &&
+           cellRect[1][0].bottom <= cellRect[2][0].top,
+           "row[i] should be above row[i+1]");
+
+    return 5;
+    },
+    function () {
+    // test 73: linebreak=auto, linebreakstyle=before
+
+    var mstyle = document.getElementById("test73");
+
+    var y1 = mstyle.firstElementChild.getBoundingClientRect().bottom;
+    var y2 = mstyle.firstElementChild.nextElementSibling.
+      getBoundingClientRect().bottom;
+    var y3 = mstyle.lastElementChild.getBoundingClientRect().bottom;
+
+    assert(y1 + 20 <= y2 && y2 == y3,
+           "should break before the plus (auto)")
+
+    return 5;
+    },
+    function () {
+    // test 74: linebreak=auto, linebreakstyle=after
+
+    var mstyle = document.getElementById("test74");
+
+    var box1 = mstyle.firstElementChild.getBoundingClientRect();
+    var box2 = mstyle.firstElementChild.nextElementSibling.
+      getBoundingClientRect();
+    var box3 = mstyle.lastElementChild.getBoundingClientRect();
+
+    assert(box1.right == box2.left &&
+           box1.bottom == box2.bottom && box2.bottom + 20 <= box3.bottom,
+           "should break after the comma (auto)")
+
+    return 5;
+    },
+    function () {
+
+    // test 75: linebreak=newline
+
+    var mstyle = document.getElementById("test75");
+
+    var y1 = mstyle.firstElementChild.getBoundingClientRect().bottom;
+    var y2 = mstyle.firstElementChild.nextElementSibling.
+      getBoundingClientRect().bottom;
+    var y3 = mstyle.lastElementChild.getBoundingClientRect().bottom;
+
+    assert(y1 + 20 <= y2 && y2 == y3,
+           "should break before the plus (newline)")
+
+    return 5;
+    },
+    function () {
+    // test 76:
+
+    var mstyle = document.getElementById("test76");
+    
+    var y = [];
+    for (var i = 0, child = mstyle.firstElementChild; child ;
+         i++, child = child.nextElementSibling) {
+      y[i] = child.getBoundingClientRect().bottom;
+    }
+
+    assert(y[0] + 20 <= y[1] &&
+           y[1] == y[2] && y[2] == y[3] && y[3] == y[4],
+           "should break before the plus not after the comma (nobreak)")
+
+    return 5;
+    },
+    function () {
+    // test 77:
+
+    var mstyle = document.getElementById("test77");
+    
+    var y = [];
+    for (var i = 0, child = mstyle.firstElementChild; child ;
+         i++, child = child.nextElementSibling) {
+      y[i] = child.getBoundingClientRect().bottom;
+    }
+
+    assert(y[0] + 20 <= y[1] &&
+    y[1] == y[2] && y[2] == y[3] && y[3] == y[4],
+    "should break before the plus not after the comma (badbreak & goodbreak)")
+
+    return 5;
+    },
+    function () {
+    // test 78:
+
+    var mstyle = document.getElementById("test78");
+
+    var y1 = mstyle.firstElementChild.getBoundingClientRect().bottom;
+    var y2 = mstyle.firstElementChild.nextElementSibling.
+      getBoundingClientRect().top;
+    var y3 = mstyle.lastElementChild.getBoundingClientRect().top;
+
+    assert(y1 + 80 == y2 && y2 == y3, "bad lineleading")
+
+    return 5;
+    },
+    function () {
+    // test 79:
+
+    var mstyle = document.getElementById("test79");
+
+    var box1 = mstyle.firstElementChild.getBoundingClientRect();
+    var box2 = mstyle.firstElementChild.nextElementSibling.
+      getBoundingClientRect();
+
+    assert(box1.bottom < box2.bottom && box2.left - box1.left == 20,
+           "bad indentalign")
+
+    return 5;
+    },
+    function () {
+    // test 80: 
+
+    var mstyle = document.getElementById("test80");
+
+    var box1 = mstyle.firstElementChild.getBoundingClientRect();
+    var box2 = mstyle.firstElementChild.nextElementSibling.
+      getBoundingClientRect();
+
+    assert(box1.bottom < box2.bottom && box2.left - box1.left == 20,
+           "bad indentshift")
+
+    return 5;
+    },
+
+    // bucket 6: alignmark and elementary math
+
+    function () {
+    // test 81:
+
+    assert(document.getElementById("test81_1").getBoundingClientRect().right ==
+           document.getElementById("test81_2").getBoundingClientRect().left,
+           "bad alignment (malignmark)")
+
+    return 6;
+    },
+    function () { 
+    // test 82:
+
+    assert(document.getElementById("test82_1").getBoundingClientRect().right ==
+           document.getElementById("test82_2").getBoundingClientRect().left,
+           "bad alignment (groupalign)")
+
+    return 6;
+    },
+    function () {
+    // test 83: groupalign=center, malignmark ; columnalign
+
+    var box1 = document.getElementById("test83_1").getBoundingClientRect();
+    var box2 = document.getElementById("test83_2").getBoundingClientRect();
+
+    assert(box1.left + box1.right == box2.left + box2.right,
+           "bad alignment (groupalign=center, malignmark)")
+
+    return 6;
+    },
+    function () {
+    // test 84: groupalign=decimalpoint
+
+    var box1 = document.getElementById("test84_1").getBoundingClientRect();
+    var box2 = document.getElementById("test84_2").getBoundingClientRect();
+
+    assert(box1.left + box1.right == box2.left + box2.right,
+           "bad alignment (groupalign=decimalpoint, malignmark)")
+
+    return 6;
+    },
+    function () {
+    // test 85: alignment ; several rows
+
+    var left = [];
+    for (var i = 0; i < 5; i++) {
+      left[i] = document.getElementById("test85_"+i).
+        getBoundingClientRect().left;
+    }
+
+    for (var i = 0; i < 4; i++) {
+      assert(left[i+1] == left[i] - 20, "bad alignment (several rows)");
+    }
+
+    return 6;
+    },
+    function () {
+    // test 86:  several alignment groups in cells ; mtd@groupalign
+
+    var box = [];
+    for (var i = 0; i < 6; i++) {
+      box[i] = document.getElementById("test86_"+i).getBoundingClientRect();
+    }
+
+    assert(box[0].left == box[3].right &&
+          (box[1].left + box[1].right)/2 == box[4].left &&
+           box[2].right == (box[5].left + box[5].right)/2 &&
+           box[0].right == box[1].left &&
+           box[4].right == box[2].left,
+           "bad alignment (several alignment groups in cells, mtd@groupalign)");
+
+    return 6;
+    },
+    function () {
+    // test 87: mtr@groupalign
+
+    var box = [];
+    for (var i = 0; i < 6; i++) {
+      box[i] = document.getElementById("test87_"+i).getBoundingClientRect();
+    }
+
+    assert(box[0].left == box[3].right &&
+          (box[1].left + box[1].right)/2 == box[4].left &&
+           box[2].right == (box[5].left + box[5].right)/2 &&
+           box[0].right == box[1].left &&
+           box[4].right == box[2].left,
+           "bad alignment (mtr@groupalign)");
+
+    return 6;
+    },
+    function () {
+    // test 88: mtable@groupalign
+
+    var box = [];
+    for (var i = 0; i < 6; i++) {
+      box[i] = document.getElementById("test88_"+i).getBoundingClientRect();
+    }
+
+    assert(box[0].left == box[3].right &&
+          (box[1].left + box[1].right)/2 == box[4].left &&
+           box[2].right == (box[5].left + box[5].right)/2 &&
+           box[0].right == box[1].left &&
+           box[4].right == box[2].left,
+           "bad alignment (mtable@groupalign)");
+
+    return 6;
+    },
+
+    function () {
+    // test 89:
+
+    var box = [];
+    for (var i = 0; i < 4; i++) {
+      box[i] = document.getElementById("test89_"+i).getBoundingClientRect();
+    }
+
+    assert(box[0].bottom <= box[1].top &&
+           box[1].bottom == box[2].top &&
+           box[2].bottom == box[3].top,
+           "bad vertical position in mstack")
+
+    assert(box[1].right <= box[2].left &&
+           box[2].left == box[0].left &&
+           box[3].right == box[0].right,
+           "bad horizontal position in mstack")
+
+    return 6;
+    },
+    function () {
+    // test 90: msline
+
+    var box1 = document.getElementById("test90_1").getBoundingClientRect();
+    var box2 = document.getElementById("test90_2").getBoundingClientRect();
+
+    assert(box1.bottom+2 <= box2.top,
+           "123 should be above 456, with enough space to draw the line")
+
+    assert(box1.left == box2.left && box1.right == box2.right,
+           "bad alignment in mstack")
+
+    return 6;
+    },
+    function () {
+    // test 91: msgroup, shift
+
+    var box = [];
+    for (var i = 0; i < 4; i++) {
+      box[i] = document.getElementById("test91_"+i).getBoundingClientRect();
+    }
+
+    assert(box[0].width == box[1].width &&
+           box[1].width == box[2].width &&
+           box[2].width == box[3].width,
+           "row should have the same width")
+
+    assert(box[0].left == box[1].left &&
+           box[2].left == box[3].left &&
+           box[0].left > box[2].left,
+           "bad horizontal position (msgroup, shift)")
+
+    return 6;
+    },
+    function () {
+    // test 92: msline (leftoverhang, rightoverhang, mslinethickness)
+
+    var mstack = document.getElementById("test92").getBoundingClientRect();
+    var mn = document.getElementById("test92").firstElementChild.
+      getBoundingClientRect();
+    
+    assert(mstack.bottom - mn.bottom >= 30, "bad mslinethickness")
+
+    assert(mn.left - mstack.left == 25, "bad lefttoverhang")
+
+    assert(mstack.right - mn.right == 50, "bad rightoverhang")
+
+    return 6;
+    },
+    function () {
+    // test 93: 93: mstack@stackalign
+
+    var box = [];
+    for (var i = 0; i < 6; i++) {
+      box[i] = document.getElementById("test93_"+i).getBoundingClientRect();
+    }
+
+    assert(box[0].width < box[1].width &&
+           box[0].left == box[1].left, "bad alignment (stackalign=left)")
+
+    assert(box[2].width < box[3].width &&
+           box[2].left + box[2].right ==
+           box[3].left + box[3].right, "bad alignment (stackalign=center)")
+
+    assert(box[4].width < box[5].width &&
+           box[4].right == box[5].right, "bad alignment (stackalign=right)")
+
+    return 6;
+    },
+    function () {
+    // test 94: mscarries, scriptlevel, scriptsizemultiplier
+
+    assert(document.getElementById("test94").getBoundingClientRect().width
+           == 100 * .6, "bad font size in mscarries")
+
+    return 6;
+    },
+    function () {
+    // test 95: mlongdiv
+
+    var box = [];
+    for (var i = 0; i < 4; i++) {
+      box[i] = document.getElementById("test95_"+i).getBoundingClientRect();
+    }
+
+    assert(box[0].right < box[1].left &&
+           box[0].right < box[2].left &&
+           box[0].top > box[1].bottom &&
+           box[0].top == box[2].top, "bad positions in mlongdiv")
+
+    assert(box[2].width == box[3].width && 
+           box[2].left == box[3].left &&
+           box[2].bottom <= box[3].top,
+           "the remaining children of mlongdiv should be treated as mstack")
+
+    return 6;
+    },
+    function () {
+    // test 96: mlongdiv@longdivstyle
+
+    var box = [];
+    for (var i = 0; i < 9; i++) {
+      box[i] = document.getElementById("test96_"+i).getBoundingClientRect();
+    }
+
+    assert(box[2].bottom == box[0].bottom &&
+           box[2].right < box[0].left &&
+           box[0].left == box[1].left &&
+           box[0].bottom < box[1].top,
+           "bad positions in mlongdiv (longdivstyle=stackedrightright)")
+
+    assert(box[0].bottom == box[1].bottom &&
+           box[1].bottom == box[2].bottom &&
+           box[0].right < box[2].left &&
+           box[2].right < box[1].left,
+           "bad positions in mlongdiv (longdivstyle=left/\right)")
+
+    assert(box[2].bottom == box[0].bottom &&
+           box[0].right < box[2].left &&
+           box[0].right == box[1].right &&
+           box[0].bottom < box[1].top,
+           "bad positions in mlongdiv (longdivstyle=stackedleftleft)")
+
+    return 6;
+    },
+
+    function () {
+    // test 97: Javascript
+
+    var ns = "http://www.w3.org/1998/Math/MathML";
+
+    // <mrow>
+    //   <mo>|</mo>
+    //   <mi></mi>
+    //   <mtext></mtext>
+    // </mrow>
+    var mo = document.createElementNS(ns, "mo");
+    mo.textContent = "|"; 
+    var mi = document.createElementNS(ns, "mi");
+    var mtext = document.createElementNS(ns, "mtext");
+    var mrow = document.createElementNS(ns, "mrow");
+    mrow.appendChild(mo);
+    mrow.appendChild(mi);
+    mrow.appendChild(mtext);
+
+    // <mpadded height="0" depth="0">
+    //   <mspace depth="40px" height="40px"></mspace>
+    // </mpadded>
+    var mspace = document.createElementNS(ns, "mspace");
+    mspace.setAttribute("height", "40px");
+    mspace.setAttribute("depth", "40px");
+    var mpadded = document.createElementNS(ns, "mpadded");
+    mpadded.setAttribute("depth", "0");
+    mpadded.setAttribute("height", "0");
+    mpadded.appendChild(mspace);
+
+    // At this point, the mstyle should will be
+    // <mstyle mathsize="20px" id="test97">
+    //   <mrow>
+    //     <mo>|</mo>
+    //     <mi></mi>
+    //     <mtext></mtext>
+    //   </mrow>
+    //   <mpadded height="0" depth="0">
+    //     <mspace depth="40px" height="40px"></mspace>
+    //   </mpadded>
+    // </mstyle>
+    var mstyle = document.getElementById("test97");
+    mstyle.appendChild(mpadded);
+    mstyle.appendChild(mrow);
+
+    // removing the mi element transforms the mrow into an embellished op
+    mrow.removeChild(mi);
+
+    // removing the dimensions from the mpadded element make it take
+    // the height of the mspace: 40 + 40 = 80px
+    mpadded.removeAttribute("depth");
+    mpadded.removeAttribute("height");
+
+    // Now, the vertical bar should stretch vertically
+    assert(mo.getBoundingClientRect().height > 70,
+           "bad size of mo (MathML created via javascript)");
+
+    return 7;
+    },
+
+    function () {
+    // test 98: mixing with HTML and SVG
+
+    assert(
+      document.getElementById('test98_A').getBoundingClientRect().bottom <=
+      document.getElementById('test98_B').getBoundingClientRect().top,
+      "the overscript should be below the base")
+
+    assert(
+      document.getElementById('test98_start').getBoundingClientRect().left
+      - document.getElementById('test98_end').getBoundingClientRect().right
+      == 20 + 20,
+      "mtext elements should have the width of their SVG/HTML content")
+
+    return 7;
+    },
+
+    function () {
+    // test 99: compatibility with CSS ; class, id and style
+
+    var math = document.getElementById("test99");
+
+    assert(math.firstElementChild.
+           getBoundingClientRect().width == 50,
+           "bad font size (@id99)")
+
+    assert(math.firstElementChild.nextElementSibling.
+           getBoundingClientRect().width == 40,
+           "bad font size (@class)")
+
+    assert(math.lastElementChild.
+           getBoundingClientRect().width == 30,
+           "bad font size (@style)")
+
+    return 7;
+    }
+  ];
+  var log = '';
+  var delay = 10;
+  var score = 0, index = 0, retry = 0, errors = 0;
+  function update() {
+    var span = document.getElementById('score'); // not cached by JS
+    span.nextSibling.removeAttribute('class'); // no-op after first loop
+    span.nextSibling.nextSibling.
+      firstChild.data = tests.length; // no-op after first loop
+    if (index < tests.length) {
+      var zeroPaddedIndex = index < 10 ? '0' + index : index;
+      try {
+        var beforeTest = new Date();
+        var result = tests[index]();
+        var elapsedTest = new Date() - beforeTest;
+        if (result == "retry") {
+          // some tests uses this magical mechanism to wait for support files
+          // to load. we will give this test 500 attempts (5000ms) before
+          // aborting
+          retry += 1;
+          if (retry < 500) {
+            setTimeout(update, delay);
+            return;
+          }
+          fail("timeout -- could be a networking issue");
+        } else if (result) {
+          var bucket = document.getElementById('bucket' + result);
+          if (bucket)
+            bucket.className += 'P';
+          score += 1;
+          if (retry > 0) {
+            errors += 1;
+            log += "Test " + zeroPaddedIndex + " passed, but took " + retry +
+              " attempts (less than perfect).\n";
+          } else if (elapsedTest > 33) { // 30fps
+            errors += 1;
+            log += "Test " + zeroPaddedIndex + " passed, but took " +
+              elapsedTest + "ms (less than 30fps)\n";
+          }
+        } else {
+          fail("no error message");
+        }
+      } catch (e) {
+        var s;
+        if (e.message)
+          s = e.message.replace(/\s+$/, "");
+        else
+          s = e;
+        errors += 1;
+        log += "Test " + zeroPaddedIndex + " failed: " + s + "\n";
+      };
+      retry = 0;
+      index += 1;
+      span.firstChild.data = score;
+      setTimeout(update, delay);
+    } else {
+      var endTime = new Date();
+      var elapsedTime = ((endTime - startTime) - (delay * tests.length)) / 1000;
+      log += "Total elapsed time: " + elapsedTime.toFixed(2) + "s";
+      if (errors == 0)
+        log += "\nNo JS errors and no timing issues.\n" +
+               "Was the rendering pixel-for-pixel perfect too?";
+    }
+  }
+  function report(event) {
+    // for debugging either click the "A" in "Acid3"
+    // (to get an alert) or shift-click it (to get a report)
+    if (event.shiftKey) {
+      var w = window.open();
+      w.document.write('<pre>Failed ' + (tests.length - score) + ' of ' +
+                       tests.length + ' tests.\n' +
+                       log.replace(/&/g,'&amp;').
+                       replace(RegExp('<', 'g'), '&lt;').
+                       replace('\0', '\\0') +
+                       '<\/pre>');
+      w.document.close();
+    } else {
+      alert('Failed ' + (tests.length - score) + ' test' +
+            (score == 1 ? '' : 's') + '.\n' + log)
+    }
+  }
+  </script>
+  </head>
+
+  <body onload="update()">
+    <h1 onclick="report(event)">Acid3</h1>
+    <div class="buckets">
+      <p id="bucket1" class="z"></p>
+      <p id="bucket2" class="z"></p>
+      <p id="bucket3" class="z"></p>
+      <p id="bucket4" class="z"></p>
+      <p id="bucket5" class="z"></p>
+      <p id="bucket6" class="z"></p>
+    </div>
+    <p id="result">
+<span id="score">JS</span><span id="slash" class="hidden">/</span><span>?</span>
+    </p>
+    <p id="instructions">To pass the test,<span></span> a browser must use its
+      default settings, the animation has to be smooth, the score has to end on
+      100/100, and the final page has to look exactly, pixel for pixel, like
+      <a href="reference.html">this reference rendering</a>.
+    </p>
+    <p id="remove-last-child-test">
+      Scripting must be enabled to use this test.
+    </p>
+
+    <div id="mathml">
+      <!--  test 0: verify JS and test basic feature of the <math> element -->
+      <p>
+        <math id="test0"></math>
+      </p>
+      <p id="test0_inline">
+        <math><mtext>X</mtext></math>
+        <math><mtext>Y</mtext></math>
+      </p>
+      <p id="test0_block">
+        <math><mtext>X</mtext></math>
+        <math display="block"><mtext>X</mtext></math>
+      </p>
+
+      <!-- bucket 1: basic presentation MathML elements -->
+
+      <!-- test 1, 2: simple script elements -->
+      <p>
+        <math>
+          <mrow id="test1_mrow">
+            <mtext>BASE</mtext>
+          </mrow>
+        </math>
+      </p>
+      <p>
+        <math>
+          <msub id="test1_msub">
+            <mtext>BASE</mtext><mtext>X</mtext>
+          </msub>
+        </math>
+      </p>
+      <p>
+        <math>
+          <msup id="test1_msup">
+            <mtext>BASE</mtext><mtext>X</mtext>
+          </msup>
+        </math>
+      </p>
+      <p>
+        <math>
+          <msubsup id="test1_msubsup">
+            <mtext>BASE</mtext><mtext>X</mtext><mtext>X</mtext>
+          </msubsup>
+        </math>
+      </p>
+      <p>
+        <math>
+          <mover id="test1_mover">
+            <mtext>BASE</mtext><mtext>X</mtext>
+          </mover>
+        </math>
+      </p>
+      <p>
+        <math>
+          <munder id="test1_munder">
+            <mtext>BASE</mtext><mtext>X</mtext>
+          </munder>
+        </math>
+      </p>
+      <p>
+        <math>
+          <munderover id="test1_munderover">
+            <mtext>BASE</mtext><mtext>X</mtext><mtext>X</mtext>
+          </munderover>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 3: mfrac -->
+        <math>
+          <mfrac id="test3_mfrac">
+            <mtext>X</mtext><mtext>Y</mtext>
+          </mfrac>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 4: msqrt -->
+        <math>
+          <msqrt id="test4_msqrt"><mtext>X</mtext></msqrt>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 5: mroot -->
+        <math>
+          <mroot id="test5_mroot"><mtext>Y</mtext><mtext>X</mtext></mroot>
+        </math>
+      </p>
+
+      <!-- test 6: menclose (longdiv, box, roundedbox, circle, madruwb) -->
+      <p>
+        <math>
+          <menclose id="test6_menclose_longdiv">
+            <mtext>XXX</mtext>
+          </menclose>
+        </math>
+      </p>
+      <p>
+        <math>
+          <menclose notation="box" id="test6_menclose_box">
+            <mtext>XXX</mtext>
+          </menclose>
+        </math>
+      </p>
+      <p>
+        <math>
+          <menclose notation="roundedbox" id="test6_menclose_roundedbox">
+            <mtext>XXX</mtext>
+          </menclose>
+        </math>
+      </p>
+      <p>
+        <math>
+          <menclose notation="circle" id="test6_menclose_circle">
+            <mtext>XXX</mtext>
+          </menclose>
+        </math>
+      </p>
+      <p>
+        <math>
+          <menclose notation="madruwb" id="test6_menclose_madruwb">
+            <mtext>XXX</mtext>
+          </menclose>
+        </math>
+      </p>
+
+      <!-- test 7: menclose (equivalent constructions) -->
+      <p>
+        <math>
+          <msqrt id="test7_radical_ref"><mtext>XXX</mtext></msqrt>
+        </math>
+      </p>
+      <p>
+        <math>
+          <menclose notation="radical" id="test7_radical">
+            <mtext>XXX</mtext>
+          </menclose>
+        </math>
+      </p>
+      <p>
+        <math>
+          <menclose notation="left right top bottom" id="test7_box_ref">
+            <mtext>XXX</mtext>
+          </menclose>
+        </math>
+      </p>
+      <p>
+        <math>
+          <menclose notation="box" id="test7_box">
+            <mtext>XXX</mtext>
+          </menclose>
+        </math>
+      </p>
+      <p>
+        <math>
+          <menclose notation="top right" id="test7_actuarial_ref">
+            <mtext>XXX</mtext>
+          </menclose>
+        </math>
+      </p>
+      <p>
+        <math>
+          <menclose notation="actuarial" id="test7_actuarial">
+            <mtext>XXX</mtext>
+          </menclose>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 8: semantics (do not display annotations) -->
+        <math>
+          <semantics id="test8_semantics">
+            <mtext>X</mtext>
+            <annotation encoding="application/x-tex">X</annotation>
+            <annotation-xml encoding="application/xhtml+xml">
+              <span>X</span>
+            </annotation-xml>
+          </semantics>
+        </math>
+      </p>
+
+       <p>
+         <!-- test 9: maction -->
+        <math>
+          <maction id="test9_maction1" actiontype="tooltip">
+            <mtext>X</mtext>
+            <mtext>tooltip</mtext>
+          </maction>
+        </math>
+        <math>
+          <maction id="test9_maction2" actiontype="statusline">
+            <mtext>X</mtext>
+            <mtext>statusline</mtext>
+          </maction>
+          <maction id="test9_maction3" actiontype="toggle" selection="2">
+            <mtext>X</mtext>
+            <mtext>selection</mtext>
+          </maction>
+        </math>
+      </p>
+
+       <!-- test 10: mrow, mstyle, mphantom -->
+      <p>
+        <math>
+          <mrow id="test10_mrow"><mtext>TEXT</mtext></mrow>
+        </math>
+      </p>
+      <p>
+        <math>
+          <mstyle id="test10_mstyle"><mtext>TEXT</mtext></mstyle>
+        </math>
+      </p>
+      <p>
+        <math>
+          <mphantom id="test10_mphantom"><mtext>TEXT</mtext></mphantom>
+        </math>
+      </p>
+      <p>
+        <math>
+          <msub id="test10_noerror">
+            <mrow>
+              <mtext>
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+              </mtext>
+              <mtext>
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+              </mtext>
+            </mrow>
+            <mtext></mtext>
+          </msub>
+          <msub id="test10_error">
+            <mtext>
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+            </mtext>
+            <mtext>
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+            </mtext>
+            <mtext>
+              <!-- This msub element is intentionally invalid and should
+                   render in a different way than test10_noerror -->
+            </mtext>
+          </msub>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 11, 12: mtable -->
+        <math>
+          <mtable id="test11_mtable">
+            <mtr>
+              <mtd><mtext>X</mtext></mtd>
+              <mtd><mtext>X</mtext></mtd>
+              <mtd><mtext>X</mtext></mtd>
+            </mtr>
+            <mtr>
+              <mtd><mtext>X</mtext></mtd>
+              <mtd><mtext>X</mtext></mtd>
+              <mtd><mtext>X</mtext></mtd>
+            </mtr>
+            <mtr>
+              <mtd><mtext>X</mtext></mtd>
+              <mtd><mtext>X</mtext></mtd>
+              <mtd><mtext>X</mtext></mtd>
+            </mtr>
+          </mtable>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 13: mmultiscripts -->
+        <math>
+          <mmultiscripts id="test13_mmultiscripts">
+            <mtext>X</mtext>
+            <mtext>X</mtext><mtext>X</mtext>
+            <none/><mtext>X</mtext>
+            <mprescripts/>
+            <mtext>X</mtext><mtext>X</mtext>
+            <mtext>X</mtext><none/>
+          </mmultiscripts>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 14: mspace -->
+        <math id="test14">
+          <mspace width="50px" height="30px" depth="20px"/>
+          <mspace width="150px" height="40px" depth="60px"/>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 15: mpadded -->
+        <math id="test15">
+          <mpadded width="50px" height="30px" depth="20px"/>
+          <mpadded width="150px" height="40px" depth="60px"/>
+        </math>
+        <math>
+          <mpadded id="test15_mpadded"
+                   width="100px" height="200px" depth="100px"
+                   lspace="20px" voffset="25px">
+            <mpadded width="30px" height="15px" depth="10px">
+            </mpadded>
+          </mpadded>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 16: mi, ms, mn -->
+        <math>
+          <mtext id="test16">X</mtext>
+          <mrow id="test16mrow"><ms lquote="XXX" rquote="XX">X</ms></mrow>
+          <mi id="test16mi">X</mi>
+          <mtext id="test16mi2ref">XX</mtext>
+          <mi id="test16mi2">XX</mi>
+          <mn id="test16mn">X</mn>
+        </math>
+      </p>
+
+      <!-- bucket 2: more advanced attributes -->
+
+      <!-- mfrac attributes -->
+      <p>
+        <math>
+          <mfrac linethickness="20px" id="test17_linethickness">
+            <mtext>X</mtext>
+            <mtext>X</mtext>
+          </mfrac>
+        </math>
+      </p>
+      <p>
+        <math>
+          <mfrac numalign="left" id="test17_numalign">
+            <mtext>X</mtext>
+            <mtext>XXX</mtext>
+          </mfrac>
+        </math>
+      </p>
+      <p>
+        <math>
+          <mfrac denomalign="right" id="test17_denomalign">
+            <mtext>XXX</mtext>
+            <mtext>X</mtext>
+          </mfrac>
+        </math>
+      </p>
+      <p>
+        <math>
+          <mfrac bevelled="true" id="test17_bevelled">
+            <mtext>X</mtext>
+            <mtext>X</mtext>
+          </mfrac>
+        </math>
+      </p>
+
+      <!-- test 18: script shifts -->
+      <p>
+        <math>
+          <msub id="test18_msub" subscriptshift="30px">
+            <mspace width="20px" height="10px" depth="10px"/>
+            <mspace width="20px" height="10px" depth="10px"/>
+          </msub>
+        </math>
+      </p>
+      <p>
+        <math>
+          <msup id="test18_msup" superscriptshift="30px">
+            <mspace width="20px" height="10px" depth="10px"/>
+            <mspace width="20px" height="10px" depth="10px"/>
+          </msup>
+        </math>
+      </p>
+
+      <p>
+        <math>
+          <msubsup id="test18_msubsup"
+                   subscriptshift="20px" superscriptshift="30px">
+            <mspace width="40px" height="20px" depth="20px"/>
+            <mspace width="20px" height="10px" depth="10px"/>
+            <mspace width="20px" height="10px" depth="10px"/>
+          </msubsup>
+        </math>
+      </p>
+
+      <!-- test 19: munder/mover/munderover align -->
+      <p>
+        <math>
+          <munder align="left" id="test19_munder_left">
+            <mtext>XXX</mtext>
+            <mtext>X</mtext>
+          </munder>
+        </math>
+        <math>
+          <munder id="test19_munder_center">
+            <mtext>XXX</mtext>
+            <mtext>X</mtext>
+          </munder>
+        </math>
+        <math>
+          <munder align="right" id="test19_munder_right">
+            <mtext>XXX</mtext>
+            <mtext>X</mtext>
+          </munder>
+        </math>
+      </p>
+
+      <p>
+        <math>
+          <mover align="left" id="test19_mover_left">
+            <mtext>XXX</mtext>
+            <mtext>X</mtext>
+          </mover>
+        </math>
+        <math>
+          <mover id="test19_mover_center">
+            <mtext>XXX</mtext>
+            <mtext>X</mtext>
+          </mover>
+        </math>
+        <math>
+          <mover align="right" id="test19_mover_right">
+            <mtext>XXX</mtext>
+            <mtext>X</mtext>
+          </mover>
+        </math>
+      </p>
+
+      <p>
+        <math>
+          <munderover align="left" id="test19_munderover_left">
+            <mtext>XXX</mtext>
+            <mtext>X</mtext>
+            <mtext>X</mtext>
+          </munderover>
+        </math>
+        <math>
+          <munderover id="test19_munderover_center">
+            <mtext>XXX</mtext>
+            <mtext>X</mtext>
+            <mtext>X</mtext>
+          </munderover>
+        </math>
+        <math>
+          <munderover align="right" id="test19_munderover_right">
+            <mtext>XXX</mtext>
+            <mtext>X</mtext>
+            <mtext>X</mtext>
+          </munderover>
+        </math>
+      </p>
+
+      <!-- test 20, 33: munder/mover/munderover: accent, accentunder -->
+      <p>
+        <math>
+          <munder>
+            <mtext id="test20_munder11">X</mtext>
+            <mtext id="test20_munder12">X</mtext>
+          </munder>
+        </math>
+        <math>
+          <munder accentunder="true">
+            <mtext id="test20_munder21">X</mtext>
+            <mtext id="test20_munder22">X</mtext>
+          </munder>
+        </math>
+      </p>
+
+      <p>
+        <math>
+          <mover>
+            <mtext id="test20_mover11">X</mtext>
+            <mtext id="test20_mover12">X</mtext>
+          </mover>
+        </math>
+        <math>
+          <mover accent="true">
+            <mtext id="test20_mover21">X</mtext>
+            <mtext id="test20_mover22">X</mtext>
+          </mover>
+        </math>
+      </p>
+
+      <p>
+        <math>
+          <munderover>
+            <mtext id="test20_munderover11">X</mtext>
+            <mtext id="test20_munderover12">X</mtext>
+            <mtext id="test20_munderover13">X</mtext>
+          </munderover>
+        </math>
+        <math>
+          <munderover accent="true" accentunder="true">
+            <mtext id="test20_munderover21">X</mtext>
+            <mtext id="test20_munderover22">X</mtext>
+            <mtext id="test20_munderover23">X</mtext>
+          </munderover>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 21: mtable align -->
+        <math>
+          <mspace id="test21_axis" height="100px" depth="0px" width="0px"/>
+          <mtable id="test21_table1" align="top">
+            <mtr><mtd><mtext>X</mtext></mtd></mtr>
+          </mtable>
+          <mtable id="test21_table2" align="bottom">
+            <mtr><mtd><mtext>X</mtext></mtd></mtr>
+          </mtable>
+          <mtable align="bottom 2">
+            <mtr><mtd><mtext>X</mtext></mtd></mtr>
+            <mtr id="test21_row1"><mtd><mtext>X</mtext></mtd></mtr>
+            <mtr><mtd><mtext>X</mtext></mtd></mtr>
+            <mtr><mtd><mtext>X</mtext></mtd></mtr>
+          </mtable>
+          <mtable align="top -2">
+            <mtr><mtd><mtext>X</mtext></mtd></mtr>
+            <mtr><mtd><mtext>X</mtext></mtd></mtr>
+            <mtr id="test21_row2"><mtd><mtext>X</mtext></mtd></mtr>
+            <mtr><mtd><mtext>X</mtext></mtd></mtr>
+          </mtable>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 22: mtable rowalign, columnalign -->
+        <math>
+          <mtable rowalign="top bottom" columnalign="right left">
+            <mtr rowalign="bottom" columnalign="left right">
+              <mtd id="test22_cell0">
+                <!-- [rowalign=bottom], (columnalign=left) -->
+                <mspace width="10px" height="30px" depth="0px"/>
+              </mtd>
+              <mtd id="test22_cell1">
+                <!-- [rowalign=bottom], ((columnalign=right)) -->
+                <mspace width="150px" height="150px" depth="0px"/>
+              </mtd>
+            </mtr>
+            <mtr rowalign="top">
+              <mtd id="test22_cell2" columnalign="left">
+                <!-- [[rowalign=top]], (columnalign=left) -->
+                <mspace width="15px" height="30px" depth="0px"/>
+              </mtd>
+              <mtd id="test22_cell3">
+                <!-- [[rowalign=top]], ((columnalign=left)) -->
+                <mspace width="40px" height="45px" depth="0px"/>
+              </mtd>
+            </mtr>
+          </mtable>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 23: mtable columnwidth -->
+        <math>
+          <mtable columnwidth="100px 200px">
+            <mtr>
+              <mtd id="test23_cell1"><mtext>X</mtext></mtd>
+              <mtd id="test23_cell2"><mtext>X</mtext></mtd>
+            </mtr>
+          </mtable>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 24: mtable width -->
+        <math>
+          <mtable id="test24" width="500px">
+            <mtr><mtd><mtext>X</mtext></mtd></mtr>
+          </mtable>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 25: mtable rowspacing, columnspacing -->
+        <math>
+          <mtable id="test25_1"
+                  rowspacing="10px 15px 20px"
+                  columnspacing="15px 25px 30px">
+            <mtr>
+              <mtd>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+              </mtd>
+            </mtr>
+          </mtable>
+        </math>
+        <math>
+          <mtable id="test25_2"
+                  rowspacing="30px 45px 20px"
+                  columnspacing="35px 55px 70px">
+            <mtr>
+              <mtd>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+                <mtext>X</mtext>
+              </mtd>
+            </mtr>
+          </mtable>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 26: side -->
+        <math>
+          <mtable side="right">
+            <mlabeledtr>
+              <mtd id="test26_label"><mtext>LABEL</mtext></mtd>
+              <mtd id="test26_equation"><mtext>EQUATION</mtext></mtd>
+            </mlabeledtr>
+          </mtable>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 27: minlabelspacing -->
+        <math>
+          <mtable side="left" minlabelspacing="200px">
+            <mlabeledtr>
+              <mtd id="test27_label"><mtext>LABEL</mtext></mtd>
+              <mtd id="test27_equation"><mtext>EQUATION</mtext></mtd>
+            </mlabeledtr>
+          </mtable>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 28: mtable framespacing -->
+        <math id="test28_framespacing1">
+          <mtable frame="solid" framespacing="10px 15px">
+            <mtr><mtd><mtext>X</mtext></mtd></mtr>
+          </mtable>
+        </math>
+        <math id="test28_framespacing2">
+          <mtable frame="solid" framespacing="25px 40px">
+            <mtr><mtd><mtext>X</mtext></mtd></mtr>
+          </mtable>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 29: mtable equalrows, equalcolumns -->
+        <math>
+          <mtable equalrows="true" equalcolumns="true">
+            <mtr>
+              <mtd id="test29_cell0">
+                <mspace width="100px" height="100px" depth="0px"/>
+              </mtd>
+              <mtd id="test29_cell1">
+                <mspace width="80px" height="50px" depth="0px"/>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd id="test29_cell2">
+                <mspace width="20px" height="30px" depth="0px"/>
+              </mtd>
+              <mtd id="test29_cell3">
+                <mspace width="40px" height="20px" depth="0px"/>
+              </mtd>
+            </mtr>
+          </mtable>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 30: mtd rowspan, columnspan -->
+        <math>
+          <mtable>
+            <mtr>
+              <mtd id="test30_cell0" rowspan="2"><mtext>X</mtext></mtd>
+              <mtd id="test30_cell1" columnspan="2"><mtext>X</mtext></mtd>
+            </mtr>
+            <mtr>
+              <mtd id="test30_cell2"><mtext>X</mtext></mtd>
+              <mtd id="test30_cell3"><mtext>X</mtext></mtd>
+            </mtr>
+          </mtable>
+        </math>
+      </p>
+
+      <p style="font-size: 100px;">
+        <!-- test 31: mathsize -->
+        <math>
+          <mtext mathsize="20px" id="test31">XXX</mtext>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 32: mathvariant -->
+        <math>
+          <mstyle id="test32" fontsize="64px">
+            <mtext>0</mtext>
+            <mi mathvariant="bold">A</mi>
+            <mi mathvariant="script">B</mi>
+            <mi mathvariant="fraktur">C</mi>
+            <mi mathvariant="bold-italic">D</mi>
+            <mi mathvariant="bold-script">E</mi>
+            <mi mathvariant="bold-fraktur">F</mi>
+            <mi mathvariant="sans-serif">G</mi>
+            <mi mathvariant="double-struck">H</mi>
+            <mi mathvariant="bold-sans-serif">I</mi>
+            <mi mathvariant="sans-serif-italic">J</mi>
+            <mi mathvariant="sans-serif-bold-italic">K</mi>
+            <mi mathvariant="monospace">L</mi>
+            <mi mathvariant="italic">M</mi>
+          </mstyle>
+        </math>
+       <!-- the math above should render the same at that one:
+       <math>
+          <mstyle id="test32" fontsize="64px">
+            <mtext>0</mtext>
+            <mtext>𝐀</mtext>
+            <mtext>ℬ</mtext>
+            <mtext>ℭ</mtext>
+            <mtext>𝑫</mtext>
+            <mtext>𝓔</mtext>
+            <mtext>𝕱</mtext>
+            <mtext>𝖦</mtext>
+            <mtext>ℍ</mtext>
+            <mtext>𝗜</mtext>
+            <mtext>𝘑</mtext>
+            <mtext>𝙆</mtext>
+            <mtext>𝙻</mtext>
+            <mtext>𝑀</mtext>
+          </mstyle>
+        </math>
+        -->
+      </p>
+
+      <!-- bucket 3: displaystyle, scriptlevel and operators -->
+
+      <!-- test 33: munder/mover/munderover: accent, accentunder
+           (see test 20 above) -->
+
+      <p>
+        <!-- test 34: movablelimits -->
+        <math>
+          <mstyle displaystyle="true">
+            <mover>
+              <mo id="test34_1" movablelimits="true">XXX</mo>
+              <mtext id="test34_2">X</mtext>
+            </mover>
+          </mstyle>
+        </math>
+        <math>
+          <munder>
+            <mo id="test34_3" movablelimits="true">X</mo>
+            <mtext id="test34_4">X</mtext>
+          </munder>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 35: mfrac, scriptsizemultiplier -->
+        <math>
+          <mstyle mathsize="100px" scriptsizemultiplier=".5">
+            <mfrac>
+              <mtext id="test35_num">X</mtext>
+              <mtext id="test35_denum">X</mtext>
+            </mfrac>
+          </mstyle>
+        </math>
+      </p>
+      <p>
+        <math>
+          <mstyle displaystyle="true">
+            <mfrac>
+              <munder>
+                <mo id="test35_num1" movablelimits="true">X</mo>
+                <mtext id="test35_num2">X</mtext>
+              </munder>
+              <mover>
+                <mo id="test35_denum1" movablelimits="true">X</mo>
+                <mtext id="test35_denum2">X</mtext>
+              </mover>
+            </mfrac>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 36: mroot -->
+        <math>
+          <mstyle displaystyle="true"
+                  mathsize="100px" scriptsizemultiplier=".5">
+            <mroot>
+              <mtext>
+                BASE
+              </mtext>
+              <mover>
+                <mo id="test36_1" movablelimits="true">X</mo>
+                <mtext id="test36_2">X</mtext>
+              </mover>
+            </mroot>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 37: msup script -->
+        <math>
+          <mstyle displaystyle="true"
+                  mathsize="100px" scriptsizemultiplier=".5">
+            <msup>
+              <mtext>
+                BASE
+              </mtext>
+              <mover>
+                <mo id="test37_1" movablelimits="true">X</mo>
+                <mtext id="test37_2">X</mtext>
+              </mover>
+            </msup>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 38: munder script -->
+        <math>
+          <mstyle displaystyle="true"
+                  mathsize="100px" scriptsizemultiplier=".5">
+            <munder>
+              <mtext>
+                BASE
+              </mtext>
+              <mover>
+                <mo id="test38_1" movablelimits="true">X</mo>
+                <mtext id="test38_2">X</mtext>
+              </mover>
+            </munder>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 39: mo accent -->
+        <math>
+          <mstyle displaystyle="true"
+                  mathsize="100px" scriptsizemultiplier=".5">
+            <mover>
+              <mtext>
+                BASE
+              </mtext>
+              <mo accent="true" id="test39">X</mo>
+            </mover>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 40: mo largeop -->
+        <math>
+          <mstyle displaystyle="true">
+            <mo id="test40_sum1">∑</mo>
+          </mstyle>
+          <mstyle displaystyle="true">
+            <mo largeop="false" id="test40_sum2">∑</mo>
+          </mstyle>
+          <mstyle displaystyle="false">
+            <mo id="test40_sum3">∑</mo>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 41: scriptlevel -->
+        <math>
+          <mstyle mathsize="128px" scriptsizemultiplier=".5">
+            <mstyle scriptlevel="3">
+              <mtext id="test41">X</mtext>
+            </mstyle>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 42: scriptminsize -->
+        <math>
+          <mstyle mathsize="32px" scriptsizemultiplier=".5"
+                  scriptminsize="8px">
+            <mstyle scriptlevel="5">
+              <mtext id="test42">X</mtext>
+            </mstyle>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 43: mo lspace, rspace -->
+        <math id="test43">
+          <mtext>X</mtext>
+          <mo lspace="35px" rspace="40px">X</mo>
+          <mtext>X</mtext>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 44: mo stretchy -->
+        <math>
+          <mstyle mathsize="20px">
+            <mo id="test44_1" stretchy="false">(</mo>
+            <mspace height="20px" depth="20px" width="1px"/>
+          </mstyle>
+        </math>
+        <math>
+          <mstyle mathsize="20px">
+            <mo id="test44_2" stretchy="true">(</mo>
+            <mspace height="20px" depth="20px" width="1px"/>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 45: mo symmetric -->
+        <math>
+          <mstyle mathsize="20px">
+            <mo symmetric="true" id="test45_1">(</mo>
+            <mspace height="40px" depth="20px" width="1px"/>
+          </mstyle>
+        </math>
+        <math>
+          <mstyle mathsize="20px">
+            <mo symmetric="false" id="test45_2">(</mo>
+            <mspace height="40px" depth="20px" width="1px"/>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 46: mo maxsize -->
+        <math>
+          <mstyle mathsize="40px">
+            <mo id="test46" maxsize="100px">|</mo>
+            <mspace height="100px" depth="100px" width="1px"/>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 47: mo minsize -->
+        <math>
+          <mstyle mathsize="20px">
+            <mo id="test47" minsize="40px">(</mo>
+            <mspace height="10px" depth="10px" width="1px"/>
+          </mstyle>
+        </math>
+      </p>
+
+     <p>
+       <!-- test 48: form -->
+       <!-- 
+            Operator dictionary:
+              U+2212, infix: mediummathspace, rspace=mediummathspace
+              U+2212, prefix: lspace=0, rspace=veryverythinmathspace
+         -->
+
+       <math>
+         <mspace id="test48space2" width="0"/>
+         <mrow id="test48_infix">
+           <mn>−</mn><mo form="infix">−</mo><mn>−</mn>
+         </mrow>
+         <mrow id="test48_infix_ref">
+             <mn>−</mn>
+             <mspace id="test48space"
+                     width="mediummathspace" height="1px"/>
+             <mn>−</mn>
+             <mspace width="mediummathspace" height="1px"/>
+             <mn>−</mn>
+         </mrow>
+       </math>
+       <math>
+         <mrow id="test48_prefix">
+           <mn>−</mn><mo form="prefix">−</mo><mn>−</mn>
+         </mrow>
+         <mrow id="test48_prefix_ref">
+             <mn>0</mn>
+             <mspace width="0px" height="1px"/>
+             <mn>1</mn>
+             <mspace width="veryverythinmathspace" height="1px"/>
+             <mn>2</mn>
+         </mrow>
+       </math>
+
+      </p>
+
+     <!-- bucket 4: more features for operators -->
+
+     <p>
+       <!-- test 49: Default value of the form attribute -->
+
+       <!--
+            Operator dictionary:
+              U+007C, infix: veryverythinmathspace, veryverythinmathspace
+              U+007C, prefix: lspace=0, rspace=0
+              U+007C, postfix: lspace=0, rspace=0
+         -->
+       <math>
+         <mn id="test49_1start">START</mn>
+         <mrow>
+           <mspace width="10px"/>
+           <mo>|</mo> <!-- prefix -->
+           <mi id="test49_1end">END</mi>
+         </mrow>
+         <mrow id="test49_1ref">
+           <mspace width="10px"/>
+           <mn>|</mn>
+         </mrow>
+       </math>
+
+       <math>
+         <mrow>
+           <mi id="test49_2start">START</mi>
+           <mo>|</mo> <!-- postfix -->
+           <mspace width="10px"/>
+         </mrow>
+         <mn id="test49_2end">END</mn>
+         <mrow id="test49_2ref">
+           <mn>|</mn>
+           <mspace width="10px"/>
+         </mrow>
+       </math>
+
+       <math>
+         <msup>
+           <mn id="test49_3ref">|</mn>
+           <mstyle id="test49_3" scriptlevel="0">
+             <mo>|</mo> <!-- postfix -->
+           </mstyle>
+         </msup>
+       </math>
+
+       <math>
+         <mrow>
+           <mrow id="test49_4ref">
+             <mspace width="veryverythinmathspace"/>
+             <mn>|</mn>
+             <mspace width="veryverythinmathspace"/>
+           </mrow>
+           <mn id="test49_4start">START</mn>
+           <mo>|</mo> <!-- infix -->
+           <mn id="test49_4end">END</mn>
+         </mrow>
+       </math>
+
+     </p>
+
+     <p>
+       <!-- Test 50: embellished operators -->
+       <math>
+         <mstyle mathsize="20px">
+           <mspace height="20px" depth="20px"/>
+           <mo id="test50_mo0">|</mo>
+           <msup><mo id="test50_mo1">|</mo><mn>X</mn></msup>
+           <msub><mo id="test50_mo2">|</mo><mn>X</mn></msub>
+           <msubsup>
+             <mo id="test50_mo3">|</mo>
+             <mn>X</mn>
+             <mn>X</mn>
+           </msubsup>
+           <munder><mo id="test50_mo4">|</mo><mn>X</mn></munder>
+           <mover><mo id="test50_mo5">|</mo><mn>X</mn></mover>
+           <munderover>
+             <mo id="test50_mo6">|</mo>
+             <mn>X</mn>
+             <mn>X</mn>
+           </munderover>
+           <mmultiscripts>
+             <mo id="test50_mo7">|</mo>
+             <mn>X</mn>
+             <mn>X</mn>
+             <mprescripts/>
+             <mn>X</mn>
+             <mn>X</mn>
+           </mmultiscripts>
+           <semantics>
+             <mo id="test50_mo8">|</mo>
+             <annotation encoding="plain/text">X</annotation>
+           </semantics>
+           <mstyle>
+             <mo id="test50_mo9">|</mo>
+           </mstyle>
+           <mphantom>
+             <mo id="test50_mo10">|</mo>
+           </mphantom>
+           <mpadded>
+             <mo id="test50_mo11">|</mo>
+           </mpadded>
+           <maction actiontype="toggle" selection="2">
+             <mn>NOTSELECTED</mn>
+             <mo id="test50_mo12">|</mo>
+           </maction>
+           <mrow>
+             <mo id="test50_mo13">|</mo>
+           </mrow>
+         </mstyle>
+       </math>
+     </p>
+
+     <!-- test 51: space-like elements -->
+
+     <p>
+       <math>
+         <mstyle mathsize="20px">
+           <mspace height="20px" depth="20px"/>
+           <mrow><mo id="test51_mo0">|</mo><mtext>S</mtext></mrow>
+           <mrow><mo id="test51_mo1">|</mo><mspace/></mrow>
+           <mrow>
+             <mo id="test51_mo2">|</mo>
+             <mstyle><mspace/><mtext>S</mtext></mstyle>
+           </mrow>
+           <mrow>
+             <mo id="test51_mo3">|</mo>
+             <mphantom><mspace/><mtext>S</mtext></mphantom>
+           </mrow>
+           <mrow>
+             <mo id="test51_mo4">|</mo>
+             <mpadded><mspace/><mtext>S</mtext></mpadded>
+           </mrow>
+           <mrow>
+             <mo id="test51_mo5">|</mo>
+             <mrow><mspace/><mtext>S</mtext></mrow>
+           </mrow>
+           <mrow>
+             <mo id="test51_mo6">|</mo>
+             <maction actiontype="toggle" selection="2">
+               <mi>X</mi>
+               <mspace/>
+             </maction>
+           </mrow>
+           <mrow><mo id="test51_mo7">|</mo><maligngroup/></mrow>
+           <mrow><mo id="test51_mo8">|</mo><malignmark/></mrow>
+         </mstyle>
+       </math>
+     </p>
+
+    <!-- test 52: vertical stretching in implicit mrow -->
+     <p>
+       <math>
+         <mstyle mathsize="20px">
+           <msqrt>
+             <mspace height="15px" depth="15px"/>
+             <mo id="test52_mo0">|</mo>
+             <mspace height="50px" depth="50px"/>
+             <mo id="test52_mo1">(</mo>
+             <mo id="test52_mo2">)</mo>
+           </msqrt>
+         </mstyle>
+       </math>
+     </p>     
+
+     <p>
+       <!-- test 53: vertical stretching in mtd -->
+       <math>
+         <mstyle mathsize="20px">
+           <mtable>
+             <mtr>
+               <mtd><mspace height="15px" depth="15px"/></mtd>
+               <mtd><mo id="test53_mo0">|</mo></mtd>
+               <mtd><mspace height="50px" depth="50px"/></mtd>
+               <mtd><mspace height="25px" depth="25px"/></mtd>
+             </mtr>
+             <mtr>
+               <mtd><mspace height="15px" depth="15px"/></mtd>
+               <mtd><mrow><mo id="test53_mo1">|</mo></mrow></mtd>
+               <mtd><mspace height="50px" depth="50px"/></mtd>
+               <mtd><mspace height="25px" depth="25px"/></mtd>
+             </mtr>
+             <mtr>
+               <mtd><mspace height="15px" depth="15px"/></mtd>
+               <mtd><mo id="test53_mo2">|</mo></mtd>
+               <mtd><mspace height="50px" depth="50px"/></mtd>
+               <mtd><mo id="test53_mo3">|</mo></mtd>
+             </mtr>
+           </mtable>
+         </mstyle>
+       </math>
+     </p>     
+
+      <p>
+        <!-- test 54: vertical stretching in mtd (symmetric) -->
+        <math>
+          <mstyle mathsize="20px">
+            <mtable>
+              <mtr rowalign="baseline">
+                <mtd>
+                  <mo symmetric="true" id="test54_1">(</mo>
+                </mtd>
+                <mtd>
+                  <mspace height="40px" depth="20px" width="1px"/>
+                </mtd>
+              </mtr>
+              <mtr rowalign="bottom">
+                <mtd>
+                  <mo symmetric="true" id="test54_2">(</mo>
+                </mtd>
+                <mtd>
+                  <mspace height="40px" depth="20px" width="1px"/>
+                </mtd>
+              </mtr>
+            </mtable>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 55: vertical stretching in mtd with rowspan -->
+        <math>
+          <mstyle mathsize="20px">
+            <mtable>
+              <mtr>
+                <mtd rowspan="2">
+                  <mo id="test55_mo" symmetric="false">|</mo>
+                </mtd>
+                <mtd rowspan="3">
+                  <mspace height="60px" depth="0"/>
+                </mtd>
+                <mtd><mspace height="20px" depth="0px"/></mtd>
+              </mtr>
+              <mtr>
+                <!-- (2,1) -->
+                <!-- (2,2) -->
+                <mtd><mspace height="20px" depth="0px"/></mtd>
+              </mtr>
+              <mtr>
+                <mtd><mtext>(3,1)</mtext></mtd>
+                <!-- (3,2) -->
+                <mtd><mtext>(3,3)</mtext></mtd>
+              </mtr>
+            </mtable>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 56: horizontal stretching in munder/mover/munderover -->
+        <math>
+          <mstyle mathsize="20px">
+            <munder>
+              <mspace width="40px"/>
+              <mo id="test56_mo0">→</mo>
+            </munder>
+            <mover>
+              <mspace width="40px"/>
+              <mo id="test56_mo1">→</mo>
+            </mover>
+            <munderover>
+              <mspace width="40px"/>
+              <mo id="test56_mo2">→</mo>
+              <mo id="test56_mo3">→</mo>
+            </munderover>
+            <munder>
+              <mspace width="40px"/>
+              <msup> <!-- this is an embellished op -->
+                <mrow><mspace/><mtext></mtext><mo id="test56_mo4">→</mo></mrow>
+                <mtext></mtext>
+              </msup>
+            </munder>
+          </mstyle>
+        </math>
+      </p>
+
+     <p>
+       <!-- test 57: horizontal stretching in mtd -->
+       <math>
+         <mstyle mathsize="20px">
+           <mtable>
+             <mtr>
+               <mtd><mspace width="30px"/></mtd>
+               <mtd><mspace width="30px"/></mtd>
+               <mtd><mspace width="30px"/></mtd>
+             </mtr>
+             <mtr>
+               <mtd><mo id="test57_mo0">→</mo></mtd>
+               <mtd><mrow><mo id="test57_mo1">→</mo></mrow></mtd>
+               <mtd><mo id="test57_mo2">→</mo></mtd>
+             </mtr>
+             <mtr>
+               <mtd><mspace width="100px"/></mtd>
+               <mtd><mspace width="100px"/></mtd>
+               <mtd><mspace width="100px"/></mtd>
+             </mtr>
+             <mtr>
+               <mtd><mspace width="50px"/></mtd>
+               <mtd><mspace width="50px"/></mtd>
+               <mtd><mrow><mo id="test57_3">→</mo></mrow></mtd>
+             </mtr>
+           </mtable>
+         </mstyle>
+       </math>
+     </p>     
+
+      <p>
+        <!-- test 58: vertical stretching in mtd with columnspan -->
+        <math>
+          <mstyle mathsize="20px">
+            <mtable>
+              <mtr>
+                <mtd columnspan="2">
+                  <mo id="test58_mo">→</mo>
+                </mtd>
+                <!-- (1,2) -->
+                <mtd><mtext>(3,1)</mtext></mtd>
+              </mtr>
+              <mtr>
+                <mtd columnspan="3">
+                  <mspace width="60px"/>
+                </mtd>
+                <!-- (2,2) -->
+                <!-- (2,3) -->
+              </mtr>
+              <mtr>
+                <mtd><mspace width="20px"/></mtd>
+                <mtd><mspace width="20px"/></mtd>
+                <mtd><mtext>(3,3)</mtext></mtd>
+              </mtr>
+            </mtable>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 59: vertical and horizontal stretching in mtd -->
+        <math>
+          <mstyle mathsize="20px">
+            <mtable>
+              <mtr>
+                <mtd><mi>X</mi></mtd>
+                <mtd id="test59_mo1" columnspan="3"><mo>→</mo></mtd>
+                <mtd><mi>X</mi></mtd>
+              </mtr>
+              <mtr>
+                <mtd id="test59_mo2" rowspan="3"><mo>↓</mo></mtd>
+                <mtd></mtd>
+                <mtd></mtd>
+                <mtd></mtd>
+                <mtd id="test59_mo3" rowspan="3"><mo>↓</mo></mtd>
+              </mtr>
+              <mtr>
+                <mtd></mtd>
+                <mtd><mspace width="60px" height="30px" depth="30px"/></mtd>
+                <mtd></mtd>
+              </mtr>
+              <mtr>
+                <mtd></mtd>
+                <mtd></mtd>
+                <mtd></mtd>
+              </mtr>
+              <mtr>
+                <mtd><mi>X</mi></mtd>
+                <mtd id="test59_mo4" columnspan="3"><mo>→</mo></mtd>
+                <mtd><mi>X</mi></mtd>
+              </mtr>
+            </mtable>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 60: complex combination of space-like and embellished op -->
+        <math>
+          <mstyle mathsize="20px">
+            <mspace height="100px"/>
+            <mmultiscripts>
+              <mphantom>
+                <maction actiontype="toggle" selection="3">
+                  <mtext>X</mtext>
+                  <mtext>Y</mtext>
+                  <mrow>
+                    <mpadded><mspace/><mtext>S</mtext></mpadded>
+                    <mo id="test60_mo1">|</mo><mspace/>
+                  </mrow>
+                </maction>
+                <mtext>Y</mtext>
+                <maction actiontype="toggle" selection="3">
+                  <mi>X</mi>
+                  <mi>X</mi>
+                  <mspace/>
+                </maction>
+              </mphantom>
+             <mn>X</mn>
+             <mn>X</mn>
+             <mprescripts/>
+             <mn>X</mn>
+             <mn>X</mn>
+            </mmultiscripts>
+            <mover>
+              <mtext mathsize="20px">XXXXX</mtext>
+              <semantics>
+                <munder>
+                  <mrow>
+                    <mtext>A</mtext>
+                    <msup>
+                      <mstyle><mo id="test60_mo2">→</mo></mstyle>
+                      <mtext>Z</mtext>
+                    </msup>
+                  </mrow>
+                  <mi>B</mi>
+                </munder>
+                <annotation encoding="plain/text">X</annotation>
+              </semantics>
+            </mover>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 61: operator dictionary: large operators -->
+        <math display="block">
+          <mstyle id="test61" mathsize="20px">
+            <mtext>X</mtext>
+            <mo>&#x220F;</mo>
+            <mo>&#x2210;</mo>
+            <mo>&#x2211;</mo>
+            <mo>&#x222B;</mo>
+            <mo>&#x222C;</mo>
+            <mo>&#x222D;</mo>
+            <mo>&#x222E;</mo>
+            <mo>&#x222F;</mo>
+            <mo>&#x2230;</mo>
+            <mo>&#x2231;</mo>
+            <mo>&#x2232;</mo>
+            <mo>&#x2233;</mo>
+            <mo>&#x22C0;</mo>
+            <mo>&#x22C1;</mo>
+            <mo>&#x22C2;</mo>
+            <mo>&#x22C3;</mo>
+            <mo>&#x2A06;</mo>
+            <mo>&#x2A0B;</mo>
+            <mo>&#x2A0C;</mo>
+            <mo>&#x2A0D;</mo>
+            <mo>&#x2A0E;</mo>
+            <mo>&#x2A0F;</mo>
+            <mo>&#x2A10;</mo>
+            <mo>&#x2A11;</mo>
+            <mo>&#x2A12;</mo>
+            <mo>&#x2A13;</mo>
+            <mo>&#x2A14;</mo>
+            <mo>&#x2A15;</mo>
+            <mo>&#x2A16;</mo>
+            <mo>&#x2A17;</mo>
+            <mo>&#x2A18;</mo>
+            <mo>&#x2A19;</mo>
+            <mo>&#x2A1A;</mo>
+            <mo>&#x2A1B;</mo>
+            <mo>&#x2A1C;</mo>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 62: operator dictionary: horizontal stretchy operators -->
+        <math>
+          <mstyle id="test62" mathsize="20px">
+            <munder><mspace width="100px"/><mo>&#x005F;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x00AF;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x203E;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x2190;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x2192;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x2194;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x21A4;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x21A6;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x21A9;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x21AA;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x21BC;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x21C0;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x21C1;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x21D0;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x21D2;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x21D4;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x23B4;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x23B5;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x23DC;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x23DD;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x23DE;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x23DF;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x27F5;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x27F6;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x27F7;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x294E;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x2950;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x295B;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#x295F;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#xFE35;</mo></munder>
+            <munder><mspace width="100px"/><mo>&#xFE36;</mo></munder>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 63: operator dictionary: vertical stretchy operators -->
+        <math >
+          <mstyle id="test63" mathsize="20px">
+            <mspace height="50px" depth="50px"/>
+            <mo>&#x0028;</mo>
+            <mo>&#x0029;</mo>
+            <mo>&#x005B;</mo>
+            <mo>&#x005D;</mo>
+            <mo>&#x007B;</mo>
+            <mo>&#x007C;</mo>
+            <mo>&#x007D;</mo>
+            <mo>&#x2016;</mo>
+            <mo>&#x2191;</mo>
+            <mo>&#x2193;</mo>
+            <mo>&#x2195;</mo>
+            <mo>&#x21D1;</mo>
+            <mo>&#x21D3;</mo>
+            <mo>&#x21D5;</mo>
+            <mo>&#x221A;</mo>
+            <mo>&#x2308;</mo>
+            <mo>&#x2309;</mo>
+            <mo>&#x230A;</mo>
+            <mo>&#x230B;</mo>
+            <mo>&#x27E8;</mo>
+            <mo>&#x27E9;</mo>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 64: operator dictionary: various spacing -->
+        <math>
+          <mstyle id="test64" mathsize="20px">
+            <mrow>
+              <mrow>
+                <mn>1</mn>
+                <mspace id="test64space" width="veryverythinmathspace"/>
+                <mn>&#x0021;</mn><mspace id="test64space2" width="0"/>
+                <mn>2</mn>
+              </mrow>
+              <mrow><mn>1</mn><mo form="postfix">&#x0021;</mo><mn>2</mn></mrow>
+            </mrow>
+            <mrow>
+              <mrow>
+                <mn>1</mn>
+                <mspace width="mediummathspace"/>
+                <mn>&#x25D7;</mn>
+                <mspace width="mediummathspace"/>
+                <mn>2</mn>
+              </mrow>
+              <mrow><mn>1</mn><mo form="infix">&#x25D7;</mo><mn>2</mn></mrow>
+            </mrow>
+            <mrow>
+              <mrow>
+                <mn>1</mn>
+                <mspace width="thickmathspace"/>
+                <mn>&#x22FD;</mn>
+                <mspace width="thickmathspace"/>
+                <mn>2</mn>
+              </mrow>
+              <mrow><mn>1</mn><mo form="infix">&#x22FD;</mo><mn>2</mn></mrow>
+            </mrow>
+            <mrow>
+              <mrow>
+                <mn>1</mn>
+                <mspace width="0"/>
+                <mn>&#x00B1;</mn>
+                <mspace width="veryverythinmathspace"/>
+                <mn>2</mn>
+              </mrow>
+              <mrow><mn>1</mn><mo form="prefix">&#x00B1;</mo><mn>2</mn></mrow>
+            </mrow>
+            <mrow>
+              <mrow>
+                <mn>1</mn>
+                <mspace width="verythinmathspace"/>
+                <mn>&#x2145;</mn>
+                <mspace width="veryverythinmathspace"/>
+                <mn>2</mn>
+              </mrow>
+              <mrow><mn>1</mn><mo form="prefix">&#x2145;</mo><mn>2</mn></mrow>
+            </mrow>
+            <mrow>
+              <mrow>
+                <mn>1</mn>
+                <mspace width="veryverythinmathspace"/>
+                <mn>&#x2201;</mn>
+                <mspace width="verythinmathspace"/>
+                <mn>2</mn>
+              </mrow>
+              <mrow><mn>1</mn><mo form="infix">&#x2201;</mo><mn>2</mn></mrow>
+            </mrow>
+            <mrow>
+              <mrow>
+                <mn>1</mn>
+                <mspace width="0"/>
+                <mn>&#x22EF;</mn>
+                <mspace width="0"/>
+                <mn>2</mn>
+              </mrow>
+              <mrow><mn>1</mn><mo form="infix">&#x22EF;</mo><mn>2</mn></mrow>
+            </mrow>
+            <mrow>
+              <mrow>
+                <mn>1</mn>
+                <mspace width="thinmathspace"/>
+                <mn>&#x29A0;</mn>
+                <mspace width="thinmathspace"/>
+                <mn>2</mn>
+              </mrow>
+              <mrow><mn>1</mn><mo form="infix">&#x29A0;</mo><mn>2</mn></mrow>
+            </mrow>
+          </mstyle>
+        </math>
+      </p>
+
+      <!-- bucket 5: directionality and linebreaking -->
+
+      <!-- test 65: mrow (RTL) -->
+      <p>
+        <math id="test65_0" dir="rtl">
+          <mtext>X</mtext><mtext>Y</mtext>
+        </math>
+        <math dir="rtl">
+          <mrow id="test65_1">
+            <mtext>X</mtext><mtext>Y</mtext>
+          </mrow>
+        </math>
+        <math dir="rtl">
+          <msqrt id="test65_2">
+            <mtext>X</mtext><mtext>Y</mtext>
+          </msqrt>
+        </math>
+        <math dir="rtl">
+          <mstyle id="test65_3">
+            <mtext>X</mtext><mtext>Y</mtext>
+          </mstyle>
+        </math>
+        <math dir="rtl">
+          <merror id="test65_4">
+            <mtext>X</mtext><mtext>Y</mtext>
+          </merror>
+        </math>
+        <math dir="rtl">
+          <mpadded id="test65_5">
+            <mtext>X</mtext><mtext>Y</mtext>
+          </mpadded>
+        </math>
+        <math dir="rtl">
+          <mphantom id="test65_6">
+            <mtext>X</mtext><mtext>Y</mtext>
+          </mphantom>
+        </math>
+        <math dir="rtl">
+          <menclose id="test65_7">
+            <mtext>X</mtext><mtext>Y</mtext>
+          </menclose>
+        </math>
+        <math dir="rtl">
+          <mtable>
+            <mtr>
+              <mtd id="test65_8">
+                <mtext>X</mtext><mtext>Y</mtext>
+              </mtd>
+            </mtr>
+          </mtable>
+        </math>
+      </p>
+
+      <!-- test 66: scripts (RTL) -->
+      <p>
+        <math dir="rtl">
+          <mrow id="test66_mrow">
+            <mtext>BASE</mtext>
+          </mrow>
+        </math>
+      </p>
+      <p>
+        <math dir="rtl">
+          <msub id="test66_msub">
+            <mtext>BASE</mtext><mtext>X</mtext>
+          </msub>
+        </math>
+      </p>
+      <p>
+        <math dir="rtl">
+          <msup id="test66_msup">
+            <mtext>BASE</mtext><mtext>X</mtext>
+          </msup>
+        </math>
+      </p>
+      <p>
+        <math dir="rtl">
+          <msubsup id="test66_msubsup">
+            <mtext>BASE</mtext><mtext>X</mtext><mtext>X</mtext>
+          </msubsup>
+        </math>
+      </p>
+      <p>
+        <math dir="rtl">
+          <mover id="test66_mover">
+            <mtext>BASE</mtext><mtext>X</mtext>
+          </mover>
+        </math>
+      </p>
+      <p>
+        <math dir="rtl">
+          <munder id="test66_munder">
+            <mtext>BASE</mtext><mtext>X</mtext>
+          </munder>
+        </math>
+      </p>
+      <p>
+        <math dir="rtl">
+          <munderover id="test66_munderover">
+            <mtext>BASE</mtext><mtext>X</mtext><mtext>X</mtext>
+          </munderover>
+        </math>
+      </p>
+
+      <!-- test 67: mfrac (RTL) -->
+      <p>
+        <math dir="rtl">
+          <mfrac numalign="left" id="test67_numalign">
+            <mtext>X</mtext>
+            <mtext>XXX</mtext>
+          </mfrac>
+        </math>
+      </p>
+      <p>
+        <math dir="rtl">
+          <mfrac denomalign="right" id="test67_denomalign">
+            <mtext>XXX</mtext>
+            <mtext>X</mtext>
+          </mfrac>
+        </math>
+      </p>
+      <p>
+        <math dir="rtl">
+          <mfrac bevelled="true" id="test67_bevelled">
+            <mtext>X</mtext>
+            <mtext>X</mtext>
+          </mfrac>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 68: mmultiscripts (RTL) -->
+        <math dir="rtl">
+          <mmultiscripts id="test68_mmultiscripts">
+            <mtext>X</mtext>
+            <mtext>X</mtext><mtext>X</mtext>
+            <none/><mtext>X</mtext>
+            <mprescripts/>
+            <mtext>X</mtext><mtext>X</mtext>
+            <mtext>X</mtext><none/>
+          </mmultiscripts>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 69: mpadded (RTL) -->
+        <math dir="rtl" id="test69">
+          <mtext>X</mtext>
+          <mpadded lspace="50px">
+              <mtext>Y</mtext>
+          </mpadded>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 70: msqrt (RTL) -->
+        <math dir="rtl">
+          <msqrt id="test70_msqrt"><mtext>X</mtext></msqrt>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 71: mroot (RTL) -->
+        <math dir="rtl">
+          <mroot id="test71_mroot"><mtext>Y</mtext><mtext>X</mtext></mroot>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 72: mtable (RTL) -->
+        <math dir="rtl">
+          <mtable id="test72_mtable">
+            <mtr>
+              <mtd><mtext>X</mtext></mtd>
+              <mtd><mtext>X</mtext></mtd>
+              <mtd><mtext>X</mtext></mtd>
+            </mtr>
+            <mtr>
+              <mtd><mtext>X</mtext></mtd>
+              <mtd><mtext>X</mtext></mtd>
+              <mtd><mtext>X</mtext></mtd>
+            </mtr>
+            <mtr>
+              <mtd><mtext>X</mtext></mtd>
+              <mtd><mtext>X</mtext></mtd>
+              <mtd><mtext>X</mtext></mtd>
+            </mtr>
+          </mtable>
+        </math>
+      </p>
+
+      <!-- test 73: linebreak=auto, linebreakstyle=before -->
+      <div style="width: 100px;">
+        <math>
+          <mstyle id="test73" mathsize="20px">
+            <mtext>ABC</mtext> <!-- w1=60 -->
+            <mo>+</mo>         <!-- w2=20 -->
+            <mtext>DEF</mtext> <!-- w3=60 -->
+            <!-- w1+w2+w3 = 140 > 100               (no break)         -->
+            <!-- w1+w2=80<100 ; w3 < 100            (break after)      -->
+            <!-- w1=60<100 ; w2+w3=80 <100          (break before)     -->
+            <!-- w1 < 100; w2 < 100; w3 < 100       (break everywhere) -->
+          </mstyle>            
+        </math>
+      </div>
+
+      <!-- test 74: linebreak=auto, linebreakstyle=after -->
+      <div style="width: 100px;">
+        <math>
+          <mstyle id="test74" mathsize="20px">
+            <mtext>ABC</mtext> <!-- w1=60 -->
+            <mo>,</mo>         <!-- w2=20 -->
+            <mtext>DEF</mtext> <!-- w3=20 -->
+            <!-- w1+w2+w3 = 140 > 100               (no break)         -->
+            <!-- w1+w2=80<100 ; w3 < 100            (break after)      -->
+            <!-- w1=60<100 ; w2+w3=80 <100          (break before)     -->
+            <!-- w1 < 100; w2 < 100; w3 < 100       (break everywhere) -->
+          </mstyle>            
+        </math>
+      </div>
+
+      <!-- test 75: linebreak=newline -->
+      <div style="width: 100px;">
+        <math>
+          <mstyle id="test75" mathsize="20px">
+            <mtext>A</mtext>               <!--  w1=20 -->
+            <mo linebreak="newline">+</mo> <!--  w2=20 -->
+            <mtext>B</mtext>               <!--  w3=20 -->
+            <!-- w1+w2+w3 = 60 < 100 (no break) -->
+          </mstyle>            
+        </math>
+      </div>
+
+      <!-- test 76: linebreak=nobreak -->
+      <div style="width: 200px;">
+        <math>
+          <mstyle id="test76" mathsize="20px">
+            <mtext>ABC</mtext>             <!--  w0=60 -->
+            <mo>+</mo>                     <!--  w1=20 -->
+            <mtext>DEFG</mtext>            <!--  w2=80 -->
+            <mo linebreak="nobreak">,</mo> <!--  w3=20 -->
+            <mtext>HIJK</mtext>            <!--  w4=80 -->
+            <!-- w0+w1+w2+w3=180; w4=80  (break after the comma) -->
+            <!-- w0=20 ; w1+w2+w3+w4=200 (break before the plus) -->
+          </mstyle>            
+        </math>
+      </div>
+
+      <!-- test 77: linebreak=goodbreak, badbreak -->
+      <div style="width: 200px;">
+        <math>
+          <mstyle id="test77" mathsize="20px">
+            <mtext>ABC</mtext>               <!--  w0=60 -->
+            <mo linebreak="goodbreak">+</mo> <!--  w1=20 -->
+            <mtext>DEFG</mtext>              <!--  w2=80 -->
+            <mo linebreak="badbreak">,</mo>  <!--  w3=20 -->
+            <mtext>HIJK</mtext>              <!--  w4=80 -->
+            <!-- w0+w1+w2+w3=180; w4=80  (break after the comma) -->
+            <!-- w0=20 ; w1+w2+w3+w4=200 (break before the plus) -->
+          </mstyle>            
+        </math>
+      </div>
+
+      <!-- test 78: lineleading -->
+      <div style="width: 80px;">
+        <math>
+          <mstyle id="test78" mathsize="20px">
+            <mtext>ABC</mtext>
+            <mo lineleading="50px">+</mo>
+            <mtext>DEF</mtext>
+            <!-- w0=60; w1+w2=80 (break before the plus) -->
+          </mstyle>
+        </math>
+      </div>
+
+      <!-- test 79: indentalign -->
+      <div style="width: 80px;">
+        <math>
+          <mstyle id="test79" mathsize="20px">
+            <mtext>ABC</mtext>
+            <mo indentalign="right">+</mo>
+            <mtext>DEF</mtext>
+            <!-- w0=60; w1+w2=80 (break before the plus) -->
+          </mstyle>
+        </math>
+      </div>
+
+      <!-- test 80: indentshift -->
+      <div style="width: 80px;">
+        <math>
+          <mstyle id="test80" mathsize="20px">
+            <mtext>ABC</mtext>
+            <mo indentshift="20px">+</mo>
+            <mtext>DEF</mtext>
+            <!-- w0=60; w1+w2=80 (break before the plus) -->
+          </mstyle>
+        </math>
+      </div>
+
+      <!-- bucket 6: alignmark and elementary math -->
+
+      <p>
+        <!-- test 81: malignmark -->
+        <math>
+          <!--
+              ABC|
+                 |DEF
+            -->
+          <mtable>
+            <mtr>
+              <mtd>
+                <maligngroup/>
+                <mtext id="test81_1">ABC<malignmark edge="right"/></mtext>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd>
+                <maligngroup/>
+                <mtext id="test81_2"><malignmark edge="left"/>DEF</mtext>
+              </mtd>
+            </mtr>
+          </mtable>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 82: groupalign -->
+        <math>
+          <!--
+              ABC|
+                 |DEF
+            -->
+          <mtable>
+            <mtr>
+              <mtd>
+                <maligngroup groupalign="right"/>
+                <mtext id="test82_1">ABC</mtext>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd>
+                <maligngroup groupalign="left"/>
+                <mtext id="test82_2">DEF</mtext>
+              </mtd>
+            </mtr>
+          </mtable>
+        </math>
+      </p>     
+
+      <p>
+        <!-- test 83: groupalign=center, malignmark ; columnalign-->
+        <math>
+          <!--
+              ABC|DEF
+               12|34
+            -->
+          <mtable columnalign="left">
+            <mtr>
+              <mtd>
+                <maligngroup groupalign="center"/>
+                <mtext id="test83_1">ABCDEF</mtext>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd>
+                <maligngroup/>
+                <mtext id="test83_2">12<malignmark/>34</mtext>
+              </mtd>
+            </mtr>
+          </mtable>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 84: groupalign=decimalpoint -->
+        <math>
+          <!--
+              AB.|.FG
+               12|34
+            -->
+          <mtable columnalign="right">
+            <mtr>
+              <mtd>
+                <maligngroup groupalign="decimalpoint"/>
+                <mtext id="test84_1">AB..EF</mtext>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd>
+                <maligngroup/>
+                <mtext id="test84_2">12<malignmark edge="left"/>34<malignmark/>
+                </mtext>
+              </mtd>
+            </mtr>
+          </mtable>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 85: alignment ; several rows -->
+        <math>
+          <mstyle mathsize="20px">
+            <!-- 
+                   |ABCD
+                  A|BCD
+                 AB|CD
+                ABC|D
+               ABCD|
+            -->
+            <mtable>
+              <mtr>
+                <mtd>
+                  <maligngroup/>
+                  <mtext id="test85_0"><malignmark/>ABCD</mtext>
+                </mtd>
+              </mtr>
+              <mtr>
+                <mtd>
+                  <maligngroup/>
+                  <mtext id="test85_1">A<malignmark/>BCD</mtext>
+                </mtd>
+              </mtr>
+              <mtr>
+                <mtd>
+                  <maligngroup/>
+                  <mtext id="test85_2">AB<malignmark/>CD</mtext>
+                </mtd>
+              </mtr>
+              <mtr>
+                <mtd>
+                  <maligngroup/>
+                  <mtext id="test85_3">ABC<malignmark/>D</mtext>
+                </mtd>
+              </mtr>
+              <mtr>
+                <mtd>
+                  <maligngroup/>
+                  <mtext id="test85_4">ABCD<malignmark/></mtext>
+                </mtd>
+              </mtr>
+            </mtable>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 86: several alignment groups in cells ; mtd@groupalign -->
+        <math>
+          <!--
+                      |[ABC][E|F]  [GHIJ]|
+                  [01]|       |[234] [56]|[78]
+            -->
+          <mstyle mathsize="20px">
+            <mtable>
+              <mtr>
+                <mtd groupalign="left center right">
+                  <maligngroup/><mtext id="test86_0">ABC</mtext>
+                  <maligngroup/><mtext id="test86_1">EF</mtext>
+                  <maligngroup/><mtext id="test86_2">GHIJ</mtext>
+                </mtd>
+                <mtd groupalign="right left center">
+                  <maligngroup/><mtext id="test86_3">01</mtext>
+                  <maligngroup/><mtext id="test86_4">234</mtext>
+                  <maligngroup/><mtext id="test86_5">5678</mtext>
+                </mtd>
+              </mtr>
+            </mtable>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 87: mtr@groupalign -->
+        <math>
+          <!--
+                      |[ABC][E|F]  [GHIJ]|
+                  [01]|       |[234] [56]|[78]
+            -->
+          <mstyle mathsize="20px">
+            <mtable>
+              <mtr groupalign="{left center right}{right left center}">
+                <mtd>
+                  <maligngroup/><mtext id="test87_0">ABC</mtext>
+                  <maligngroup/><mtext id="test87_1">EF</mtext>
+                  <maligngroup/><mtext id="test87_2">GHIJ</mtext>
+                </mtd>
+                <mtd>
+                  <maligngroup/><mtext id="test87_3">01</mtext>
+                  <maligngroup/><mtext id="test87_4">234</mtext>
+                  <maligngroup/><mtext id="test87_5">5678</mtext>
+                </mtd>
+              </mtr>
+            </mtable>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 88: mtable@groupalign -->
+        <math>
+          <!--
+                      |[ABC][E|F]  [GHIJ]|
+                  [01]|       |[234] [56]|[78]
+            -->
+          <mstyle mathsize="20px">
+            <mtable groupalign="{left center right}{right left center}">
+              <mtr>
+                <mtd>
+                  <maligngroup/><mtext id="test88_0">ABC</mtext>
+                  <maligngroup/><mtext id="test88_1">EF</mtext>
+                  <maligngroup/><mtext id="test88_2">GHIJ</mtext>
+                </mtd>
+                <mtd>
+                  <maligngroup/><mtext id="test88_3">01</mtext>
+                  <maligngroup/><mtext id="test88_4">234</mtext>
+                  <maligngroup/><mtext id="test88_5">5678</mtext>
+                </mtd>
+              </mtr>
+            </mtable>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 89: mstack, msrow -->
+        <math>
+          <mstack>
+            <mn id="test89_0">424</mn>
+            <msrow>
+              <mo id="test89_1">+</mo>
+              <none id="test89_2"/>
+              <mn id="test89_3">33</mn>
+            </msrow>
+          </mstack>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 90: msline -->
+        <math>
+          <mstack>
+            <mn id="test90_1">123</mn>
+            <msline/>
+            <mn id="test90_2">456</mn>
+          </mstack>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 91: msgroup, shift -->
+        <math>
+          <mstack>
+            <msgroup>
+              <mn id="test91_0">123</mn>
+              <mn id="test91_1">456</mn>
+            </msgroup>
+            <msgroup shift="1">
+              <mn id="test91_2">456</mn>
+              <mn id="test91_3">789</mn>
+            </msgroup>
+          </mstack>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 92: msline (leftoverhang, rightoverhang, mslinethickness) -->
+        <math>
+          <mstack id="test92">
+            <mn>012</mn>
+            <msline leftoverhang="25px"
+                    rightoverhang="50px"
+                    mslinethickness="30px"/>
+          </mstack>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 93: mstack@stackalign -->
+        <math>
+          <mstack stackalign="left">
+            <mn id="test93_0">1</mn>
+            <mn id="test93_1">111</mn>
+          </mstack>
+          <mstack stackalign="center">
+            <mn id="test93_2">1</mn>
+            <mn id="test93_3">111</mn>
+          </mstack>
+          <mstack stackalign="right">
+            <mn id="test93_4">1</mn>
+            <mn id="test93_5">111</mn>
+          </mstack>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 94: mscarries, scriptlevel, scriptsizemultiplier -->
+        <math>
+          <mstyle mathsize="100px">
+            <mstack>
+              <mscarries>
+                <mscarry><mn id="test94">1</mn></mscarry>
+              </mscarries>
+              <mn>1</mn>
+            </mstack>
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 95: mlongdiv -->
+        <math>
+          <mlongdiv>
+            <mn id="test95_0">64</mn>
+            <mn id="test95_1">16</mn>
+            <mn id="test95_2">1024</mn>
+            <mn id="test95_3">0000</mn>
+          </mlongdiv>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 96: mlongdiv@longdivstyle -->
+        <math>
+          <mlongdiv longdivstyle="stackedrightright">
+            <mn id="test96_0">64</mn>
+            <mn id="test96_1">16</mn>
+            <mn id="test96_2">1024</mn>
+          </mlongdiv>
+          <mlongdiv longdivstyle="left/\right">
+            <mn id="test96_3">64</mn>
+            <mn id="test96_4">16</mn>
+            <mn id="test96_5">1024</mn>
+          </mlongdiv>
+          <mlongdiv longdivstyle="stackedleftleft">
+            <mn id="test96_6">64</mn>
+            <mn id="test96_7">16</mn>
+            <mn id="test96_8">1024</mn>
+          </mlongdiv>
+        </math>
+      </p>
+
+      <!-- special tests -->
+
+      <p>
+        <!-- test 97: Javascript -->
+        <math>
+          <mstyle mathsize="20px" id="test97">
+          </mstyle>
+        </math>
+      </p>
+
+      <p>
+        <!-- test 98: mixing with HTML and SVG -->
+        <svg>
+          <g transform="translate(+50,+50) rotate(180) translate(-50,-50) ">
+            <switch>
+              <foreignObject
+                 requiredExtensions="http://www.w3.org/1998/Math/MathML" 
+                 width="100px" height="100px">
+                <math>
+                  <mrow>
+                    <mover>
+                      <mtext id="test98_A">A</mtext>
+                      <mtext id="test98_B">B</mtext>
+                    </mover>
+                    <mtext id="test98_start">START</mtext>
+                    <mtext>
+                      <svg width="20px" height="20px">
+                        <rect width="20px" height="20px"
+                              fill="red" stroke-width="0"/>
+                      </svg>
+                    </mtext>
+                    <semantics>
+                      <mtext>
+                        <img src="rect.png" alt=""
+                             width="20" height="20" style="border: 0;"/>
+                      </mtext>
+                      <annotation encoding="plain/text">D</annotation>
+                    </semantics>
+                    <mtext id="test98_end">END</mtext>
+                  </mrow>
+                </math>
+              </foreignObject>
+            </switch>
+          </g>
+        </svg>
+      </p>
+
+      <p>
+        <!-- test 99: compatibility with CSS ; class, id and style -->
+        <math class="test99" id="test99">
+          <mtext>X</mtext>
+          <mtext style="font-size: 40px;">Y</mtext>
+          <mn>Z</mn>
+        </math>
+      </p>
+
+    </div>
+
+  </body>
+</html>

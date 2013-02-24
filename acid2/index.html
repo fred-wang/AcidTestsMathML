@@ -1,0 +1,266 @@
+<!doctype html>
+<html>
+  <head>
+    <title>The Second Acid Test</title>
+    <meta charset="utf-8"/>
+    <style type="text/css">
+      /* page setup */
+      html { font: 12px sans-serif; margin: 0; padding: 0; overflow: hidden;
+      background: white; color: red; }
+      body { margin: 0; padding: 0; }
+
+      /* introduction message */
+      .intro { font: 2em sans-serif; margin: 3.5em 2em; padding: 0.5em;
+      border: solid thin; background: white; color: black; position: relative;
+      z-index: 2; }
+      .intro * { font: inherit; margin: 0; padding: 0; }
+      .intro h1 { font-size: 1em; font-weight: bolder; margin: 0; padding: 0; }
+      .intro :link { color: blue; }
+      .intro :visited { color: purple; }
+
+      /* picture setup */
+      #top { width: 168px; margin: 100em auto; padding-top: 168px; }
+      span { display: inline-block; }
+      @font-face { font-family: "Acid2Diamond";
+                   src: url(data:application/font-woff;base64,d09GRk9UVE8AAAQIAAsAAAAABkgAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABDRkYgAAABCAAAAMYAAADiRcQ3VEZGVE0AAAHQAAAAHAAAABxii9CCR0RFRgAAAewAAAAgAAAAKAAxACRPUy8yAAACDAAAAEYAAABgfMeGJGNtYXAAAAJUAAAANAAAAUIADShsaGVhZAAAAogAAAAvAAAANv3VmotoaGVhAAACuAAAACAAAAAkBoQCDmhtdHgAAALYAAAACAAAAAgIMAAAbWF4cAAAAuAAAAAGAAAABgACUABuYW1lAAAC6AAAAQUAAAI0WV70AXBvc3QAAAPwAAAAFgAAACD/hgAzeJxjZGBhYWBkZBR1TM5MMXLJTMzNz0vRDUpNL81JLGJgZGJgZHD6wc/wQ4bxhyzTDznmHxIsPTyMclwMnGVh+t3dcAYPe/efBb/W/ljAKsMwm1+GgUFAhmGeoAyDmgzDHiEGFpA5HEAow6BRmpdpZOpshs0+ZDEGBgbGdgYmRkYWyV9T+H4sKGf8tVbsD9CCP1P+LPgBxKx8v9aIdIuWz/+xoJtNjot5mup/Hs5uHq59XPt4ePZx7+PhleNi+88jBACXCEVlAAAAAAABAAAAAMf+sN8AAAAAzT5y6QAAAADNTqy5eJxjYGRgYOADYgkGBSDJxMAIhSxgHgMDIwQDAAmfAFZ4nGNgZpFg/MLAysDANJPpDAMDQz+EZnzNYMzICRRlYAOSUMDIgAQC0lxTGBxUj6keY2L4x8AQw8TDxIOiRgEIGQFfSgrlAAB4nGNgYGBmgGAZBkYGELAB8hjBfBYGBSDNAoRAvuqx//8h5C1rqEoGRjYGGHPEAgA5HgedeJxjYGRgYABi54N/lOL5bb4ycLMwgMBZvzXHEfTfLyySTDxALgcDE0gUAD/YCxUAeJxjYGRgYOL5+4UhhkWCgeH/fxZJBqAICmACAHTMBJcEGAAABBgAAAAAUAAAAgAAeJylj8FKw0AQhr9N04og4iEHL8Iei5Cw2UIOvVVKvXvo2dCGEGgTTNs38uzb+Dw6SUaQYk8uLPPN7j//zAC3fGD4OYGy4YYH5YAr5sojHO/KIRFfymPuTKY8ITJvojThtboObLgXGjiQvo/KI155Ug6Z8qk8xppIecLUPHdWCzZUbPEsJebsaaglZ7Gptn5Z5fumluyFgpITO5G0khblaZcLrHr5sY+tKAqsWCWylZUd7UX7+MxxUKdk8uP76ySbSYOmPq6atiysT5yd299jxTqGPKdZ7GPv0tnljc5b8pcVrEXUcpDSrszKHN0kSR+7rVgX7aFqautcmjjn7H87fgOSXlhqAAAAeJxjYGYAg//NDEZAipEBDQAAKFUBuQAA); }
+      .nose { font-family: Acid2Diamond; color: black; }
+      .nose:hover { color: blue; }
+    </style>
+  </head>
+  
+  <body>
+
+    <div class="intro">
+      <h1>Standards compliant?</h1>
+      <p>
+        <a href="#top">Take The Acid2 Test</a> and compare it to
+        <a href="reference.html">the reference rendering</a>.
+      </p>
+    </div>
+
+    <div id="top">
+      <math>
+        <mpadded width="0" height="0" depth="0">
+          <mphantom>
+            <mtext>
+              <span style="position: relative; background: red;
+                           left: -200px; color: black; text-align: center;
+                           width: 400px; height: 70px;">ERROR</span>
+              <span style="background: black;
+                           width: 300px; height: 10px;">ERROR</span>
+            </mtext>
+          </mphantom>
+        </mpadded>
+        <mover>
+          <mpadded width="168px" height="84px" depth="84px">
+
+            <mpadded width="168px" height="84px" depth="84px"
+                     lspace="24px" mathbackground="black">
+              <mspace width="120px" height="48px" depth="48px"
+                      mathbackground="yellow"></mspace>
+            </mpadded>
+            <mpadded width="0" height="0" depth="0">
+              <mphantom>
+                <mtext>
+                  <span style="background: yellow;
+                               border-left: 30px solid black;
+                               width: 200px; height: 40px;"></span>
+                  <span style="position: relative; left: -120px;
+                               background: orange; color: green;
+                               width: 300px;">ERROR</span>
+                </mtext>
+              </mphantom>
+            </mpadded>
+            <mspace width="-168px"></mspace>
+            <mpadded width="168px" height="84px" depth="84px"
+                     lspace="36px" voffset="-60px">
+              <mspace width="96px" height="120px"
+                      mathbackground="yellow"></mspace>
+            </mpadded>
+            <mspace width="-168px"></mspace>
+            <mpadded width="168px" height="84px" depth="84px"
+                     lspace="12px">
+              <mspace width="144px" height="24px" depth="24px"
+                      mathbackground="yellow"></mspace>
+            </mpadded>
+            <mspace width="-168px"></mspace>
+            <mpadded width="168px" height="84px" depth="84px"
+                     lspace="60px" voffset="72px">
+              <mspace width="48px" height="0px" depth="144px"
+                      mathbackground="yellow"></mspace>
+            </mpadded>
+            <mspace width="-168px"></mspace>
+            <mpadded width="168px" height="84px" depth="84px">
+              <mpadded voffset="72px">
+                <mspace width="36px" height="12px" depth="12px"
+                        mathbackground="white"></mspace>
+                <mspace width="96px"></mspace>
+                <mspace width="36px" height="12px" depth="12px"
+                        mathbackground="white"></mspace>
+              </mpadded>
+              <mspace width="-168px"></mspace>
+              <mpadded voffset="-72px">
+                <mspace width="36px" height="12px" depth="12px"
+                        mathbackground="white"></mspace>
+                <mspace width="96px"></mspace>
+                <mspace width="36px" height="12px" depth="12px"
+                        mathbackground="white"></mspace>
+              </mpadded>
+            </mpadded>
+            <mspace width="-168px"></mspace>
+            <mpadded width="168px" height="84px" depth="84px">
+              <mpadded voffset="60px">
+                <mspace width="24px" height="12px" depth="12px"
+                        mathbackground="white"></mspace>
+                <mspace width="120px"></mspace>
+                <mspace width="24px" height="12px" depth="12px"
+                        mathbackground="white"></mspace>
+              </mpadded>
+              <mspace width="-168px"></mspace>
+              <mpadded voffset="-60px">
+                <mspace width="24px" height="12px" depth="12px"
+                        mathbackground="white"></mspace>
+                <mspace width="120px"></mspace>
+                <mspace width="24px" height="12px" depth="12px"
+                        mathbackground="white"></mspace>
+              </mpadded>
+            </mpadded>
+            <mspace width="-168px"></mspace>
+            <mpadded width="168px" height="84px" depth="84px">
+              <mpadded voffset="36px">
+                <mspace width="12px" height="12px" depth="12px"
+                        mathbackground="white"></mspace>
+                <mspace width="144px"></mspace>
+                <mspace width="12px" height="12px" depth="12px"
+                        mathbackground="white"></mspace>
+              </mpadded>
+              <mspace width="-168px"></mspace>
+              <mpadded voffset="-36px">
+                <mspace width="12px" height="12px" depth="12px"
+                        mathbackground="white"></mspace>
+                <mspace width="144px"></mspace>
+                <mspace width="12px" height="12px" depth="12px"
+                        mathbackground="white"></mspace>
+              </mpadded>
+            </mpadded>
+            <mspace width="-168px"></mspace>
+            <mpadded width="168px" height="84px" depth="84px" lspace="36px">
+              <mpadded voffset="72px">
+                <mspace width="24px" height="12px"
+                        mathbackground="white"></mspace>
+                <mspace width="48px"></mspace>
+                <mspace width="24px" height="12px"
+                        mathbackground="white"></mspace>
+              </mpadded>
+              <mspace width="-96px"></mspace>
+              <mpadded voffset="-72px" >
+                <mspace width="24px" depth="12px"
+                        mathbackground="white"></mspace>
+                <mspace width="48px"></mspace>
+                <mspace width="24px" depth="12px"
+                        mathbackground="white"></mspace>
+              </mpadded>
+              <mspace width="-96px"></mspace>
+              <mpadded voffset="-36px">
+                <mspace width="12px" height="12px"
+                        mathbackground="black"></mspace>
+                <mspace width="72px"></mspace>
+                <mspace width="12px" height="12px"
+                        mathbackground="black"></mspace>
+              </mpadded>
+              <mspace width="-84px"></mspace>
+              <mpadded voffset="-48px">
+                <mspace width="72px" height="12px"
+                        mathbackground="black"></mspace>
+              </mpadded>
+            </mpadded>
+            <mspace width="-168px"></mspace>
+            <mpadded width="168px" height="84px" depth="84px"
+                     lspace="36px"
+                     voffset="24px">
+              <semantics>
+                <mtext href="reference.html">
+                  <img src="data:image/png;base64,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" width="96" height="24" alt="eyes"/>
+                </mtext>
+                <annotation-xml encoding="application/xhtml+xml">
+                  <span style="position: relative; top: -20px; z-index: -3;
+                               float: left; border-right: 10px solid black;
+                               width: 76px; height: 44px; background: yellow;">
+                    ERROR
+                  </span>
+                </annotation-xml>
+              </semantics>
+            </mpadded>
+            <mpadded width="0" height="0" depth="0">
+              <maction actiontype="unknown" selection="2">
+                <mtext>
+                  <span style="background: yellow;
+                               position: relative; left: -220px;
+                               border-right: 60px solid black;
+                               width: 200px; height: 34px;">ERROR</span>
+                </mtext>
+                <mphantom>
+                  <mtext>
+                    <span style="position: relative; left: -200px;
+                                 z-index: 3;
+                                 background: red;
+                                 width: 600px; height: 30px;"></span>
+                  </mtext>
+                </mphantom>
+              </maction>
+            </mpadded>
+            <mspace width="-168px"></mspace>
+            <mpadded lspace="84px">
+              <mpadded lspace="-.5width">
+                <mtext mathsize="24px" class="nose">◆</mtext>
+              </mpadded>
+            </mpadded>
+          </mpadded>
+          <mstyle scriptlevel="0">
+            <mpadded depth="+36px">
+              <mtext mathcolor="navy" mathvariant="sans-serif"
+                     mathsize="24px">Hello World!</mtext>
+              <mpadded width="0" height="0" depth="0">
+                <mphantom>
+                  <mtext>
+                    <span style="background: green;
+                                 position: relative; left: -20px;
+                                 border-bottom: 12px solid black;
+                                 text-align: right;
+                                 width: 200px; height: 20px;">ERROR</span>
+                    <span style="position: relative; left: 40px;
+                                 background: yellow; z-index: 2;
+                                 border-right: 10px solid red;
+                                 text-align: center;
+                                 width: 200px; height: 20px;">ERROR</span>
+                  </mtext>
+                </mphantom>
+              </mpadded>
+            </mpadded>
+          </mstyle>
+        </mover>
+        <mpadded width="0" height="0" depth="0">
+          <maction actiontype="unknown" selection="2">
+            <mtext>
+              <span style="position: relative; left: 200px; top: -200px;
+                           color: white;
+                           background: black; z-index: -2;
+                           border-right: 20px solid green;
+                           width: 100px; height: 300px;
+                           text-align: right;">ERROR</span>
+              <span style="position: relative; left: -100px; top: -630px;
+                           background: grey; z-index: -4;
+                           width: 250px; height: 400px;
+                           text-align: right;">ERROR</span>
+              <span style="position: relative; left: +170px; top: -870px;
+                           background: blue; z-index: +1;
+                           width: 20px; height: 300px;"></span>
+            </mtext>
+            <mrow></mrow>
+          </maction>
+        </mpadded>
+      </math>
+    </div>
+
+  </body>
+</html>
