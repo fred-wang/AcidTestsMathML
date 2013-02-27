@@ -865,7 +865,7 @@
            "bad row alignment")
 
     assert(cells[0].left == cells[2].left &&
-           cells[1].right == cells[3].left,
+           cells[1].right == cells[3].right,
            "bad column alignment")
 
     return 2;
@@ -2262,6 +2262,11 @@
       == 20 + 20,
       "mtext elements should have the width of their SVG/HTML content")
 
+    assert(
+      document.getElementById('test98_abc').getBoundingClientRect().bottom <=
+      document.getElementById('test98_def').getBoundingClientRect().top,
+      "math in table should line break")
+
     return 7;
     },
 
@@ -3025,8 +3030,8 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                 <!-- [[rowalign=top]], (columnalign=left) -->
                 <mspace width="15px" height="30px" depth="0px"/>
               </mtd>
-              <mtd id="test22_cell3">
-                <!-- [[rowalign=top]], ((columnalign=left)) -->
+              <mtd id="test22_cell3" columnalign="right">
+                <!-- [[rowalign=top]], ((columnalign=right)) -->
                 <mspace width="40px" height="45px" depth="0px"/>
               </mtd>
             </mtr>
@@ -3860,15 +3865,15 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
             <mtable>
               <mtr>
                 <mtd><mi>X</mi></mtd>
-                <mtd id="test59_mo1" columnspan="3"><mo>→</mo></mtd>
+                <mtd columnspan="3"><mo id="test59_mo1">→</mo></mtd>
                 <mtd><mi>X</mi></mtd>
               </mtr>
               <mtr>
-                <mtd id="test59_mo2" rowspan="3"><mo>↓</mo></mtd>
+                <mtd rowspan="3"><mo id="test59_mo2">↓</mo></mtd>
                 <mtd></mtd>
                 <mtd></mtd>
                 <mtd></mtd>
-                <mtd id="test59_mo3" rowspan="3"><mo>↓</mo></mtd>
+                <mtd rowspan="3"><mo id="test59_mo3">↓</mo></mtd>
               </mtr>
               <mtr>
                 <mtd></mtd>
@@ -3882,7 +3887,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
               </mtr>
               <mtr>
                 <mtd><mi>X</mi></mtd>
-                <mtd id="test59_mo4" columnspan="3"><mo>→</mo></mtd>
+                <mtd columnspan="3"><mo id="test59_mo4">→</mo></mtd>
                 <mtd><mi>X</mi></mtd>
               </mtr>
             </mtable>
@@ -4824,6 +4829,19 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
             </switch>
           </g>
         </svg>
+	<div style="width: 100px; font-size: 20px;">
+	  <table>
+	    <mtr>
+	      <mtd>
+		<math>
+		  <mtext id="test98_abc">ABC</mtext>
+		  <mo>+</mo>
+		  <mtext id="test98_def">DEF</mtext>
+		</math>
+	      </mtd>
+	    </mtr>
+	  </table>
+	</div>
       </p>
 
       <p>
