@@ -4794,7 +4794,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         </math>
       </p>
 
-      <p>
+      <div>
         <!-- test 98: mixing with HTML and SVG -->
         <svg>
           <g transform="translate(+50,+50) rotate(180) translate(-50,-50) ">
@@ -4829,20 +4829,22 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
             </switch>
           </g>
         </svg>
+
 	<div style="width: 100px; font-size: 20px;">
 	  <table>
-	    <mtr>
-	      <mtd>
+	    <tr>
+	      <td>
 		<math>
 		  <mtext id="test98_abc">ABC</mtext>
 		  <mo>+</mo>
 		  <mtext id="test98_def">DEF</mtext>
 		</math>
-	      </mtd>
-	    </mtr>
+	      </td>
+	    </tr>
 	  </table>
 	</div>
-      </p>
+
+      </div>
 
       <p>
         <!-- test 99: compatibility with CSS ; class, id and style -->
