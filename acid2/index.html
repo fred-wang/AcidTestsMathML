@@ -40,6 +40,8 @@
 
     <div id="top">
       <math>
+
+	<!-- test 1: Invisible elements -->
         <mpadded width="0" height="0" depth="0">
           <mphantom>
             <mtext>
@@ -51,7 +53,9 @@
             </mtext>
           </mphantom>
         </mpadded>
-        <mover>
+
+	<!-- test 2: mover -->
+        <mover accent="true">
           <mpadded width="168px" height="84px" depth="84px">
 
             <mpadded width="168px" height="84px" depth="84px"
@@ -59,6 +63,8 @@
               <mspace width="120px" height="48px" depth="48px"
                       mathbackground="yellow"></mspace>
             </mpadded>
+
+	    <!-- test 1: Invisible elements -->
             <mpadded width="0" height="0" depth="0">
               <mphantom>
                 <mtext>
@@ -71,6 +77,7 @@
                 </mtext>
               </mphantom>
             </mpadded>
+
             <mspace width="-168px"></mspace>
             <mpadded width="168px" height="84px" depth="84px"
                      lspace="36px" voffset="-60px">
@@ -178,6 +185,7 @@
             <mpadded width="168px" height="84px" depth="84px"
                      lspace="36px"
                      voffset="24px">
+	      <!-- test 1: Invisible elements -->
               <semantics>
                 <mtext href="reference.html">
                   <img src="data:image/png;base64,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" width="96" height="24" alt="eyes"/>
@@ -191,6 +199,8 @@
                 </annotation-xml>
               </semantics>
             </mpadded>
+
+	    <!-- test 1: Invisible elements -->
             <mpadded width="0" height="0" depth="0">
               <maction actiontype="unknown" selection="2">
                 <mtext>
@@ -215,50 +225,56 @@
                 <mtext mathsize="24px" class="nose">◆</mtext>
               </mpadded>
             </mpadded>
+
           </mpadded>
-          <mstyle scriptlevel="0">
-            <mpadded depth="+36px">
-              <mtext mathcolor="navy" mathvariant="sans-serif"
-                     mathsize="24px">Hello World!</mtext>
-              <mpadded width="0" height="0" depth="0">
-                <mphantom>
-                  <mtext>
-                    <span style="background: green;
-                                 position: relative; left: -20px;
-                                 border-bottom: 12px solid black;
-                                 text-align: right;
-                                 width: 200px; height: 20px;">ERROR</span>
-                    <span style="position: relative; left: 40px;
-                                 background: yellow; z-index: 2;
-                                 border-right: 10px solid red;
-                                 text-align: center;
-                                 width: 200px; height: 20px;">ERROR</span>
-                  </mtext>
-                </mphantom>
-              </mpadded>
+
+
+	  <!-- test 3: Hello World! -->
+          <mpadded depth="+36px">
+            <mtext mathcolor="navy" mathvariant="sans-serif"
+                   mathsize="24px">Hello World!</mtext>
+
+	    <!-- test 1: Invisible elements -->
+            <mpadded width="0" height="0" depth="0">
+              <mphantom>
+                <mtext>
+                  <span style="background: green;
+                               position: relative; left: -20px;
+                               border-bottom: 12px solid black;
+                               text-align: right;
+                               width: 200px; height: 20px;">ERROR</span>
+                  <span style="position: relative; left: 40px;
+                               background: yellow; z-index: 2;
+                               border-right: 10px solid red;
+                               text-align: center;
+                               width: 200px; height: 20px;">ERROR</span>
+                </mtext>
+              </mphantom>
             </mpadded>
-          </mstyle>
+          </mpadded>
+
         </mover>
-        <mpadded width="0" height="0" depth="0">
-          <maction actiontype="unknown" selection="2">
-            <mtext>
-              <span style="position: relative; left: 200px; top: -200px;
-                           color: white;
-                           background: black; z-index: -2;
-                           border-right: 20px solid green;
-                           width: 100px; height: 300px;
-                           text-align: right;">ERROR</span>
-              <span style="position: relative; left: -100px; top: -630px;
-                           background: grey; z-index: -4;
-                           width: 250px; height: 400px;
-                           text-align: right;">ERROR</span>
-              <span style="position: relative; left: +170px; top: -870px;
-                           background: blue; z-index: +1;
-                           width: 20px; height: 300px;"></span>
-            </mtext>
-            <mrow></mrow>
-          </maction>
-        </mpadded>
+
+	<!-- test 1: Invisible elements -->
+        <maction actiontype="unknown" selection="2">
+          <mtext>
+            <span style="position: relative; left: 200px; top: -200px;
+                         color: white;
+                         background: black; z-index: -2;
+                         border-right: 20px solid green;
+                         width: 100px; height: 300px;
+                         text-align: right;">ERROR</span>
+            <span style="position: relative; left: -100px; top: -630px;
+                         background: grey; z-index: -4;
+                         width: 250px; height: 400px;
+                         text-align: right;">ERROR</span>
+            <span style="position: relative; left: +170px; top: -870px;
+                         background: blue; z-index: +1;
+                         width: 20px; height: 300px;"></span>
+          </mtext>
+          <mrow></mrow>
+        </maction>
+
       </math>
     </div>
 

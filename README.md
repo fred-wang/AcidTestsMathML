@@ -73,27 +73,30 @@ Acid2
 
 **Perfect pixel matching is not required to pass the test. See below.**
 
+**The MathML code is valid against the MathML RelaxNG schema if HTML `<span>`'s
+  are allowed in `<mtext>` elements (e.g. the one used in Validator.nu).**
+
 As said in the introduction, perfect pixel matching is hard to achieve with
 MathML elements. As a consequence, the MathML Acid2 only relies on a few
 MathML elements whose rendering is well-defined. The requirements to pass the
 MathML Acid2 test are:
 
-* All but the smiley face should match the reference rendering.
+* All the smiley face (except maybe the nose) should match the reference
+  rendering.
 * The eyes should be a link pointing to the reference rendering.
 * The nose should have the rendering and `hover` effect described in test ??
-* The "Hello World!" should be centered above the smiley face and have the
-  aspect described in test ??.
+* The "Hello World!" should be placed as described in test 2 and have the
+  aspect described in test 3.
 
 This makes the test a bit less objective but still provides something that
 looks like the good old Acid2 test.
 
-Test 1: `<maction>`, `<mpadded>`, `<mphantom>`, empty `<mrow>`, `<semantics>`
------------------------------------------------------------------------------
+Test 1: Invisible Elements
+--------------------------
 
 The test verifies that some invisible MathML elements do not appear. These
 elements are `<mtext>` or `<semantics>` with HTML content inside as described in
-chapter 6 (in the HTML5 RelaxNG schema, some foreign content is allowed in
-the `<mtext>` element). We test the following elements:
+chapter 6. We test the following elements:
 
 * An empty `<mrow>` should not be visible and should have size 0.
 
@@ -113,7 +116,48 @@ of different sizes and colors as well as ERROR messages might show up. This
 may recall you the failure of the classical Acid2 test in older browser
 versions.
 
-Test 2:
+Test 2: mover
+-------------
+
+The main element is a `<mover accent="true">` with two children:
+
+* An `<mpadded width="168px" height="84px" depth="84px">` where the the smiley
+  face will be drawn.
+* An `<mpadded depth="+36px">` that contains the "Hello World!" message.
+
+The first element is a square with side of size 168px. The baseline of its
+content is the horizontal symmetric axis. The "Hello World!" message should be
+placed over the square and aligned center. **The MathML recommendation does not
+specify the vertical gap between the two children** but the `accent="true"`
+helps making the overscript closer to the base. The `depth="+36px"` increases
+the bottom padding of the "Hello World!" and guarantee that the gap is at
+least 36px (value from the classical Acid2). Hence the overall layout should
+look like something like
+
+<div style="width: 168px; margin-left: auto; margin-right: auto;">
+  <svg width="168px" height="228px">
+    <rect x="10px" y="0px" width="148px" height="24px" fill="navy"/>
+    <rect x="0px" y="60px" width="168px" height="168px" fill="yellow"/>
+  </svg>
+</div>
+
+Test 3: Hello World!
+--------------------
+
+This message is contained in a `<mtext mathcolor="navy" mathvariant="sans-serif"
+mathsize="24px">` element and so should at least have the following properties
+(values from the classical Acid2).
+
+* font-size should be 24px. In particular, it is not influenced by the
+  scriptlevel incrementation in the `<mover>` overscript.
+* characters should be sans-serif.
+* color should be `navy` or equivalently `#000080`.
+
+<div style="text-align: center">
+  <span style="font: 24px sans-serif; color: #000080;">Hello World!</span>
+</div>
+
+Test 4:
 -------
 
 ...
