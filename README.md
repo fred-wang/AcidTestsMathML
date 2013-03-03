@@ -71,6 +71,51 @@ readable mathematical expressions.
 Acid2
 =====
 
+**Perfect pixel matching is not required to pass the test. See below.**
+
+As said in the introduction, perfect pixel matching is hard to achieve with
+MathML elements. As a consequence, the MathML Acid2 only relies on a few
+MathML elements whose rendering is well-defined. The requirements to pass the
+MathML Acid2 test are:
+
+* All but the smiley face should match the reference rendering.
+* The eyes should be a link pointing to the reference rendering.
+* The nose should have the rendering and `hover` effect described in test ??
+* The "Hello World!" should be centered above the smiley face and have the
+  aspect described in test ??.
+
+This makes the test a bit less objective but still provides something that
+looks like the good old Acid2 test.
+
+Test 1: `<maction>`, `<mpadded>`, `<mphantom>`, empty `<mrow>`, `<semantics>`
+-----------------------------------------------------------------------------
+
+The test verifies that some invisible MathML elements do not appear. These
+elements are `<mtext>` or `<semantics>` with HTML content inside as described in
+chapter 6 (in the HTML5 RelaxNG schema, some foreign content is allowed in
+the `<mtext>` element). We test the following elements:
+
+* An empty `<mrow>` should not be visible and should have size 0.
+
+* The `<mphantom>` should hide its content. The `<mpadded>` element is used to
+  force the size to 0. The combination is equivalent to an empty `<mrow>`.
+
+* The `<maction>` element is used with a `selection` attribute and unknown
+  `actiontype`. Only the selected child should appear, not the other children.
+
+* The `<semantics>` element is used to annotate a presentation MathML element.
+  Only the annotated element should appear, not the annotations.
+
+Note that even a browser without MathML support might be able to recognize the
+HTML content and incorrectly make it visible. Depending on the browser MathML
+support and its ability to hide the MathML elements above, various rectangle
+of different sizes and colors as well as ERROR messages might show up. This
+may recall you the failure of the classical Acid2 test in older browser
+versions.
+
+Test 2:
+-------
+
 ...
 
 Acid3
