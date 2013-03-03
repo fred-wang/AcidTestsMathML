@@ -1,7 +1,15 @@
 MathML Acid Tests
 =================
 
-*[Online example.](http://dbaupp.github.com/AcidTestsMathML/)*
+*Although the creation of the tests is now complete, I expect to modify some
+of them if I get feedback or if I find errors while I write the detailed
+description below. Once the tests are considered stable, I plan to submit them 
+to organizations like the Math WG or the WaSP, that could publish them and 
+provide an official URL. In the meantime, online versions are available on
+GitHub:*
+
+* [MathML Acid 2](http://fred-wang.github.com/AcidTestsMathML/acid2/)
+* [MathML Acid 3](http://fred-wang.github.com/AcidTestsMathML/acid3/)
 
 This repository contains MathML versions of the famous
 [Acid2](http://acid2.acidtests.org) and [Acid3](http://acid3.acidtests.org)
@@ -59,12 +67,6 @@ test, while such a rendering would not be considered acceptable by most people.
 On the other hand, the three first buckets should be enough to reach a decent
 mathematical rendering and supporting only the first one would still provide
 readable mathematical expressions.
-
-*Although the creation of the tests is now complete, I expect to modify some
-of them if I get feedback or if find errors while I write the detailed
-description below. Once the tests are considered stable, I plan to submit them 
-to organizations like the Math WG or the WaSP, that could publish them and 
-provide an official URL.*
 
 Acid2
 =====
