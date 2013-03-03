@@ -1,6 +1,8 @@
 MathML Acid Tests
 =================
 
+*[Online example.](http://dbaupp.github.com/AcidTestsMathML/)*
+
 This repository contains MathML versions of the famous
 [Acid2](http://acid2.acidtests.org) and [Acid3](http://acid3.acidtests.org)
 tests. At the time these MathML versions are published, most modern browsers
@@ -60,10 +62,9 @@ readable mathematical expressions.
 
 *Although the creation of the tests is now complete, I expect to modify some
 of them if I get feedback or if find errors while I write the detailed
-description below. At the moment, no online versions are available and you need
-to clone the GitHub repository and open the page locally. Once the tests are
-considered stable, I plan to submit them to organizations like the Math WG or
-the WaSP, that could publish them and provide an official URL.*
+description below. Once the tests are considered stable, I plan to submit them 
+to organizations like the Math WG or the WaSP, that could publish them and 
+provide an official URL.*
 
 Acid2
 =====
