@@ -3,6 +3,19 @@
  <head>
   <title>The Acid2 test (description)</title>
   <meta charset="utf-8"/>
+  <style type="text/css">
+    svg.framed {
+      border: 1px dashed grey;
+      background: #ddd;
+    }
+    rect {
+      shape-rendering: crispEdges;
+    }
+    @font-face { font-family: "Acid2Diamond";
+                 src: url(Acid2Diamond-Regular.woff); }
+    .nose { font-family: Acid2Diamond; fill: black; font-size: 24px; }
+    .nose:hover { fill: blue; }
+  </style>
  </head>
  <body>
   <h1>The Acid2 test (description)</h1>
@@ -21,7 +34,8 @@ MathML Acid2 test are:</p>
 <li>All the smiley face (except maybe the nose) should match the reference
 rendering.</li>
 <li>The eyes should be a link pointing to the reference rendering.</li>
-<li>The nose should have the rendering and <code>hover</code> effect described in test ??</li>
+<li>The nose should have the rendering and <code>hover</code> effect described
+in test 6.</li>
 <li>The "Hello World!" should be placed as described in test 2 and have the
 aspect described in test 3.</li>
 </ul>
@@ -57,8 +71,7 @@ versions.</p>
 <p>The main element is a <code>&lt;mover accent="true"&gt;</code> with two children:</p>
 
 <ul>
-<li>An <code>&lt;mpadded width="168px" height="84px" depth="84px"&gt;</code> where the the smiley
-face will be drawn.</li>
+<li>An <code>&lt;mpadded width="168px" height="84px" depth="84px"&gt;</code> where the the smiley face will be drawn.</li>
 <li>An <code>&lt;mpadded depth="+36px"&gt;</code> that contains the "Hello World!" message.</li>
 </ul>
 
@@ -95,9 +108,343 @@ scriptlevel incrementation in the <code>&lt;mover&gt;</code> overscript.</li>
   <span style="font: 24px sans-serif; color: #000080;">Hello World!</span>
 </div>
 
-<h2>Test 4:</h2>
+<h2>Test 4: mpadded, mspace, mathbackground</h2>
 
-<p>...</p>
+<p>Various <code>&lt;mspace&gt;</code> element with <code>mathbackground</code>
+colors are used to draw rectangle of the smiley face. The dimensions are
+given by <code>width</code>, <code>height</code> and <code>depth</code>
+attributes. <code>&lt;mpadded&gt;</code> elements are used to position these
+rectangles. The expected rendering are given below.</p>
+
+<pre>
+  &lt;mpadded width="168px" height="84px" depth="84px"
+           lspace="24px" mathbackground="black"&gt;
+    &lt;mspace width="120px" height="48px" depth="48px"
+            mathbackground="yellow"&gt;&lt;/mspace&gt;
+  &lt;/mpadded&gt;
+</pre>
+
+<div style="width: 168px; margin-left: auto; margin-right: auto;">
+  <svg width="168px" height="168px" class="framed">
+    <g transform="translate(0,84)">
+      <rect x="0px" y="-84px" width="168px" height="168px" fill="black"/>
+      <rect x="24px" y="-48px" width="120px" height="96px" fill="yellow"/>
+    </g>
+  </svg>
+</div>
+
+<pre>
+  &lt;mpadded width="168px" height="84px" depth="84px"
+           lspace="36px" voffset="-60px"&gt;
+    &lt;mspace width="96px" height="120px"
+            mathbackground="yellow"&gt;&lt;/mspace&gt;
+  &lt;/mpadded&gt;
+</pre>
+
+<div style="width: 168px; margin-left: auto; margin-right: auto;">
+  <svg width="168px" height="168px" class="framed">
+    <g transform="translate(0,84)">
+      <rect x="36px" y="-60px" width="96px" height="120px" fill="yellow"/>
+    </g>
+  </svg>
+</div>
+
+<pre>
+  &lt;mpadded width="168px" height="84px" depth="84px"
+           lspace="12px"&gt;
+    &lt;mspace width="144px" height="24px" depth="24px"
+            mathbackground="yellow"&gt;&lt;/mspace&gt;
+  &lt;/mpadded&gt;
+</pre>
+
+<div style="width: 168px; margin-left: auto; margin-right: auto;">
+  <svg width="168px" height="168px" class="framed">
+    <g transform="translate(0,84)">
+      <rect x="12px" y="-24px" width="144px" height="48px" fill="yellow"/>
+    </g>
+  </svg>
+</div>
+
+<pre>
+  &lt;mpadded width="168px" height="84px" depth="84px"
+           lspace="60px" voffset="72px"&gt;
+    &lt;mspace width="48px" height="0px" depth="144px"
+            mathbackground="yellow"&gt;&lt;/mspace&gt;
+  &lt;/mpadded&gt;
+</pre>
+
+<div style="width: 168px; margin-left: auto; margin-right: auto;">
+  <svg width="168px" height="168px" class="framed">
+    <g transform="translate(0,84)">
+      <rect x="60px" y="-72px" width="48px" height="144px" fill="yellow"/>
+    </g>
+  </svg>
+</div>
+
+<pre>
+  &lt;mpadded width="168px" height="84px" depth="84px"&gt;
+    &lt;mpadded voffset="±72px"&gt;
+      &lt;mspace width="36px" height="12px" depth="12px"
+              mathbackground="white"&gt;&lt;/mspace&gt;
+      &lt;mspace width="96px"&gt;&lt;/mspace&gt;
+      &lt;mspace width="36px" height="12px" depth="12px"
+              mathbackground="white"&gt;&lt;/mspace&gt;
+    &lt;/mpadded&gt;
+  &lt;/mpadded&gt;
+</pre>
+
+<div style="width: 168px; margin-left: auto; margin-right: auto;">
+  <svg width="168px" height="168px" class="framed">
+    <g transform="translate(0,84)">
+      <g transform="translate(0,-72)">
+	<rect y="-12px" width="36px" height="24px" fill="white"/>
+	<g transform="translate(96,0)">
+	  <rect x="36px" y="-12px" width="36px" height="24px" fill="white"/>
+	</g>
+      </g>
+      <g transform="translate(0,+72)">
+	<rect y="-12px" width="36px" height="24px" fill="white"/>
+	<g transform="translate(96,0)">
+	  <rect x="36px" y="-12px" width="36px" height="24px" fill="white"/>
+	</g>
+      </g>
+    </g>
+  </svg>
+</div>
+
+<pre>
+  &lt;mpadded width="168px" height="84px" depth="84px"&gt;
+    &lt;mpadded voffset="±60px"&gt;
+      &lt;mspace width="24px" height="12px" depth="12px"
+              mathbackground="white"&gt;&lt;/mspace&gt;
+      &lt;mspace width="120px"&gt;&lt;/mspace&gt;
+      &lt;mspace width="24px" height="12px" depth="12px"
+              mathbackground="white"&gt;&lt;/mspace&gt;
+    &lt;/mpadded&gt;
+  &lt;/mpadded&gt;
+</pre>
+
+<div style="width: 168px; margin-left: auto; margin-right: auto;">
+  <svg width="168px" height="168px" class="framed">
+    <g transform="translate(0,84)">
+      <g transform="translate(0,-60)">
+	<rect x="0" y="-12px" width="24px" height="24px" fill="white"/>
+	<g transform="translate(120,0)">
+	  <rect x="24px" y="-12px" width="24px" height="24px" fill="white"/>
+	</g>
+      </g>
+      <g transform="translate(0,+60)">
+	<rect x="0" y="-12px" width="24px" height="24px" fill="white"/>
+	<g transform="translate(120,0)">
+	  <rect x="24px" y="-12px" width="24px" height="24px" fill="white"/>
+	</g>
+      </g>
+    </g>
+  </svg>
+</div>
+
+<pre>
+  &lt;mpadded width="168px" height="84px" depth="84px"&gt;
+    &lt;mpadded voffset="±36px"&gt;
+      &lt;mspace width="12px" height="12px" depth="12px"
+              mathbackground="white"&gt;&lt;/mspace&gt;
+      &lt;mspace width="144px"&gt;&lt;/mspace&gt;
+      &lt;mspace width="12px" height="12px" depth="12px"
+              mathbackground="white"&gt;&lt;/mspace&gt;
+    &lt;/mpadded&gt;
+  &lt;/mpadded&gt;
+</pre>
+
+<div style="width: 168px; margin-left: auto; margin-right: auto;">
+  <svg width="168px" height="168px" class="framed">
+    <g transform="translate(0,84)">
+      <g transform="translate(0,-36)">
+	<rect x="0" y="-12px" width="12px" height="24px" fill="white"/>
+	<g transform="translate(144,0)">
+	  <rect x="12px" y="-12px" width="12px" height="24px" fill="white"/>
+	</g>
+      </g>
+      <g transform="translate(0,+36)">
+	<rect x="0" y="-12px" width="12px" height="24px" fill="white"/>
+	<g transform="translate(144,0)">
+	  <rect x="12px" y="-12px" width="12px" height="24px" fill="white"/>
+	</g>
+      </g>
+    </g>
+  </svg>
+</div>
+
+<pre>
+  &lt;mpadded width="168px" height="84px" depth="84px" lspace="36px"&gt;
+    &lt;mpadded voffset="±72px"&gt;
+      &lt;mspace width="24px" height="12px"
+              mathbackground="white"&gt;&lt;/mspace&gt;
+      &lt;mspace width="48px"&gt;&lt;/mspace&gt;
+      &lt;mspace width="24px" height="12px"
+              mathbackground="white"&gt;&lt;/mspace&gt;
+    &lt;/mpadded&gt;
+  &lt;/mpadded&gt;
+</pre>
+
+<div style="width: 168px; margin-left: auto; margin-right: auto;">
+  <svg width="168px" height="168px" class="framed">
+    <g transform="translate(0,84)">
+      <g transform="translate(36,0)">
+	<g transform="translate(0,-72)">
+	  <rect x="0" y="-12px" width="24px" height="12px" fill="white"/>
+	  <g transform="translate(48,0)">
+	    <rect x="24px" y="-12px" width="24px" height="12px" fill="white"/>
+	  </g>
+	</g>
+	<g transform="translate(0,+72)">
+	  <rect x="0" y="0px" width="24px" height="12px" fill="white"/>
+	  <g transform="translate(48,0)">
+	    <rect x="24px" y="0px" width="24px" height="12px" fill="white"/>
+	  </g>
+	</g>
+      </g>
+    </g>
+  </svg>
+</div>
+
+<pre>
+  &lt;mpadded width="168px" height="84px" depth="84px" lspace="36px"&gt;
+    &lt;mpadded voffset="-36px"&gt;
+      &lt;mspace width="12px" height="12px"
+              mathbackground="black"&gt;&lt;/mspace&gt;
+      &lt;mspace width="72px"&gt;&lt;/mspace&gt;
+      &lt;mspace width="12px" height="12px"
+              mathbackground="black"&gt;&lt;/mspace&gt;
+    &lt;/mpadded&gt;
+  &lt;/mpadded&gt;
+</pre>
+
+<div style="width: 168px; margin-left: auto; margin-right: auto;">
+  <svg width="168px" height="168px" class="framed">
+    <g transform="translate(0,84)">
+      <g transform="translate(36,0)">
+	<g transform="translate(0,36)">
+	  <rect x="0" y="-12px" width="12px" height="12px" fill="black"/>
+	  <g transform="translate(72,0)">
+	    <rect x="12px" y="-12px" width="12px" height="12px" fill="black"/>
+	  </g>
+	</g>
+      </g>
+    </g>
+  </svg>
+</div>
+
+<pre>
+  &lt;mpadded width="168px" height="84px" depth="84px" lspace="36px"&gt;
+    &lt;mpadded voffset="-48px"&gt;
+      &lt;mspace width="72px" height="12px"
+              mathbackground="black"&gt;&lt;/mspace&gt;
+    &lt;/mpadded&gt;
+  &lt;/mpadded&gt;
+</pre>
+
+<div style="width: 168px; margin-left: auto; margin-right: auto;">
+  <svg width="168px" height="168px" class="framed">
+    <g transform="translate(0,84)">
+      <g transform="translate(36,0)">
+	<g transform="translate(0,48)">
+	  <rect x="12px" y="-12px" width="72px" height="12px" fill="black"/>
+	</g>
+      </g>
+    </g>
+  </svg>
+</div>
+
+<h2>Test 5: Eyes</h2>
+
+<p>The eyes are drawn in an HTML <code>&lt;img&gt;</code> element. They are
+drawn with a PNG image encoded in base64. The HTML code is contained in a
+<code>&lt;mtext&gt;</code> element with a <code>href</code> link and
+so <strong>clicking on the eyes should redirect to the reference page</strong>.
+An <code>&lt;mpadded&gt;</code> element is used to positioned them precisely,
+as shown below.</p>
+
+<pre>
+  &lt;mpadded width="168px" height="84px" depth="84px"
+           lspace="36px"
+           voffset="24px"&gt;
+    &lt;mtext href="reference.html"&gt;
+      &lt;img src="data:image/png;base64... /&gt;
+    &lt;/mtext&gt;
+  &lt;/mpadded&gt;
+</pre>
+
+<div style="width: 168px; margin-left: auto; margin-right: auto;">
+  <svg width="168px" height="168px" class="framed"
+       xmlns:xlink="http://www.w3.org/1999/xlink">>
+    <g transform="translate(0,84)">
+      <g transform="translate(36,0)">
+	<g transform="translate(0,-24)">
+	  <g transform="translate(0,-24)">
+	    <a xlink:href="reference.html">
+	      <image x="0px" y="0px" width="96px" height="24px"
+		     xlink:href="eyes.png"/>
+	    </a>
+	  </g>
+	</g>
+      </g>
+    </g>
+  </svg>
+</div>
+
+<h2>Test 6: Nose</h2>
+
+<p>The nose is drawn using U+25C6 BLACK DIAMOND character in an mtext.
+<code>class</code> and <code>mathsize</code> attributes are used to apply a
+specific style:</p>
+
+<ul>
+<li>A special Acid2Diamond woff font encoded as base64. In this font, the
+  BLACK DIAMOND is a glyph of size 1024x1024. The coordinates of the points
+  are (0,0), (512,-512), (1024,0) and (512,+512).</li>
+<li>The actual size of the glyph is set to 24px.</li>
+<li>The color is black but becomes blue when you move the mouse over the
+  nose.</li>
+</ul>
+
+<p>By definition of the baselines, the nose will be centered vertically. Two
+<code>mpadded</code> elements are used to ensure that the nose is centered
+inside the face square.</p>
+
+<pre>
+  @font-face { font-family: "Acid2Diamond";
+               src: url(data:application/font-woff;base64,... }
+  .nose { font-family: Acid2Diamond; color: black; }
+  .nose:hover { color: blue; }
+
+  &lt;mpadded lspace="84px"&gt;
+    &lt;mpadded lspace="-.5width"&gt;
+      &lt;mtext mathsize="24px" class="nose"&gt;◆&lt;/mtext&gt;
+    &lt;/mpadded&gt;
+  &lt;/mpadded&gt;
+</pre>
+
+<div style="width: 168px; margin-left: auto; margin-right: auto;">
+  <svg width="168px" height="168px" class="framed"
+       xmlns:xlink="http://www.w3.org/1999/xlink">>
+    <g transform="translate(72,84)">
+      <text class="nose">◆</text>
+    </g>
+  </svg>
+</div>
+
+
+<h2>Test 7: Negative Space</h2>
+
+<p>By default the different pieces of the smiley face described above would be
+placed from left to right. However, <code>&lt;mspace&gt;</code> with negative
+<code>width</code> are inserted between these pieces in order to force them
+to overlap inside the <code>&lt;mover&gt;</code> base. Hence you should get
+something like</p>
+
+<div style="text-align: center">
+  <img src="reference.png" width="168" height="168" alt="Smiley Face"/>
+</div>
 
  </body>
 </html>
