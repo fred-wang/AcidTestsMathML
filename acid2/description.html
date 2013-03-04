@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+ <head>
+  <title>The Acid2 test (description)</title>
+  <meta charset="utf-8"/>
+ </head>
+ <body>
+  <h1>The Acid2 test (description)</h1>
+
+<p><strong>Perfect pixel matching is not required to pass the test. See below.</strong></p>
+
+<p><strong>The MathML code is valid against the MathML RelaxNG schema if HTML <code>&lt;span&gt;</code>'s
+  are allowed in <code>&lt;mtext&gt;</code> elements (e.g. the one used in Validator.nu).</strong></p>
+
+<p>As said in the introduction, perfect pixel matching is hard to achieve with
+MathML elements. As a consequence, the MathML Acid2 only relies on a few
+MathML elements whose rendering is well-defined. The requirements to pass the
+MathML Acid2 test are:</p>
+
+<ul>
+<li>All the smiley face (except maybe the nose) should match the reference
+rendering.</li>
+<li>The eyes should be a link pointing to the reference rendering.</li>
+<li>The nose should have the rendering and <code>hover</code> effect described in test ??</li>
+<li>The "Hello World!" should be placed as described in test 2 and have the
+aspect described in test 3.</li>
+</ul>
+
+<p>This makes the test a bit less objective but still provides something that
+looks like the good old Acid2 test.</p>
+
+<h2>Test 1: Invisible Elements</h2>
+
+<p>The test verifies that some invisible MathML elements do not appear. These
+elements are <code>&lt;mtext&gt;</code> or <code>&lt;semantics&gt;</code> with HTML content inside as described in
+chapter 6. We test the following elements:</p>
+
+<ul>
+<li><p>An empty <code>&lt;mrow&gt;</code> should not be visible and should have size 0.</p></li>
+<li><p>The <code>&lt;mphantom&gt;</code> should hide its content. The <code>&lt;mpadded&gt;</code> element is used to
+force the size to 0. The combination is equivalent to an empty <code>&lt;mrow&gt;</code>.</p></li>
+<li><p>The <code>&lt;maction&gt;</code> element is used with a <code>selection</code> attribute and unknown
+<code>actiontype</code>. Only the selected child should appear, not the other children.</p></li>
+<li><p>The <code>&lt;semantics&gt;</code> element is used to annotate a presentation MathML element.
+Only the annotated element should appear, not the annotations.</p></li>
+</ul>
+
+<p>Note that even a browser without MathML support might be able to recognize the
+HTML content and incorrectly make it visible. Depending on the browser MathML
+support and its ability to hide the MathML elements above, various rectangle
+of different sizes and colors as well as ERROR messages might show up. This
+may recall you the failure of the classical Acid2 test in older browser
+versions.</p>
+
+<h2>Test 2: mover</h2>
+
+<p>The main element is a <code>&lt;mover accent="true"&gt;</code> with two children:</p>
+
+<ul>
+<li>An <code>&lt;mpadded width="168px" height="84px" depth="84px"&gt;</code> where the the smiley
+face will be drawn.</li>
+<li>An <code>&lt;mpadded depth="+36px"&gt;</code> that contains the "Hello World!" message.</li>
+</ul>
+
+<p>The first element is a square with side of size 168px. The baseline of its
+content is the horizontal symmetric axis. The "Hello World!" message should be
+placed over the square and aligned center. <strong>The MathML recommendation does not
+specify the vertical gap between the two children</strong> but the <code>accent="true"</code>
+helps making the overscript closer to the base. The <code>depth="+36px"</code> increases
+the bottom padding of the "Hello World!" and guarantee that the gap is at
+least 36px (value from the classical Acid2). Hence the overall layout should
+look like something like</p>
+
+<div style="width: 168px; margin-left: auto; margin-right: auto;">
+  <svg width="168px" height="228px">
+    <rect x="10px" y="0px" width="148px" height="24px" fill="navy"/>
+    <rect x="0px" y="60px" width="168px" height="168px" fill="yellow"/>
+  </svg>
+</div>
+
+<h2>Test 3: Hello World!</h2>
+
+<p>This message is contained in a <code>&lt;mtext mathcolor="navy" mathvariant="sans-serif"
+mathsize="24px"&gt;</code> element and so should at least have the following properties
+(values from the classical Acid2).</p>
+
+<ul>
+<li>font-size should be 24px. In particular, it is not influenced by the
+scriptlevel incrementation in the <code>&lt;mover&gt;</code> overscript.</li>
+<li>characters should be sans-serif.</li>
+<li>color should be <code>navy</code> or equivalently <code>#000080</code>.</li>
+</ul>
+
+<div style="text-align: center">
+  <span style="font: 24px sans-serif; color: #000080;">Hello World!</span>
+</div>
+
+<h2>Test 4:</h2>
+
+<p>...</p>
+
+ </body>
+</html>
