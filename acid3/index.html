@@ -112,11 +112,6 @@
 
 <!-- main test body -->
 <script type="text/javascript">
-  var notifications = {};
-  function notify(file) {
-    // used in cross-file tests
-    notifications[file] = 1;
-  }
   function fail(message) {
     throw { message: message };
   }
@@ -124,7 +119,6 @@
     if (!condition)
       fail(message);
   }
-  var kungFuDeathGrip = null; // used to hold things from test to test
 
   var epsilon = .0001; // allow a small error
 
@@ -168,6 +162,12 @@
     // bucket 1: basic presentation MathML elements
     function () {
     // test 1: simple script elements (size)
+
+    if (document.getElementById("test1_Acid3MathML").getBoundingClientRect().
+        width != 64 * (1024*6 + 768*6 + 512*4 + 256*10) / 1024) {
+       return "retry";
+    }
+
     var mrowRect =
       document.getElementById("test1_mrow").getBoundingClientRect();
     var msubRect =
@@ -2410,6 +2410,9 @@
       </p>
 
       <!-- bucket 1: basic presentation MathML elements -->
+
+      <!-- test to check whether Web fonts are available -->
+      <div><span id="test1_Acid3MathML" style="font-size: 64px;"><span>NORMAL</span><span style="font-style: italic;">ITALIC</span><span style="font-weight: bold;">BOLD</span><span style="font-weight: bold; font-style: italic;">BOLDITALIC</span><span></div>
 
       <!-- test 1, 2: simple script elements -->
       <p>
