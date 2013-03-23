@@ -25,25 +25,32 @@
 <p><strong>The MathML code is valid against the MathML RelaxNG schema if HTML <code>&lt;span&gt;</code>'s
   are allowed in <code>&lt;mtext&gt;</code> elements (e.g. the one used in Validator.nu).</strong></p>
 
-<p>As said in the introduction, perfect pixel matching is hard to achieve with
+<h2>Introduction</h2>
+
+<p>Perfect pixel matching is hard to achieve with
 MathML elements. As a consequence, the MathML Acid2 only relies on a few
 MathML elements whose rendering is well-defined. The requirements to pass the
 MathML Acid2 test are:</p>
 
+<div style="border: 1px dotted black; padding: 1em; margin: 1em;">
+In order to pass the test,
 <ul>
-<li>All the smiley face (except maybe the nose) should match the reference
-rendering.</li>
+<li>All the smiley face (except maybe the nose) should match the
+<a href="reference.html">this reference rendering</a>.</li>
 <li>The eyes should be a link pointing to the reference rendering.</li>
 <li>The nose should have the rendering and <code>hover</code> effect described
-in test 6.</li>
-<li>The "Hello World!" should be placed as described in test 2 and have the
-aspect described in test 3.</li>
+in <a href="#test6">test 6</a>.</li>
+<li>The "Hello World!" should be placed as described in
+<a href="#test2">test 2</a> and have the
+aspect described in <a href="#test3">test 3</a>.</li>
 </ul>
+</div>
 
 <p>This makes the test a bit less objective but still provides something that
-looks like the good old Acid2 test.</p>
+looks like the good old <a href="http://acid2.acidtests.org/">Acid2 test</a>.
+</p>
 
-<h2>Test 1: Invisible Elements</h2>
+<h2 id="test1">Test 1: Invisible Elements</h2>
 
 <p>The test verifies that some invisible MathML elements do not appear. These
 elements are <code>&lt;mtext&gt;</code> or <code>&lt;semantics&gt;</code> with HTML content inside as described in
@@ -66,7 +73,7 @@ of different sizes and colors as well as ERROR messages might show up. This
 may recall you the failure of the classical Acid2 test in older browser
 versions.</p>
 
-<h2>Test 2: mover</h2>
+<h2 id="test2">Test 2: mover</h2>
 
 <p>The main element is a <code>&lt;mover accent="true"&gt;</code> with two children:</p>
 
@@ -91,7 +98,7 @@ look like something like</p>
   </svg>
 </div>
 
-<h2>Test 3: Hello World!</h2>
+<h2 id="test3">Test 3: Hello World!</h2>
 
 <p>This message is contained in a <code>&lt;mtext mathcolor="navy" mathvariant="sans-serif"
 mathsize="24px"&gt;</code> element and so should at least have the following properties
@@ -108,7 +115,7 @@ scriptlevel incrementation in the <code>&lt;mover&gt;</code> overscript.</li>
   <span style="font: 24px sans-serif; color: #000080;">Hello World!</span>
 </div>
 
-<h2>Test 4: mpadded, mspace, mathbackground</h2>
+<h2 id="test4">Test 4: mpadded, mspace, mathbackground</h2>
 
 <p>Various <code>&lt;mspace&gt;</code> element with <code>mathbackground</code>
 colors are used to draw rectangle of the smiley face. The dimensions are
@@ -355,7 +362,7 @@ rectangles. The expected rendering are given below.</p>
   </svg>
 </div>
 
-<h2>Test 5: Eyes</h2>
+<h2 id="test5">Test 5: Eyes</h2>
 
 <p>The eyes are drawn in an HTML <code>&lt;img&gt;</code> element. They are
 drawn with a PNG image encoded in base64. The HTML code is contained in a
@@ -392,7 +399,7 @@ as shown below.</p>
   </svg>
 </div>
 
-<h2>Test 6: Nose</h2>
+<h2 id="test6">Test 6: Nose</h2>
 
 <p>The nose is drawn using U+25C6 BLACK DIAMOND character in an mtext.
 <code>class</code> and <code>mathsize</code> attributes are used to apply a
@@ -434,7 +441,7 @@ inside the face square.</p>
 </div>
 
 
-<h2>Test 7: Negative Space</h2>
+<h2 id="test7">Test 7: Negative Space</h2>
 
 <p>By default the different pieces of the smiley face described above would be
 placed from left to right. However, <code>&lt;mspace&gt;</code> with negative
