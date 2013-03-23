@@ -163,6 +163,7 @@
     function () {
     // test 1: simple script elements (size)
 
+    // Wait for the Acid3MathML Web fonts. Preparation for later tests.
     if (document.getElementById("test1_Acid3MathML").getBoundingClientRect().
         width != 64 * (1024*6 + 768*6 + 512*4 + 256*10) / 1024) {
        return "retry";
@@ -2250,6 +2251,13 @@
 
     function () {
     // test 98: mixing with HTML and SVG
+
+    // Wait for rect.png
+    var imgBox = document.getElementById("test98_img").
+                 getBoundingClientRect();
+    if (imgBox.width != 20 || imgBox.height != 20) {
+       return "retry";
+    }
 
     assert(
       document.getElementById('test98_A').getBoundingClientRect().bottom <=
@@ -4799,6 +4807,8 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
       <div>
         <!-- test 98: mixing with HTML and SVG -->
+	<img id="test98_img" src="rect.png" alt="" style="border: 0;"/>
+
         <svg>
           <g transform="translate(+50,+50) rotate(180) translate(-50,-50) ">
             <switch>
@@ -4820,8 +4830,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                     </mtext>
                     <semantics>
                       <mtext>
-                        <img src="rect.png" alt=""
-                             width="20" height="20" style="border: 0;"/>
+                        <img src="rect.png" alt="" style="border: 0;"/>
                       </mtext>
                       <annotation encoding="plain/text">D</annotation>
                     </semantics>
