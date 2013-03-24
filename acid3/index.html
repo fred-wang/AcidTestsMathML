@@ -299,17 +299,17 @@
     
     var mfracNum = document.getElementById("test3_mfrac").firstElementChild.
       getBoundingClientRect();
-    var mfracDenum = document.getElementById("test3_mfrac").lastElementChild.
+    var mfracDenom = document.getElementById("test3_mfrac").lastElementChild.
       getBoundingClientRect();
 
-    assert(mfracNum.left == mfracDenum.left &&
-           mfracNum.right == mfracDenum.right,
-           "Numerator and denumerator should be vertical aligned");
+    assert(mfracNum.left == mfracDenom.left &&
+           mfracNum.right == mfracDenom.right,
+           "Numerator and denominator should be vertical aligned");
 
-    assert(mfracNum.bottom <= mfracDenum.top+3,
-           "Numerator should be above denumerator, "+
+    assert(mfracNum.bottom+3 <= mfracDenom.top,
+           "Numerator should be above denominator, "+
            "with enough space to draw the fraction bar");
-    
+
     return 1;
     },
     function () {
@@ -1094,7 +1094,7 @@
     assert(
       document.getElementById("test35_denum").getBoundingClientRect().width ==
       100/2,
-      "scriptlevel should be increased by 1 within denumerator")
+      "scriptlevel should be increased by 1 within denominator")
 
     assert(
       document.getElementById("test35_num1").getBoundingClientRect().right <=
@@ -1104,7 +1104,7 @@
     assert(
       document.getElementById("test35_denum1").getBoundingClientRect().right <=
       document.getElementById("test35_denum2").getBoundingClientRect().left,
-      "displaystyle should be reset within denumerator")
+      "displaystyle should be reset within denominator")
 
     return 3;
     },

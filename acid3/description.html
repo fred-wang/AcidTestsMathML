@@ -109,11 +109,151 @@ breaks (bottom of X is at most as low as top of Y):
 
 </ul>
 
-
-
 <h2>Bucket 1: Basic Presentation MathML Elements</h2>
 
+<h3>Test 1 and 2: simple script elements</h3>
+
+<p>These are tests for <code>&lt;mrow&gt;</code>, <code>&lt;msub&gt;</code>,
+<code>&lt;msup&gt;</code>, <code>&lt;msubsup&gt;</code>,
+<code>&lt;mover&gt;</code>, <code>&lt;munder&gt;</code>
+and <code>&lt;munderover&gt;</code> (left to right):</p>
+
+      <p  class="framed">
+        <math>
+          <mrow>
+            <mtext>BASE</mtext>
+          </mrow>
+        <math>
+        </math>
+          <msub>
+            <mtext>BASE</mtext><mtext>X</mtext>
+          </msub>
+        </math>
+        <math>
+          <msup>
+            <mtext>BASE</mtext><mtext>X</mtext>
+          </msup>
+        </math>
+        <math>
+          <msubsup>
+            <mtext>BASE</mtext><mtext>X</mtext><mtext>X</mtext>
+          </msubsup>
+        </math>
+        <math>
+          <mover>
+            <mtext>BASE</mtext><mtext>X</mtext>
+          </mover>
+        </math>
+        <math>
+          <munder>
+            <mtext>BASE</mtext><mtext>X</mtext>
+          </munder>
+        </math>
+        <math>
+          <munderover>
+            <mtext>BASE</mtext><mtext>X</mtext><mtext>X</mtext>
+          </munderover>
+        </math>
+
+<p>Test 1 verifies some sizes:</p>
+
+<ul>
+<li>The height of the <code>&lt;mrow&gt;</code>
+  is less than the heights of the elements that have scripts
+  attached to the BASE.</li>
+
+<li>When the scripts are positioned on the right of the
+  base (<code>&lt;msub&gt;</code>,
+  <code>&lt;msup&gt;</code>, <code>&lt;msubsup&gt;</code>),
+  the width of these elements should be larger than the one of the
+  <code>&lt;mrow&gt;</code>.</li>
+<li>
+ When the scripts are positioned above or
+  below the base (<code>&lt;mover&gt;</code>, <code>&lt;munder&gt;</code>
+  and <code>&lt;munderover&gt;</code>) the width of these elements should
+  be the same as the width of the <code>&lt;mrow&gt;</code>.
+</li>
+</ul>
+
+<p>Test 2: verifies some positions:</p>
+
+<ul>
+<li>The subscripts of <code>&lt;msub&gt;</code> and
+<code>&lt;msubsup&gt;</code> should be lower than the base. This is verified
+by testing that the top (respectively bottom) of the subscripts are lower
+than the top (respectively bottom) of the base. Similarly, the test
+checks that the supscripts of 
+<code>&lt;msup&gt;</code> and <code>&lt;msubsup&gt;</code> are higher than
+the base.
+</li>
+<li>The sub/super scripts of
+  <code>&lt;msub&gt;</code>,
+  <code>&lt;msup&gt;</code>, <code>&lt;msubsup&gt;</code>
+  should be placed on the right of the base. The test verifies that
+  the right coordinate of the base is at most the left coordinate of the
+  scripts.  
+</li>
+<li>The under/over scripts of
+<code>&lt;mover&gt;</code>, <code>&lt;munder&gt;</code>
+  and <code>&lt;munderover&gt;</code>
+should be placed between the left and
+right coordinates of the base. The test verifies that the
+left coordinate of base is less than the left coordinate of the scripts and
+  similarly for the right coordinates.
+</li>
+<li>The under/over scripts of
+<code>&lt;mover&gt;</code>, <code>&lt;munder&gt;</code>
+  and <code>&lt;munderover&gt;</code>
+should be placed above/below the base. The test verifies that
+the top of the base is at most as low as the bottom of the overscripts.
+Similarly for the underscripts.</li>
+</ul>
+
+<h3>Test 3: mfrac</h3>
+
+<p>A simple test for the <code>&lt;mfrac&gt;</code> element, where
+  numerator and denominator have the same size.</p>
+
+      <p class="framed">
+        <math>
+          <mfrac>
+            <mtext>X</mtext><mtext>Y</mtext>
+          </mfrac>
+        </math>
+      </p>
+
+<ul>
+<li>Numerator and denominator should be vertical aligned: 
+the test verifies that the left coordinate of the numerator
+(respectively right coordinate) matches the left coordinate of the
+denominator.</li>
+<li>Numerator should be above denominator
+with enough space to draw the fraction bar. The test verifies that
+the bottom of the numerator plus 3px is at most as low as the top of the
+denumerator. We assume that 3px is the minimum to draw a fraction bar
+that does not touch the numerator and denominator.
+</li>
+</ul>
+
+<h3>Test 4: msqrt</h3>
+
 <p>...</p>
+
+      <p class="framed">
+        <math>
+          <msqrt><mtext>X</mtext></msqrt>
+        </math>
+      </p>
+
+<h3>Test 5: mroot</h3>
+
+<p>...</p>
+
+      <p class="framed">
+        <math>
+          <mroot><mtext>Y</mtext><mtext>X</mtext></mroot>
+        </math>
+      </p>
 
 <h2>Bucket 2: More Advanced Presentation Attributes</h2>
 
