@@ -237,7 +237,26 @@ that does not touch the numerator and denominator.
 
 <h3>Test 4: msqrt</h3>
 
-<p>...</p>
+<p>This test verifies some properties of the <code>&lt;msqrt&gt;</code>
+element:</p>
+
+<ul>
+<li><code>&lt;msqrt&gt;</code> should be at least as large as its child
+with enough space to draw the radical. As for test 3, we assume that we need
+at least 3px to draw the top bar and the radical symbols.
+So the height and width of the <code>&lt;msqrt&gt;</code>
+should be at least 3px more than those of the child.
+</li>
+<li>The square root should be placed on the left. For that purpose we
+  verify that the space on the left (the left coordinate of the
+  child minus the left coordinate of the <code>&lt;msqrt&gt;</code>) is
+  larger than the space on the right (the right coordinate of the
+  <code>&lt;msqrt&gt;</code> minus the right coordinate of the child)
+</li>
+<li>The child should be inside the square root. The test verifies that
+the bottom of the child is at most at low as the bottom of the square root
+and similarly for the other coordinates.</li>
+</ul>
 
       <p class="framed">
         <math>
@@ -247,13 +266,48 @@ that does not touch the numerator and denominator.
 
 <h3>Test 5: mroot</h3>
 
-<p>...</p>
+<p>This test verifies the following properties of the <code>&lt;mroot&gt;</code>
+element:</p>
+
+<ul>
+<li>The index should be higher than the base. The test checks that the
+top (respectively bottom) of the index is higher than the top
+(respectively bottom) of the base.
+</li>
+<li>
+The index should be on the left of the base, with enough space to draw the
+radical. We check that the right coordinate of the index plus 3px is at most
+the left coordinate of the base.</li>
+
+</ul>
 
       <p class="framed">
         <math>
           <mroot><mtext>Y</mtext><mtext>X</mtext></mroot>
         </math>
       </p>
+
+<h3>test 6: menclose (longdiv, box, roundedbox, circle, madruwb)</h3>
+
+<h3>test 7: menclose (equivalent constructions)</h3>
+
+<h3>test 8: semantics (do not display annotations)</h3>
+
+<h3>test 9: maction</h3>
+
+<h3>test 10: mrow, mstyle, mphantom</h3>
+
+<h3>test 11: mtable (rows)</h3>
+
+<h3>test 12: mtable (cells)</h3>
+
+<h3>test 13: mmultiscripts</h3>
+
+<h3>test 14: mspace</h3>
+
+<h3>test 15: mpadded</h3>
+
+<h3>test 16: ms, mi, mn</h3>
 
 <h2>Bucket 2: More Advanced Presentation Attributes</h2>
 
