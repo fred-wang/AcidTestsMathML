@@ -99,7 +99,7 @@
     /* use the Acid3MathML font to get accurate sizes and to test mathvariant */
     /* TODO: add an Open Type Math table to ensure operators can stretch? */
     font-family: Acid3MathML;
-    font-size: 20px;
+    font-size: 64px;
 
     /* large enough to ignore automatic linebreaking */
     width: 10000px;
@@ -108,8 +108,8 @@
   }
 
   /* used in test 99 */
-  math.test99 :first-child { font-size: 64px; }
-  #test99 > mn { font-size: 32px; }
+  math.test99 :first-child { font-size: 2em; }
+  #test99 > mn { font-size: 4em; }
 </style>
 
 <!-- main test body -->
@@ -122,12 +122,20 @@
       fail(message);
   }
 
-  var epsilon = .0001; // allow a small error
-  function almostEqual(x, y) {
-    return (Math.abs(x - y) < epsilon);
+  var baseSize = 1; // default font size (initialized in test 0)
+  var epsilon = .05; // allow a small relative error
+
+  function almostEqualAbs(x, y) {
+    return (Math.abs(x - y) < epsilon * baseSize);
   }
-  function almostLessThan(x, y) {
-    return (x < y + epsilon);
+  function almostEqualRel(x, y) {
+    return (Math.abs(x - y) / (Math.abs(x) + Math.abs(y)) < epsilon);
+  }
+  function almostLessThanAbs(x, y) {
+    return ((x - y) < epsilon * baseSize);
+  }
+  function almostLessThanRel(x, y) {
+    return ((x - y) / (Math.abs(x) + Math.abs(y)) < epsilon);
   }
 
   var tests = [
@@ -143,7 +151,17 @@
 
       // removing the "JS required" message
       var last = document.getElementById('remove-last-child-test');
-      last.parentNode.removeChild(last);
+      if (last) {
+        last.parentNode.removeChild(last);
+      }
+
+      // Wait for the Acid3MathML Web fonts. Preparation for later tests.
+      if (!almostEqualRel(document.getElementById("test1_Acid3MathMLA").getBoundingClientRect().width*(512+256),
+                       document.getElementById("test1_Acid3MathMLB").getBoundingClientRect().width*(1024+768))) {
+        return "retry";
+      }
+
+      baseSize = document.getElementById("test1_Acid3MathMLA").getBoundingClientRect().height;
 
       // verify that the <math> element has the right namespace
       assert(document.getElementById("test0").namespaceURI ==
@@ -151,7 +169,7 @@
              "The <math> element should have the MathML namespace");
       
       // verify inline <math>
-      assert(almostEqual(document.
+      assert(almostEqualAbs(document.
                          getElementById("test0_inline").firstElementChild.
                          getBoundingClientRect().bottom,
                          document.
@@ -160,7 +178,7 @@
                          "math@display = 'inline' should not break"));
 
       // verify block <math>
-      assert(almostLessThan(
+      assert(almostLessThanAbs(
              document.getElementById("test0_block").firstElementChild.
              getBoundingClientRect().bottom,
              document.getElementById("test0_block").lastElementChild.
@@ -173,13 +191,6 @@
     // bucket 1: basic presentation MathML elements
     function () {
     // test 1: simple script elements (size)
-
-    // Wait for the Acid3MathML Web fonts. Preparation for later tests.
-    if (!almostEqual(
-        document.getElementById("test1_Acid3MathML").getBoundingClientRect().
-        width, 16 * (1024*6 + 768*6 + 512*4 + 256*10) / 1024)) {
-       return "retry";
-    }
 
     var mrowRect =
       document.getElementById("test1_mrow").getBoundingClientRect();
@@ -221,9 +232,9 @@
     assert(moverRect.height < munderoverRect.height,
            "moverRect.height should be less than munderoverRect.height");
 
-    assert(munderRect.width == mrowRect.width &&
-         moverRect.width == mrowRect.width &&
-         munderoverRect.width == mrowRect.width,
+    assert(almostEqualRel(munderRect.width, mrowRect.width) &&
+           almostEqualRel(moverRect.width, mrowRect.width) &&
+           almostEqualRel(munderoverRect.width, mrowRect.width),
         "the width of munderover, munder and mover should be the same as mrow");
 
     return 1;
@@ -268,22 +279,26 @@
       document.getElementById("test1_munderover").
       lastElementChild.getBoundingClientRect();
 
-    assert(msubBaseRect.top < msubScriptRect.top && 
-           msubBaseRect.bottom < msubScriptRect.bottom &&
-           msubsupBaseRect.top < msubsupSubScriptRect.top && 
-           msubsupBaseRect.bottom < msubsupSubScriptRect.bottom,
+    assert(almostLessThanAbs(msubBaseRect.top, msubScriptRect.top) && 
+           almostLessThanAbs(msubBaseRect.bottom, msubScriptRect.bottom) &&
+           almostLessThanAbs(msubsupBaseRect.top, msubsupSubScriptRect.top) && 
+           almostLessThanAbs(msubsupBaseRect.bottom,
+                             msubsupSubScriptRect.bottom),
            "the subscripts should be lower than the base"); 
 
-    assert(msupBaseRect.top > msupScriptRect.top && 
-           msupBaseRect.bottom > msupScriptRect.bottom &&
-           msubsupBaseRect.top > msubsupSupScriptRect.top && 
-           msubsupBaseRect.bottom > msubsupSupScriptRect.bottom,
+    assert(almostLessThanAbs(msupScriptRect.top, msupBaseRect.top) && 
+           almostLessThanAbs(msupScriptRect.bottom, msupBaseRect.bottom) &&
+           almostLessThanAbs(msubsupSupScriptRect.top, msubsupBaseRect.top) && 
+           almostLessThanAbs(msubsupSupScriptRect.bottom,
+                             msubsupBaseRect.bottom),
            "the supscripts should be higher than the base"); 
 
-    assert(msubBaseRect.right <= msubScriptRect.left &&
-           msupBaseRect.right <= msupScriptRect.left && 
-           msubsupBaseRect.right <= msubsupSubScriptRect.left &&
-           msubsupBaseRect.right <= msubsupSupScriptRect.left,
+    assert(almostLessThanAbs(msubBaseRect.right, msubScriptRect.left) &&
+           almostLessThanAbs(msupBaseRect.right, msupScriptRect.left) && 
+           almostLessThanAbs(msubsupBaseRect.right,
+                             msubsupSubScriptRect.left) &&
+           almostLessThanAbs(msubsupBaseRect.right,
+                             msubsupSupScriptRect.left),
            "the sub/super scripts should be placed on the right of the base"); 
 
     assert(munderBaseRect.left < munderScriptRect.left &&
@@ -297,10 +312,12 @@
            "the under/over scripts should be placed between the left and " +
            "right coordinates of the base.");
  
-    assert(munderBaseRect.top <= munderScriptRect.bottom &&
-           moverBaseRect.top >= moverScriptRect.bottom &&
-           munderoverBaseRect.top <= munderoverUnderScriptRect.bottom &&
-           munderoverBaseRect.top >= munderoverOverScriptRect.bottom,
+    assert(almostLessThanAbs(munderBaseRect.bottom, munderScriptRect.top) &&
+           almostLessThanAbs(moverScriptRect.bottom, moverBaseRect.top) &&
+           almostLessThanAbs(munderoverBaseRect.bottom,
+                             munderoverUnderScriptRect.top) &&
+           almostLessThanAbs(munderoverOverScriptRect.bottom,
+                             munderoverBaseRect.top),
            "the under/over scripts should be placed above/below the base");
 
     return 1;
@@ -419,8 +436,8 @@
       getBoundingClientRect();
     var semanticsAnnotatedChild = document.getElementById("test8_semantics").
       firstElementChild.getBoundingClientRect();
-    assert(semantics.width == semanticsAnnotatedChild.width &&
-           semantics.height == semanticsAnnotatedChild.height,
+    assert(almostEqualRel(semantics.width, semanticsAnnotatedChild.width) &&
+           almostEqualRel(semantics.height, semanticsAnnotatedChild.height),
            "semantics size should be the one of the annotated child");
     return 1;
     },
@@ -431,22 +448,22 @@
       getBoundingClientRect();
     var mactionVisibleChild = document.getElementById("test9_maction1").
       firstElementChild.getBoundingClientRect();
-    assert(maction.width == mactionVisibleChild.width &&
-           maction.height == mactionVisibleChild.height,
+    assert(almostEqualRel(maction.width, mactionVisibleChild.width) &&
+           almostEqualRel(maction.height, mactionVisibleChild.height),
            "maction should have first child visible (tooltip)");
 
     maction = document.getElementById("test9_maction2").getBoundingClientRect()
     mactionVisibleChild = document.getElementById("test9_maction2").
       firstElementChild.getBoundingClientRect()
-    assert(maction.width == mactionVisibleChild.width &&
-           maction.height == mactionVisibleChild.height,
+    assert(almostEqualRel(maction.width, mactionVisibleChild.width) &&
+           almostEqualRel(maction.height, mactionVisibleChild.height),
            "maction should have first child visible (statusline)");
 
     maction = document.getElementById("test9_maction3").getBoundingClientRect()
     mactionVisibleChild = document.getElementById("test9_maction3").
       lastElementChild.getBoundingClientRect()
-    assert(maction.width == mactionVisibleChild.width &&
-           maction.height == mactionVisibleChild.height,
+    assert(almostEqualRel(maction.width, mactionVisibleChild.width) &&
+           almostEqualRel(maction.height, mactionVisibleChild.height),
            "maction should have second child visible (toggle)");
     return 1;
     },
@@ -459,15 +476,15 @@
         getBoundingClientRect()
       var childRect = document.getElementById("test10_" + elements[i]).
         firstElementChild.getBoundingClientRect()
-      assert(elementRect.width == childRect.width &&
-             elementRect.height == childRect.height,
+      assert(almostEqualRel(elementRect.width, childRect.width) &&
+             almostEqualRel(elementRect.height, childRect.height),
             "element should have the same size as child (" + elements[i] + ")");
     }
 
-    assert(document.getElementById("test10_error").
-           getBoundingClientRect().width !=
-           document.getElementById("test10_noerror").
-           getBoundingClientRect().width, 
+    assert(!almostEqualRel(document.getElementById("test10_error").
+                           getBoundingClientRect().width,
+                           document.getElementById("test10_noerror").
+                           getBoundingClientRect().width), 
            "msub with three children should raise an error message ; but "+
            "not when the two first are put in an mrow")
 
@@ -483,16 +500,16 @@
     var rowRect3 = document.getElementById("test11_mtable").lastElementChild.
       getBoundingClientRect();
 
-    assert(almostEqual(rowRect1.height, rowRect2.height) &&
-           almostEqual(rowRect2.height, rowRect3.height),
+    assert(almostEqualRel(rowRect1.height, rowRect2.height) &&
+           almostEqualRel(rowRect2.height, rowRect3.height),
            "mtable rows should have same height");
 
     assert(rowRect1.left == rowRect2.left && rowRect2.left == rowRect3.left &&
            rowRect1.right == rowRect2.right && rowRect2.right == rowRect3.right,
            "mtable rows should be aligned");
 
-    assert(almostLessThan(rowRect1.bottom, rowRect2.top) &&
-           almostLessThan(rowRect2.bottom, rowRect3.top),
+    assert(almostLessThanAbs(rowRect1.bottom, rowRect2.top) &&
+           almostLessThanAbs(rowRect2.bottom, rowRect3.top),
            "row[i] should be above row[i+1]");
     return 1;
     },
@@ -527,12 +544,12 @@
              "cellRects of row "+(i+1)+" should be aligned");
     }
 
-    assert(almostLessThan(cellRect[0][0].right, cellRect[0][1].left) &&
-           almostLessThan(cellRect[0][1].right, cellRect[0][2].left),
+    assert(almostLessThanAbs(cellRect[0][0].right, cellRect[0][1].left) &&
+           almostLessThanAbs(cellRect[0][1].right, cellRect[0][2].left),
            "column[j] should be on the left of column[j+1]");
 
-    assert(almostLessThan(cellRect[0][0].bottom, cellRect[1][0].top) &&
-           almostLessThan(cellRect[1][0].bottom, cellRect[2][0].top),
+    assert(almostLessThanAbs(cellRect[0][0].bottom, cellRect[1][0].top) &&
+           almostLessThanAbs(cellRect[1][0].bottom, cellRect[2][0].top),
            "row[i] should be above row[i+1]");
 
     return 1;
@@ -561,16 +578,16 @@
            prescripts[3].width * prescripts[3].height == 0,
            "<none/> scripts should be empty")
 
-    assert(postscripts[0].width == postscripts[1].width &&
-           postscripts[1].width == postscripts[3].width &&
-           postscripts[0].height == postscripts[1].height &&
-           postscripts[1].height == postscripts[3].height &&            
-           prescripts[0].width == prescripts[1].width &&
-           prescripts[1].width == prescripts[2].width &&
-           prescripts[0].height == prescripts[1].height &&
-           prescripts[1].height == prescripts[2].height &&
-           postscripts[0].width == prescripts[0].width &&
-           postscripts[0].height == prescripts[0].height,
+    assert(almostEqualRel(postscripts[0].width, postscripts[1].width) &&
+           almostEqualRel(postscripts[1].width, postscripts[3].width) &&
+           almostEqualRel(postscripts[0].height, postscripts[1].height) &&
+           almostEqualRel(postscripts[1].height, postscripts[3].height) &&   
+           almostEqualRel(prescripts[0].width, prescripts[1].width) &&
+           almostEqualRel(prescripts[1].width, prescripts[2].width) &&
+           almostEqualRel(prescripts[0].height, prescripts[1].height) &&
+           almostEqualRel(prescripts[1].height, prescripts[2].height) &&
+           almostEqualRel(postscripts[0].width, prescripts[0].width) &&
+           almostEqualRel(postscripts[0].height, prescripts[0].height),
            "nonempty scripts should have the same size")
 
     assert(prescripts[1].right <= base.left &&
@@ -581,13 +598,13 @@
            prescripts[0].right <= prescripts[2].left,
            "incorrect horizontal positions of nonempty scripts")
 
-    assert(prescripts[0].left == prescripts[1].left &&
-           postscripts[0].left == postscripts[1].left,
+    assert(almostEqualAbs(prescripts[0].left, prescripts[1].left) &&
+           almostEqualAbs(postscripts[0].left, postscripts[1].left),
            "incorrect vertical alignment of nonempty scripts")
 
-    assert(prescripts[1].top == postscripts[1].top &&
-           postscripts[1].top == postscripts[3].top &&
-           prescripts[0].top == postscripts[0].top &&
+    assert(almostEqualAbs(prescripts[1].top, postscripts[1].top) &&
+           almostEqualAbs(postscripts[1].top, postscripts[3].top) &&
+           almostEqualAbs(prescripts[0].top, postscripts[0].top),
            "incorrect horizontal alignment of nonempty scripts")
 
     assert(prescripts[0].bottom >= prescripts[1].top,
@@ -607,15 +624,15 @@
     var space1 = document.getElementById("test14").firstElementChild.
       getBoundingClientRect();
     var space2 = document.getElementById("test14").lastElementChild.
-      getBoundingClientRect();
+				  getBoundingClientRect();
 
-    assert(space1.width == 50 &&
-           space1.height == 30+20 &&
-           space2.width == 150 &&
-           space2.height == 40+60,
+    assert(almostEqualRel(space1.width, 5*baseSize) &&
+           almostEqualRel(space1.height, (3+2)*baseSize) &&
+           almostEqualRel(space2.width, 15*baseSize) &&
+           almostEqualRel(space2.height, (4+6)*baseSize),
            "bad sizes of mspace elements");
 
-    assert(space2.bottom - space1.bottom == 60-20,
+    assert(almostEqualRel(space2.bottom - space1.bottom, (6-2)*baseSize),
            "bad alignment of mspace elements");
     
     return 1;
@@ -633,21 +650,21 @@
     var mpadded4 = document.getElementById("test15_mpadded").firstElementChild.
       getBoundingClientRect();
 
-    assert(mpadded1.width == 50 &&
-           mpadded1.height == 30+20 &&
-           mpadded2.width == 150 &&
-           mpadded2.height == 40+60 &&
-           mpadded3.width == 100 &&
-           mpadded3.height == 200+100 &&
-           mpadded4.width == 30 &&
-           mpadded4.height == 15+10,
+    assert(almostEqualRel(mpadded1.width, 5*baseSize) &&
+           almostEqualRel(mpadded1.height, (3+2)*baseSize) &&
+           almostEqualRel(mpadded2.width, 15*baseSize) &&
+           almostEqualRel(mpadded2.height, (4+6)*baseSize) &&
+           almostEqualRel(mpadded3.width, 10*baseSize) &&
+           almostEqualRel(mpadded3.height, (20+10)*baseSize) &&
+           almostEqualRel(mpadded4.width, 3*baseSize) &&
+           almostEqualRel(mpadded4.height, (1.5+1)*baseSize),
            "bad sizes of mpadded elements");
 
-    assert(almostEqual(mpadded2.bottom - mpadded1.bottom, 60-20),
+    assert(almostEqualRel(mpadded2.bottom - mpadded1.bottom, (6-2)*baseSize),
            "bad alignment of mpadded elements");
 
-    assert(almostEqual(mpadded4.top - mpadded3.top, 200-15-25)  &&
-           almostEqual(mpadded4.left - mpadded3.left, 20),
+    assert(almostEqualRel(mpadded4.top - mpadded3.top, (20-1.5-2.5)*baseSize) &&
+           almostEqualRel(mpadded4.left - mpadded3.left, 2*baseSize),
            "bad position of inner mpadded element")
 
     return 1;
@@ -660,24 +677,24 @@
     var mrowRect = document.getElementById("test16mrow").
       getBoundingClientRect();
 
-    assert(almostEqual(mrowRect.width, (3 + 1 + 2)*w),
+    assert(almostEqualRel(mrowRect.width, (3 + 1 + 2)*w),
            "bad size of lquote/rquote")
 
     var miRect = document.getElementById("test16mi").getBoundingClientRect();
 
-    assert(almostEqual(miRect.width, 3*w/4),
+    assert(almostEqualRel(miRect.width, 3*w/4),
            "single char mi should be slanted")
 
-    assert(almostEqual(document.getElementById("test16mi2").
-	               getBoundingClientRect().width,
-                       document.getElementById("test16mi2ref").
-                       getBoundingClientRect().width),
+    assert(almostEqualRel(document.getElementById("test16mi2").
+                          getBoundingClientRect().width,
+                          document.getElementById("test16mi2ref").
+                         getBoundingClientRect().width),
            "multi char mi should not be slanted")
 
     var mnRect = document.getElementById("test16mn").getBoundingClientRect();
 
-    assert(almostEqual(mnRect.width, w) &&
-           almostEqual(mnRect.height, w),
+    assert(almostEqualRel(mnRect.width, w) &&
+           almostEqualRel(mnRect.height, w),
            "mn should have same size as mtext")
 
     return 1;
@@ -694,8 +711,8 @@
     var denum = document.getElementById("test17_linethickness").
       lastElementChild.getBoundingClientRect();
 
-    assert(mfrac.height >= num.height + 20 + denum.height &&
-           num.bottom + 20 <= denum.top,
+    assert(mfrac.height >= num.height + 2*baseSize + denum.height &&
+           num.bottom + 2*baseSize <= denum.top,
            "numerator and denominator should be separated by linethickness")
 
     num = document.getElementById("test17_numalign").firstElementChild.
@@ -731,28 +748,32 @@
     // test 18: script shifts
 
     assert(
-      document.getElementById("test18_msub").firstElementChild.
-        getBoundingClientRect().bottom + 10 <=
-      document.getElementById("test18_msub").lastElementChild.
-        getBoundingClientRect().top,
+      almostLessThanAbs(
+        document.getElementById("test18_msub").firstElementChild.
+        getBoundingClientRect().bottom + baseSize,
+        document.getElementById("test18_msub").lastElementChild.
+        getBoundingClientRect().top),
       "bad subscriptshift (msub)")
 
     assert(
-      document.getElementById("test18_msup").firstElementChild.
-        getBoundingClientRect().top - 10 >= 
+      almostLessThanAbs(
       document.getElementById("test18_msup").lastElementChild.
         getBoundingClientRect().bottom,
+      document.getElementById("test18_msup").firstElementChild.
+        getBoundingClientRect().top - baseSize),
       "bad superscriptshift (msup)")
 
     assert(
+      almostLessThanAbs(
       document.getElementById("test18_msubsup").firstElementChild.
-        getBoundingClientRect().bottom + 10 <=
+        getBoundingClientRect().bottom + baseSize,
       document.getElementById("test18_msubsup").firstElementChild.
-        nextElementSibling.getBoundingClientRect().top &&
-      document.getElementById("test18_msubsup").firstElementChild.
-        getBoundingClientRect().top - 10 >= 
+        nextElementSibling.getBoundingClientRect().top) &&
+      almostLessThanAbs(
       document.getElementById("test18_msubsup").lastElementChild.
         getBoundingClientRect().bottom,
+      document.getElementById("test18_msubsup").firstElementChild.
+        getBoundingClientRect().top - baseSize),
       "bad script shifts (msubsup)")
 
     return 2;
@@ -773,13 +794,14 @@
           var b = child.getBoundingClientRect();
           var success = false;
           if (align[j] == "left") {
-            success = (baseRect.left == b.left);
+            success = (almostEqualAbs(baseRect.left, b.left));
           } else if (align[j] == "right") {
-            success = (baseRect.right == b.right);
+            success = (almostEqualAbs(baseRect.right, b.right));
           } else {
-            success = (baseRect.right + baseRect.left == b.right + b.left);
+            success = (almostEqualAbs(baseRect.right + baseRect.left,
+                                      b.right + b.left));
           }
-          success = success && (baseRect.width > b.width);
+          success = success && almostLessThanRel(b.width, baseRect.width);
           assert(success,
                  "bad alignment (" + elements[i] + "_" + align[j] + ")");
         }
@@ -851,13 +873,13 @@
     var row2align = document.getElementById("test21_row2").
         getBoundingClientRect().top;
 
-    assert(almostEqual(table1align, axis),
+    assert(almostEqualAbs(table1align, axis),
            "bad table alignment (table1align)");
-    assert(almostEqual(table2align, axis),
+    assert(almostEqualAbs(table2align, axis),
            "bad table alignment (table2align)");
-    assert(almostEqual(row2align, axis),
+    assert(almostEqualAbs(row2align, axis),
            "bad table alignment (row1align)");
-    assert(almostEqual(row1align, axis),
+    assert(almostEqualAbs(row1align, axis),
           "bad table alignment (row2align)");
 
     return 2;
@@ -873,14 +895,15 @@
 
     // just a test to verify that mspace is nonempty
     // (if mspace is not supported, the test is trivial)
-    assert(cells[1].height >= 150, "bad size for mspace")
+    assert(almostLessThanRel(15*baseSize,
+                             cells[1].height), "bad size for mspace")
 
-    assert(cells[0].bottom == cells[1].bottom &&
-           cells[2].top == cells[3].top,
+    assert(almostEqualAbs(cells[0].bottom, cells[1].bottom) &&
+           almostEqualAbs(cells[2].top, cells[3].top),
            "bad row alignment")
 
-    assert(cells[0].left == cells[2].left &&
-           cells[1].right == cells[3].right,
+    assert(almostEqualAbs(cells[0].left, cells[2].left) &&
+           almostEqualAbs(cells[1].right, cells[3].right),
            "bad column alignment")
 
     return 2;
@@ -889,9 +912,9 @@
     // test 23: mtable columnwidth
 
     assert(document.getElementById("test23_cell1").
-           getBoundingClientRect().width == 100 &&
+           getBoundingClientRect().width == 1*baseSize &&
            document.getElementById("test23_cell2").
-           getBoundingClientRect().width == 200, 
+           getBoundingClientRect().width == 2*baseSize, 
            "bad column width")
 
     return 2;
@@ -900,7 +923,7 @@
     // test 24: mtable width
 
     assert(document.getElementById("test24").
-           getBoundingClientRect().width == 500, "bad mtable width")
+           getBoundingClientRect().width == 5*baseSize, "bad mtable width")
 
     return 2;
     },
@@ -912,10 +935,12 @@
     var table2 = document.getElementById("test25_2").
       getBoundingClientRect();
 
-    assert(table2.height - table1.height == 30+45+20 - (10+15+20),
+    assert(almostEqualRel(table2.height - table1.height,
+                          (3+4.5+2 - (1+1.5+2))*baseSize),
            "bad rowspacing")
 
-    assert(table2.width - table1.width == 35+55+70 - (15+25+30),
+    assert(almostEqualRel(table2.width - table1.width,
+                          (3.5+5.5+7 - (1.5+2.5+3))*baseSize),
            "bad columnspacing")
 
     return 2;
@@ -924,8 +949,8 @@
     // test 26: side
 
     assert(
-      document.getElementById("test26_label").left >=
-      document.getElementById("test26_equation").right,
+      almostLessThanAbs(document.getElementById("test26_equation").right,
+                        document.getElementById("test26_label").left),
       "bad label position")
 
     return 2;
@@ -996,8 +1021,8 @@
     // test 31: mathsize
     var rect = document.getElementById("test31").getBoundingClientRect();
 
-    assert(rect.width == 3*20 &&
-           rect.height == 20, "bad mathsize")
+    assert(almostEqualRel(rect.width, 3*2*baseSize) &&
+           almostEqualRel(rect.height, 2*baseSize), "bad mathsize")
 
     return 2;
     },
@@ -1012,43 +1037,43 @@
       box[i] = child.getBoundingClientRect();
     }
 
-    assert(box[1].width == 512*box[0].width/1024,
+    assert(almostEqualRel(box[1].width, 512*box[0].width/1024),
            "bad mathvariant (bold)")
 
-    assert(box[2].width, 1088*box[0].width/1024,
+    assert(almostEqualRel(box[2].width, 1088*box[0].width/1024),
            "bad mathvariant (script)")
 
-    assert(box[3].width == 1152*box[0].width/1024,
+    assert(almostEqualRel(box[3].width, 1152*box[0].width/1024),
            "bad mathvariant (fraktur)")
 
-    assert(box[4].width == 256*box[0].width/1024,
+    assert(almostEqualRel(box[4].width, 256*box[0].width/1024),
            "bad mathvariant (bold-italic)")
 
-    assert(box[5].width == 576*box[0].width/1024,
+    assert(almostEqualRel(box[5].width, 576*box[0].width/1024),
            "bad mathvariant (bold-script)")
 
-    assert(box[6].width == 640*box[0].width/1024,
+    assert(almostEqualRel(box[6].width, 640*box[0].width/1024),
            "bad mathvariant (bold-fraktur)")
 
-    assert(box[7].width == 1216*box[0].width/1024,
+    assert(almostEqualRel(box[7].width, 1216*box[0].width/1024),
            "bad mathvariant (sans-serif)")
 
-    assert(box[8].width == 1280*box[0].width/1024,
+    assert(almostEqualRel(box[8].width, 1280*box[0].width/1024),
            "bad mathvariant (double-struck)")
 
-    assert(box[9].width == 704*box[0].width/1024,
+    assert(almostEqualRel(box[9].width, 704*box[0].width/1024),
            "bad mathvariant (sans-serif-bxold)")
 
-    assert(box[10].width == 832*box[0].width/1024,
+    assert(almostEqualRel(box[10].width, 832*box[0].width/1024),
            "bad mathvariant (sans-serif-italic)")
 
-    assert(box[11].width == 384*box[0].width/1024,
+    assert(almostEqualRel(box[11].width, 384*box[0].width/1024),
            "bad mathvariant (sans-serif-bold-italic)")
                         
-    assert(box[12].width == 896*box[0].width/1024,
+    assert(almostEqualRel(box[12].width, 896*box[0].width/1024),
            "bad mathvariant (monospace)")
 
-    assert(box[13].width == 768*box[0].width/1024,
+    assert(almostEqualRel(box[13].width, 768*box[0].width/1024),
            "bad mathvariant (italic)")
 
     return 2;
@@ -1085,13 +1110,15 @@
     function () {
     // test 34: movablelimits
     assert(
-      document.getElementById("test34_2").getBoundingClientRect().right <=
-      document.getElementById("test34_1").getBoundingClientRect().right,
+      almostLessThanAbs(
+      document.getElementById("test34_2").getBoundingClientRect().right,
+      document.getElementById("test34_1").getBoundingClientRect().right),
       "Bad position of scripts (displaystyle=true)")
 
     assert(
-      document.getElementById("test34_3").getBoundingClientRect().right <=
-      document.getElementById("test34_4").getBoundingClientRect().left,
+      almostLessThanAbs(
+      document.getElementById("test34_3").getBoundingClientRect().right,
+      document.getElementById("test34_4").getBoundingClientRect().left),
       "Bad position of script (displaystyle=false)")
 
     return 3;
@@ -1100,23 +1127,27 @@
     // test 35: mfrac, scriptsizemultiplier
 
     assert(
-      document.getElementById("test35_num").getBoundingClientRect().width ==
-      100/2,
+      almostEqualRel(
+        document.getElementById("test35_num").getBoundingClientRect().width,
+        10/2 * baseSize),
       "scriptlevel should be increased by 1 within numerator")
 
     assert(
-      document.getElementById("test35_denum").getBoundingClientRect().width ==
-      100/2,
+      almostEqualRel(
+        document.getElementById("test35_denum").getBoundingClientRect().width,
+        10/2 * baseSize),
       "scriptlevel should be increased by 1 within denominator")
 
     assert(
-      document.getElementById("test35_num1").getBoundingClientRect().right <=
-      document.getElementById("test35_num2").getBoundingClientRect().left,
+      almostLessThanAbs(
+        document.getElementById("test35_num1").getBoundingClientRect().right,
+        document.getElementById("test35_num2").getBoundingClientRect().left),
       "displaystyle should be reset within numerator")
 
     assert(
-      document.getElementById("test35_denum1").getBoundingClientRect().right <=
-      document.getElementById("test35_denum2").getBoundingClientRect().left,
+      almostLessThanAbs(
+        document.getElementById("test35_denum1").getBoundingClientRect().right,
+        document.getElementById("test35_denum2").getBoundingClientRect().left),
       "displaystyle should be reset within denominator")
 
     return 3;
@@ -1127,10 +1158,10 @@
     var rect1 = document.getElementById("test36_1").getBoundingClientRect()
     var rect2 = document.getElementById("test36_2").getBoundingClientRect()
 
-    assert(rect1.right <= rect2.left,
+    assert(almostLessThanAbs(rect1.right, rect2.left),
       "displaystyle should be reset within the mroot index")
 
-    assert(rect1.width == 100/4,
+    assert(almostEqualRel(rect1.width, 20/4 * baseSize),
       "scriptlevel should be increased by 2 within the mroot index")
 
     return 3;
@@ -1141,10 +1172,10 @@
     var rect1 = document.getElementById("test37_1").getBoundingClientRect()
     var rect2 = document.getElementById("test37_2").getBoundingClientRect()
 
-    assert(rect1.right <= rect2.left,
+    assert(almostLessThanAbs(rect1.right, rect2.left),
       "displaystyle should be reset within the sup script)")
 
-    assert(rect1.width == 100/2,
+    assert(almostEqualRel(rect1.width, 10/2 * baseSize),
       "scriptlevel should be increased by 1 within sup script")
 
     return 3;
@@ -1155,10 +1186,10 @@
     var rect1 = document.getElementById("test38_1").getBoundingClientRect()
     var rect2 = document.getElementById("test38_2").getBoundingClientRect()
 
-    assert(rect1.right <= rect2.left,
+    assert(almostLessThanAbs(rect1.right, rect2.left),
       "displaystyle should be reset within the under script)")
 
-    assert(rect1.width == 100/2,
+    assert(almostEqualRel(rect1.width, 10/2 * baseSize),
       "scriptlevel should be increased by 1 within under script")
 
     return 3;
@@ -1166,8 +1197,8 @@
     function () {
     // test 39: mo accent
 
-    assert(document.getElementById("test39").getBoundingClientRect().
-           width == 100,
+    assert(almostEqualRel(document.getElementById("test39").
+                          getBoundingClientRect().width, 10 * baseSize),
       "scriptlevel should not increase for accent operator")
 
     return 3;
@@ -1179,8 +1210,8 @@
     var rect2 = document.getElementById("test40_sum2").getBoundingClientRect()
     var rect3 = document.getElementById("test40_sum3").getBoundingClientRect()
 
-    assert(rect1.height > rect2.height &&
-           rect2.height == rect3.height,
+    assert(almostLessThanRel(rect2.height, rect1.height) &&
+           almostEqualRel(rect2.height, rect3.height),
            "bad size of sum")
 
     return 3;
@@ -1188,15 +1219,17 @@
     function () {
     // test 41: scriptlevel
 
-    assert(document.getElementById("test41").
-           getBoundingClientRect().width == 16, "bad scriptlevel")
+    assert(almostEqualRel(document.getElementById("test41").
+           getBoundingClientRect().width, 16*baseSize), "bad scriptlevel")
 
     return 3;
     },
     function () {
     // test 42: scriptminsize
 
-    assert(document.getElementById("test42").getBoundingClientRect().width == 8,
+    assert(almostEqualRel(
+           document.getElementById("test42").getBoundingClientRect().width,
+           8*baseSize),
            "scriptminsize not respected")
 
     return 3;
@@ -1207,8 +1240,9 @@
     var rect1 = math.firstElementChild.getBoundingClientRect()
     var rect2 = math.lastElementChild.getBoundingClientRect()
 
-    assert(rect2.left - rect1.right ==
-           35 + rect1.width + 40, "bad lspace/rspace")
+    assert(almostEqualRel(rect2.left - rect1.right,
+                          3.5*baseSize + rect1.width + 4*baseSize),
+           "bad lspace/rspace")
 
     return 3;
     },
@@ -1265,18 +1299,18 @@
            getBoundingClientRect().width == 0,
            "bad mediumspace width")
 
-    assert(almostEqual(
+    assert(almostEqualRel(
 	   document.getElementById("test48_infix").
            getBoundingClientRect().width,
            document.getElementById("test48_infix_ref").
            getBoundingClientRect().width),
                  "bad lspace/rspace for minus sign (infix form)")
 
-    assert(almostEqual(document.getElementById("test48_prefix").
-                    getBoundingClientRect().width,
-                    document.getElementById("test48_prefix_ref").
-                    getBoundingClientRect().width),
-                 "bad lspace/rspace for minus sign (prefix form)")
+    assert(almostEqualRel(document.getElementById("test48_prefix").
+                          getBoundingClientRect().width,
+                          document.getElementById("test48_prefix_ref").
+                          getBoundingClientRect().width),
+                          "bad lspace/rspace for minus sign (prefix form)")
  
     return 3;
     },
@@ -1285,7 +1319,7 @@
     function () {
     // test 49: Default value of the form attribute
 
-    assert(almostEqual(document.getElementById("test49_1end").
+    assert(almostEqualRel(document.getElementById("test49_1end").
                     getBoundingClientRect().left -
                     document.getElementById("test49_1start").
                     getBoundingClientRect().right,
@@ -1293,7 +1327,7 @@
                     getBoundingClientRect().width),
                     "prefix form should be used")
 
-    assert(almostEqual(document.getElementById("test49_2end").
+    assert(almostEqualRel(document.getElementById("test49_2end").
                     getBoundingClientRect().left -
                     document.getElementById("test49_2start").
                     getBoundingClientRect().right,
@@ -1302,17 +1336,17 @@
                     "postfix form should be used")
 
     assert(
-     almostEqual(
-      document.getElementById("test49_3").getBoundingClientRect().width -
+     almostEqualRel(
+      document.getElementById("test49_3").getBoundingClientRect().width,
       document.getElementById("test49_3ref").getBoundingClientRect().width),
       "postfix for should be used")
 
     assert(
-      almostEqual(
+      almostEqualRel(
         document.getElementById("test49_4end").
         getBoundingClientRect().left -
        document.getElementById("test49_4start").getBoundingClientRect().right,
-       - document.getElementById("test49_4ref").getBoundingClientRect().width),
+       document.getElementById("test49_4ref").getBoundingClientRect().width),
        "infix for should be used")
     
     return 4;
@@ -1516,7 +1550,7 @@
 
     for (var i = 0, child = mstyle.firstElementChild; child ;
          child = child.nextElementSibling, i++) {
-      assert(almostEqual(
+      assert(almostEqualRel(
        child.firstElementChild.
                   lastElementChild.getBoundingClientRect().left -
                 child.firstElementChild.
@@ -1778,16 +1812,16 @@
     var rowRect3 = document.getElementById("test72_mtable").lastElementChild.
       getBoundingClientRect();
 
-    assert(almostEqual(rowRect1.height, rowRect2.height) &&
-           almostEqual(rowRect2.height, rowRect3.height),
+    assert(almostEqualRel(rowRect1.height, rowRect2.height) &&
+           almostEqualRel(rowRect2.height, rowRect3.height),
            "mtable rows should have same height");
 
     assert(rowRect1.left == rowRect2.left && rowRect2.left == rowRect3.left &&
            rowRect1.right == rowRect2.right && rowRect2.right == rowRect3.right,
            "mtable rows should be aligned");
 
-    assert(almostLessThan(rowRect1.bottom, rowRect2.top) &&
-           almostLessThan(rowRect2.bottom, rowRect3.top),
+    assert(almostLessThanAbs(rowRect1.bottom, rowRect2.top) &&
+           almostLessThanAbs(rowRect2.bottom, rowRect3.top),
            "row[i] should be above row[i+1] (mtr)");
 
     var rows = [document.getElementById("test72_mtable").firstElementChild,
@@ -1822,8 +1856,8 @@
            cellRect[0][1].left >= cellRect[0][2].right,
            "column[j] should be on the right of column[j+1]");
 
-    assert(almostLessThan(cellRect[0][0].bottom, cellRect[1][0].top) &&
-           almostLessThan(cellRect[1][0].bottom, cellRect[2][0].top),
+    assert(almostLessThanAbs(cellRect[0][0].bottom, cellRect[1][0].top) &&
+           almostLessThanAbs(cellRect[1][0].bottom, cellRect[2][0].top),
            "row[i] should be above row[i+1] (mtd)");
 
     return 5;
@@ -2153,8 +2187,9 @@
     function () {
     // test 94: mscarries, scriptlevel, scriptsizemultiplier
 
-    assert(document.getElementById("test94").getBoundingClientRect().width
-           == 100 * .6, "bad font size in mscarries")
+    assert(almostEqualRef(
+           document.getElementById("test94").getBoundingClientRect().width,
+			  10 * .6 * baseSize), "bad font size in mscarries")
 
     return 6;
     },
@@ -2273,25 +2308,26 @@
     // Wait for rect.png
     var imgBox = document.getElementById("test98_img").
                  getBoundingClientRect();
-    if (imgBox.width != 20 || imgBox.height != 20) {
+    if (!almostEqualRel(imgBox.width, 20) ||
+        !almostEqualRel(imgBox.height, 20)) {
        return "retry";
     }
 
     assert(
-      almostLessThan(
+      almostLessThanAbs(
       document.getElementById('test98_A').getBoundingClientRect().bottom,
       document.getElementById('test98_B').getBoundingClientRect().top),
       "the overscript should be below the base")
 
     assert(
-      almostEqual(
+      almostEqualRel(
       document.getElementById('test98_start').getBoundingClientRect().left
       - document.getElementById('test98_end').getBoundingClientRect().right,
       20 + 20),
       "mtext elements should have the width of their SVG/HTML content")
 
     assert(
-      almostLessThan(
+      almostLessThanAbs(
       document.getElementById('test98_abc').getBoundingClientRect().bottom,
       document.getElementById('test98_def').getBoundingClientRect().top),
       "math in table should line break")
@@ -2304,16 +2340,16 @@
 
     var math = document.getElementById("test99");
 
-    assert(almostEqual(math.firstElementChild.
-                       getBoundingClientRect().width, 64),
+    assert(almostEqualRel(math.firstElementChild.
+                          getBoundingClientRect().width, baseSize * 2),
            "bad font size (@id99)")
 
-    assert(almostEqual(math.firstElementChild.nextElementSibling.
-                       getBoundingClientRect().width, 48),
+    assert(almostEqualRel(math.firstElementChild.nextElementSibling.
+                          getBoundingClientRect().width, baseSize * 3),
            "bad font size (@class)")
 
-    assert(almostEqual(math.lastElementChild.
-                       getBoundingClientRect().width, 32),
+    assert(almostEqualRel(math.lastElementChild.
+                          getBoundingClientRect().width, baseSize * 4),
            "bad font size (@style)")
 
     return 7;
@@ -2425,7 +2461,12 @@
     </p>
 
     <div id="mathml">
-      <!--  test 0: verify JS and test basic feature of the <math> element -->
+      <!--  test 0: verify JS, Web fonts and
+	    test basic feature of the <math> element -->
+      <div>
+	<span id="test1_Acid3MathMLA"><span>0123456789</span><span style="font-style: italic">0123456789</span></span>
+	<span id="test1_Acid3MathMLB"><span style="font-weight: bold;">0123456789</span><span style="font-weight: bold; font-style: italic;">0123456789</span></span>
+      </div>
       <p>
         <math id="test0"></math>
       </p>
@@ -2439,9 +2480,6 @@
       </p>
 
       <!-- bucket 1: basic presentation MathML elements -->
-
-      <!-- test to check whether Web fonts are available -->
-      <div><span id="test1_Acid3MathML" style="font-size: 16px;"><span>NORMAL</span><span style="font-style: italic;">ITALIC</span><span style="font-weight: bold;">BOLD</span><span style="font-weight: bold; font-style: italic;">BOLDITALIC</span><span></div>
 
       <!-- test 1, 2: simple script elements -->
       <p>
@@ -2805,22 +2843,22 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       <p>
         <!-- test 14: mspace -->
         <math id="test14">
-          <mspace width="50px" height="30px" depth="20px"/>
-          <mspace width="150px" height="40px" depth="60px"/>
+          <mspace width="5em" height="3em" depth="2em"/>
+          <mspace width="15em" height="4em" depth="6em"/>
         </math>
       </p>
 
       <p>
         <!-- test 15: mpadded -->
         <math id="test15">
-          <mpadded width="50px" height="30px" depth="20px"/>
-          <mpadded width="150px" height="40px" depth="60px"/>
+          <mpadded width="5em" height="3em" depth="2em"/>
+          <mpadded width="15em" height="4em" depth="6em"/>
         </math>
         <math>
           <mpadded id="test15_mpadded"
-                   width="100px" height="200px" depth="100px"
-                   lspace="20px" voffset="25px">
-            <mpadded width="30px" height="15px" depth="10px">
+                   width="10em" height="20em" depth="10em"
+                   lspace="2em" voffset="2.5em">
+            <mpadded width="3em" height="1.5em" depth="1em">
             </mpadded>
           </mpadded>
         </math>
@@ -2843,7 +2881,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       <!-- mfrac attributes -->
       <p>
         <math>
-          <mfrac linethickness="20px" id="test17_linethickness">
+          <mfrac linethickness="2em" id="test17_linethickness">
             <mtext>X</mtext>
             <mtext>X</mtext>
           </mfrac>
@@ -2877,17 +2915,17 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       <!-- test 18: script shifts -->
       <p>
         <math>
-          <msub id="test18_msub" subscriptshift="30px">
-            <mspace width="20px" height="10px" depth="10px"/>
-            <mspace width="20px" height="10px" depth="10px"/>
+          <msub id="test18_msub" subscriptshift="3em">
+            <mspace width="2em" height="1em" depth="1em"/>
+            <mspace width="2em" height="1em" depth="1em"/>
           </msub>
         </math>
       </p>
       <p>
         <math>
-          <msup id="test18_msup" superscriptshift="30px">
-            <mspace width="20px" height="10px" depth="10px"/>
-            <mspace width="20px" height="10px" depth="10px"/>
+          <msup id="test18_msup" superscriptshift="3em">
+            <mspace width="2em" height="1em" depth="1em"/>
+            <mspace width="2em" height="1em" depth="1em"/>
           </msup>
         </math>
       </p>
@@ -2895,10 +2933,10 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       <p>
         <math>
           <msubsup id="test18_msubsup"
-                   subscriptshift="30px" superscriptshift="30px">
-            <mspace width="20px" height="10px" depth="10px"/>
-            <mspace width="20px" height="10px" depth="10px"/>
-            <mspace width="20px" height="10px" depth="10px"/>
+                   subscriptshift="3em" superscriptshift="3em">
+            <mspace width="2em" height="1em" depth="1em"/>
+            <mspace width="2em" height="1em" depth="1em"/>
+            <mspace width="2em" height="1em" depth="1em"/>
           </msubsup>
         </math>
       </p>
@@ -3021,7 +3059,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       <p>
         <!-- test 21: mtable align -->
         <math>
-          <mspace id="test21_axis" height="100px" depth="0px" width="0px"/>
+          <mspace id="test21_axis" height="10em" depth="0em" width="0em"/>
           <mtable id="test21_table1" align="top">
             <mtr><mtd><mtext>X</mtext></mtd></mtr>
           </mtable>
@@ -3050,21 +3088,21 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
             <mtr rowalign="bottom" columnalign="left right">
               <mtd id="test22_cell0">
                 <!-- [rowalign=bottom], (columnalign=left) -->
-                <mspace width="10px" height="30px" depth="0px"/>
+                <mspace width="1em" height="3em" depth="0em"/>
               </mtd>
               <mtd id="test22_cell1">
                 <!-- [rowalign=bottom], ((columnalign=right)) -->
-                <mspace width="150px" height="150px" depth="0px"/>
+                <mspace width="15em" height="15em" depth="0em"/>
               </mtd>
             </mtr>
             <mtr rowalign="top">
               <mtd id="test22_cell2" columnalign="left">
                 <!-- [[rowalign=top]], (columnalign=left) -->
-                <mspace width="15px" height="30px" depth="0px"/>
+                <mspace width="1.5em" height="3em" depth="0em"/>
               </mtd>
               <mtd id="test22_cell3" columnalign="right">
                 <!-- [[rowalign=top]], ((columnalign=right)) -->
-                <mspace width="40px" height="45px" depth="0px"/>
+                <mspace width="4em" height="4.5em" depth="0em"/>
               </mtd>
             </mtr>
           </mtable>
@@ -3074,7 +3112,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       <p>
         <!-- test 23: mtable columnwidth -->
         <math>
-          <mtable columnwidth="100px 200px">
+          <mtable columnwidth="1em 2em">
             <mtr>
               <mtd id="test23_cell1"><mtext>X</mtext></mtd>
               <mtd id="test23_cell2"><mtext>X</mtext></mtd>
@@ -3086,7 +3124,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       <p>
         <!-- test 24: mtable width -->
         <math>
-          <mtable id="test24" width="500px">
+          <mtable id="test24" width="5em">
             <mtr><mtd><mtext>X</mtext></mtd></mtr>
           </mtable>
         </math>
@@ -3096,8 +3134,8 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         <!-- test 25: mtable rowspacing, columnspacing -->
         <math>
           <mtable id="test25_1"
-                  rowspacing="10px 15px 20px"
-                  columnspacing="15px 25px 30px">
+                  rowspacing="1em 1.5em 2em"
+                  columnspacing="1.5em 2.5em 3em">
             <mtr>
               <mtd>
                 <mtext>X</mtext>
@@ -3134,8 +3172,8 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         </math>
         <math>
           <mtable id="test25_2"
-                  rowspacing="30px 45px 20px"
-                  columnspacing="35px 55px 70px">
+                  rowspacing="3em 4.5em 2em"
+                  columnspacing="3.5em 5.5em 7em">
             <mtr>
               <mtd>
                 <mtext>X</mtext>
@@ -3250,17 +3288,17 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         </math>
       </p>
 
-      <p style="font-size: 100px;">
+      <p>
         <!-- test 31: mathsize -->
         <math>
-          <mtext mathsize="20px" id="test31">XXX</mtext>
+          <mtext mathsize="2em" id="test31">XXX</mtext>
         </math>
       </p>
 
       <p>
         <!-- test 32: mathvariant -->
         <math>
-          <mstyle id="test32" fontsize="64px">
+          <mstyle id="test32" fontsize="16em">
             <mtext>0</mtext>
             <mi mathvariant="bold">A</mi>
             <mi mathvariant="script">B</mi>
@@ -3279,7 +3317,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         </math>
        <!-- the math above should render the same at that one:
        <math>
-          <mstyle id="test32" fontsize="64px">
+          <mstyle id="test32" fontsize="16em">
             <mtext>0</mtext>
             <mtext>𝐀</mtext>
             <mtext>ℬ</mtext>
@@ -3325,7 +3363,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       <p>
         <!-- test 35: mfrac, scriptsizemultiplier -->
         <math>
-          <mstyle mathsize="100px" scriptsizemultiplier=".5">
+          <mstyle mathsize="10em" scriptsizemultiplier=".5">
             <mfrac>
               <mtext id="test35_num">X</mtext>
               <mtext id="test35_denum">X</mtext>
@@ -3354,7 +3392,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         <!-- test 36: mroot -->
         <math>
           <mstyle displaystyle="true"
-                  mathsize="100px" scriptsizemultiplier=".5">
+                  mathsize="20em" scriptsizemultiplier=".5">
             <mroot>
               <mtext>
                 BASE
@@ -3372,7 +3410,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         <!-- test 37: msup script -->
         <math>
           <mstyle displaystyle="true"
-                  mathsize="100px" scriptsizemultiplier=".5">
+                  mathsize="10em" scriptsizemultiplier=".5">
             <msup>
               <mtext>
                 BASE
@@ -3390,7 +3428,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         <!-- test 38: munder script -->
         <math>
           <mstyle displaystyle="true"
-                  mathsize="100px" scriptsizemultiplier=".5">
+                  mathsize="10em" scriptsizemultiplier=".5">
             <munder>
               <mtext>
                 BASE
@@ -3408,7 +3446,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         <!-- test 39: mo accent -->
         <math>
           <mstyle displaystyle="true"
-                  mathsize="100px" scriptsizemultiplier=".5">
+                  mathsize="10em" scriptsizemultiplier=".5">
             <mover>
               <mtext>
                 BASE
@@ -3437,7 +3475,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       <p>
         <!-- test 41: scriptlevel -->
         <math>
-          <mstyle mathsize="128px" scriptsizemultiplier=".5">
+          <mstyle mathsize="128em" scriptsizemultiplier=".5">
             <mstyle scriptlevel="3">
               <mtext id="test41">X</mtext>
             </mstyle>
@@ -3448,8 +3486,8 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       <p>
         <!-- test 42: scriptminsize -->
         <math>
-          <mstyle mathsize="32px" scriptsizemultiplier=".5"
-                  scriptminsize="8px">
+          <mstyle mathsize="32em" scriptsizemultiplier=".5"
+                  scriptminsize="8em">
             <mstyle scriptlevel="5">
               <mtext id="test42">X</mtext>
             </mstyle>
@@ -3461,7 +3499,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         <!-- test 43: mo lspace, rspace -->
         <math id="test43">
           <mtext>X</mtext>
-          <mo lspace="35px" rspace="40px">X</mo>
+          <mo lspace="3.5em" rspace="4em">X</mo>
           <mtext>X</mtext>
         </math>
       </p>
@@ -4772,7 +4810,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       <p>
         <!-- test 94: mscarries, scriptlevel, scriptsizemultiplier -->
         <math>
-          <mstyle mathsize="100px">
+          <mstyle mathsize="10em">
             <mstack>
               <mscarries>
                 <mscarry><mn id="test94">1</mn></mscarry>
@@ -4883,7 +4921,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         <!-- test 99: compatibility with CSS ; class, id and style -->
         <math class="test99" id="test99">
           <mtext>X</mtext>
-          <mtext style="font-size: 48px;">Y</mtext>
+          <mtext style="font-size: 3em">Y</mtext>
           <mn>Z</mn>
         </math>
       </p>
