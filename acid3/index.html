@@ -126,10 +126,14 @@
   var epsilon = .05; // allow a small relative error
 
   function almostEqualAbs(x, y) {
-    return (Math.abs(x - y) < epsilon * baseSize);
+    var e = Math.abs(x - y);
+    var t = epsilon * baseSize;
+    return (e < t);
   }
   function almostEqualRel(x, y) {
-    return (Math.abs(x - y) / (Math.abs(x) + Math.abs(y)) < epsilon);
+    var e = Math.abs(x - y) / (Math.abs(x) + Math.abs(y))
+    var t = epsilon;
+    return (e < t);
   }
   function almostLessThanAbs(x, y) {
     return ((x - y) < epsilon * baseSize);
@@ -330,8 +334,8 @@
     var mfracDenom = document.getElementById("test3_mfrac").lastElementChild.
       getBoundingClientRect();
 
-    assert(mfracNum.left == mfracDenom.left &&
-           mfracNum.right == mfracDenom.right,
+    assert(almostEqualAbs(mfracNum.left, mfracDenom.left) &&
+           almostEqualAbs(mfracNum.right, mfracDenom.right),
            "Numerator and denominator should be vertical aligned");
 
     assert(mfracNum.bottom+3 <= mfracDenom.top,
@@ -423,8 +427,8 @@
         getBoundingClientRect();
       var mencloseRef = document.getElementById("test7_"+notations[i]+"_ref").
         getBoundingClientRect();
-      assert(menclose.width == mencloseRef.width &&
-             menclose.height == mencloseRef.height,
+      assert(almostEqualRel(menclose.width, mencloseRef.width) &&
+             almostEqualAbs(menclose.height, mencloseRef.height),
              "menclose equivalence ("+notations[i]+")");
     }
     return 1;
@@ -504,8 +508,10 @@
            almostEqualRel(rowRect2.height, rowRect3.height),
            "mtable rows should have same height");
 
-    assert(rowRect1.left == rowRect2.left && rowRect2.left == rowRect3.left &&
-           rowRect1.right == rowRect2.right && rowRect2.right == rowRect3.right,
+    assert(almostEqualAbs(rowRect1.left, rowRect2.left) &&
+           almostEqualAbs(rowRect2.left, rowRect3.left) &&
+           almostEqualAbs(rowRect1.right, rowRect2.right) &&
+           almostEqualAbs(rowRect2.right, rowRect3.right),
            "mtable rows should be aligned");
 
     assert(almostLessThanAbs(rowRect1.bottom, rowRect2.top) &&
@@ -529,18 +535,18 @@
     }
 
     for (var i = 0; i < 3; i++) {
-      assert(cellRect[0][i].left == cellRect[1][i].left &&
-             cellRect[1][i].left == cellRect[2][i].left &&
-             cellRect[0][i].right == cellRect[1][i].right &&
-             cellRect[1][i].right == cellRect[2][i].right,
+      assert(almostEqualAbs(cellRect[0][i].left, cellRect[1][i].left) &&
+             almostEqualAbs(cellRect[1][i].left, cellRect[2][i].left) &&
+             almostEqualAbs(cellRect[0][i].right, cellRect[1][i].right) &&
+             almostEqualAbs(cellRect[1][i].right, cellRect[2][i].right),
              "cellRects of column "+(i+1)+" should be aligned");
     }
 
     for (var i = 0; i < 3; i++) {
-      assert(cellRect[i][0].top == cellRect[i][1].top &&
-             cellRect[i][1].top == cellRect[i][2].top &&
-             cellRect[i][0].bottom == cellRect[i][1].bottom &&
-             cellRect[i][1].bottom == cellRect[i][2].bottom,
+      assert(almostEqualAbs(cellRect[i][0].top, cellRect[i][1].top) &&
+             almostEqualAbs(cellRect[i][1].top, cellRect[i][2].top) &&
+             almostEqualAbs(cellRect[i][0].bottom, cellRect[i][1].bottom) &&
+             almostEqualAbs(cellRect[i][1].bottom, cellRect[i][2].bottom),
              "cellRects of row "+(i+1)+" should be aligned");
     }
 
@@ -720,7 +726,7 @@
     denum = document.getElementById("test17_numalign").
       lastElementChild.getBoundingClientRect();
 
-    assert(num.left == denum.left,
+    assert(almostEqualAbs(num.left, denum.left),
            "numerator and denominator should be aligned left")
 
     num = document.getElementById("test17_denomalign").firstElementChild.
@@ -728,7 +734,7 @@
     denum = document.getElementById("test17_denomalign").
       lastElementChild.getBoundingClientRect();
 
-    assert(num.right == denum.right,
+    assert(almostEqualAbs(num.right, denum.right),
            "numerator and denominator should be aligned right")
 
     num = document.getElementById("test17_bevelled").firstElementChild.
@@ -798,8 +804,8 @@
           } else if (align[j] == "right") {
             success = (almostEqualAbs(baseRect.right, b.right));
           } else {
-            success = (almostEqualAbs(baseRect.right + baseRect.left,
-                                      b.right + b.left));
+            success = (almostEqualAbs((baseRect.right + baseRect.left)/2,
+                                      (b.right + b.left)/2));
           }
           success = success && almostLessThanRel(b.width, baseRect.width);
           assert(success,
@@ -911,10 +917,10 @@
     function () {
     // test 23: mtable columnwidth
 
-    assert(document.getElementById("test23_cell1").
-           getBoundingClientRect().width == 1*baseSize &&
-           document.getElementById("test23_cell2").
-           getBoundingClientRect().width == 2*baseSize, 
+    assert(almostEqualRel(document.getElementById("test23_cell1").
+                          getBoundingClientRect().width, 1*baseSize) &&
+           almostEqualRel(document.getElementById("test23_cell2").
+                          getBoundingClientRect().width, 2*baseSize), 
            "bad column width")
 
     return 2;
@@ -922,8 +928,9 @@
     function () {
     // test 24: mtable width
 
-    assert(document.getElementById("test24").
-           getBoundingClientRect().width == 5*baseSize, "bad mtable width")
+    assert(almostEqualRel(document.getElementById("test24").
+                          getBoundingClientRect().width, 5*baseSize),
+                          "bad mtable width")
 
     return 2;
     },
@@ -972,9 +979,11 @@
     var table2 = document.getElementById("test28_framespacing2").
       getBoundingClientRect();
 
-    assert(table2.width - table1.width == (25 - 10) * 2,
+    assert(almostEqualRel(table2.width - table1.width,
+                          (2.5 - 1) * 2 * baseSize),
           "bad framespacing on the right and left")
-    assert(table2.height - table1.height == (40 - 15) * 2,
+    assert(almostEqualRel(table2.height - table1.height,
+                          (4 - 1.5) * 2 * baseSize),
           "bad framespacing above and below")
 
     return 2;
@@ -990,12 +999,13 @@
 
     // just a test to verify that mspace is nonempty
     // (if mspace is not supported, the test is trivial)
-    assert(cells[0].height >= 100, "bad size for mspace")
+    assert(almostLessThanRel(10 * baseSize, cells[0].height),
+           "bad size for mspace")
 
-    assert(cells[0].width == cells[1].width,
+    assert(almostEqualRel(cells[0].width, cells[1].width),
            "equalcolumns not satisfied")
 
-    assert(cells[0].height == cells[2].height,
+    assert(almostEqualRel(cells[0].height, cells[2].height),
            "equalrows not satisfied")
 
     return 2;
@@ -1009,10 +1019,12 @@
         getBoundingClientRect();
     }
 
-    assert(cells[0].height == cells[1].height + cells[2].height,
+    assert(almostEqualRel(cells[0].height,
+                          cells[1].height + cells[2].height),
            "bad row span")
 
-    assert(cells[1].width == cells[2].width + cells[3].width,
+    assert(almostEqualRel(cells[1].width,
+                          cells[2].width + cells[3].width),
            "bad column span")
 
     return 2;
@@ -1210,7 +1222,7 @@
     var rect2 = document.getElementById("test40_sum2").getBoundingClientRect()
     var rect3 = document.getElementById("test40_sum3").getBoundingClientRect()
 
-    assert(almostLessThanRel(rect2.height, rect1.height) &&
+    assert(almostLessThanAbs(rect2.height*1.1, rect1.height) &&
            almostEqualRel(rect2.height, rect3.height),
            "bad size of sum")
 
@@ -1220,7 +1232,8 @@
     // test 41: scriptlevel
 
     assert(almostEqualRel(document.getElementById("test41").
-           getBoundingClientRect().width, 16*baseSize), "bad scriptlevel")
+                          getBoundingClientRect().width,
+                          2*baseSize), "bad scriptlevel")
 
     return 3;
     },
@@ -1275,16 +1288,17 @@
     function () {
     // test 46: mo maxsize
 
-    var h = document.getElementById("test46").getBoundingClientRect().height
-    assert(h > 50 && h < 190, "bad maxsize")
+    var h = document.getElementById("test46").getBoundingClientRect().height;
+    assert(almostLessThanRel(5*baseSize, h) &&
+           almostLessThanRel(h, 10*baseSize), "bad maxsize")
 
     return 3;
     },
     function () {
     // test 47: mo minsize
 
-    assert(document.getElementById("test47").
-           getBoundingClientRect().height > 30,
+    assert(almostLessThanRel(10*baseSize,
+           document.getElementById("test47").getBoundingClientRect().height),
            "bad minsize")
 
     return 3;
@@ -1356,8 +1370,9 @@
     // test 50: embellished operators
 
     for (var i = 0; i < 14; i++) {
-      assert(document.getElementById("test50_mo"+i).
-             getBoundingClientRect().height > 30,
+      assert(almostLessThanRel(20*baseSize,
+                               document.getElementById("test50_mo"+i).
+                               getBoundingClientRect().height),
              "mo"+i+" should stretch")
     }
 
@@ -1367,8 +1382,9 @@
     // test 51: space-like elements
 
     for (var i = 0; i < 9; i++) {
-      assert(document.getElementById("test51_mo"+i).
-             getBoundingClientRect().height > 30,
+      assert(almostLessThanRel(20*baseSize,
+             document.getElementById("test51_mo"+i).
+             getBoundingClientRect().height),
              "mo"+i+" should stretch")
     }
 
@@ -1422,8 +1438,9 @@
     // test 56: horizontal stretching in munder/mover/munderover
 
     for (var i = 0; i < 5; i++) {
-      assert(document.getElementById("test56_mo"+i).
-             getBoundingClientRect().width > 30,
+      assert(almostLessThanRel(5*baseSize,
+                              document.getElementById("test56_mo"+i).
+                              getBoundingClientRect().width),
              "mo"+i+" should stretch (munder/mover/munderover)")
     }
 
@@ -1461,7 +1478,10 @@
     var h4 =
       document.getElementById("test59_mo4").getBoundingClientRect().width
 
-    assert(h1 > 50 && h2 > 50 && h3 > 50 && h4 > 50,
+    assert(almostLessThanRel(5*baseSize, h1) &&
+           almostLessThanRel(5*baseSize, h2) &&
+           almostLessThanRel(5*baseSize, h3) &&
+           almostLessThanRel(5*baseSize, h4),
            "bad size for stretchy operator (mtd)")
 
     return 4;
@@ -1509,7 +1529,7 @@
     }
 
     for (var i = 1; i < box.length; i++) {
-      assert(box[i].width > 30,
+      assert(almostLessThanRel(5*baseSize, box[i].width),
              "mo"+i+" should stretch horizontally")
     }
 
@@ -1571,8 +1591,9 @@
                                                                            
     for (var i = 0; i < 9; i++) {
       var mrow = document.getElementById("test65_"+i);
-      assert(mrow.firstElementChild.getBoundingClientRect().left
-             >= mrow.lastElementChild.getBoundingClientRect().right,
+      assert(almostLessThanAbs(
+             mrow.lastElementChild.getBoundingClientRect().right,
+             mrow.firstElementChild.getBoundingClientRect().left),
              "the element should be displayed RTL ("+i+")")
     }
 
@@ -1711,38 +1732,38 @@
            prescripts[3].width * prescripts[3].height == 0,
            "<none/> scripts should be empty")
 
-    assert(postscripts[0].width == postscripts[1].width &&
-           postscripts[1].width == postscripts[3].width &&
-           postscripts[0].height == postscripts[1].height &&
-           postscripts[1].height == postscripts[3].height &&            
-           prescripts[0].width == prescripts[1].width &&
-           prescripts[1].width == prescripts[2].width &&
-           prescripts[0].height == prescripts[1].height &&
-           prescripts[1].height == prescripts[2].height &&
-           postscripts[0].width == prescripts[0].width &&
-           postscripts[0].height == prescripts[0].height,
+    assert(almostEqualRel(postscripts[0].width, postscripts[1].width) &&
+           almostEqualRel(postscripts[1].width, postscripts[3].width) &&
+           almostEqualRel(postscripts[0].height, postscripts[1].height) &&
+           almostEqualRel(postscripts[1].height, postscripts[3].height) &&
+           almostEqualRel(prescripts[0].width, prescripts[1].width) &&
+           almostEqualRel(prescripts[1].width, prescripts[2].width) &&
+           almostEqualRel(prescripts[0].height, prescripts[1].height) &&
+           almostEqualRel(prescripts[1].height, prescripts[2].height) &&
+           almostEqualRel(postscripts[0].width, prescripts[0].width) &&
+           almostEqualRel(postscripts[0].height, prescripts[0].height),
            "nonempty scripts should have the same size")
 
-    assert(prescripts[1].left >= base.right &&
-           base.left >= postscripts[1].right &&
-           postscripts[1].left >= postscripts[3].right &&
-           prescripts[0].left >= base.right &&
-           base.left >= postscripts[0].right &&
-           prescripts[0].left >= prescripts[2].right,
+    assert(almostLessThanAbs(base.right, prescripts[1].left)  &&
+           almostLessThanAbs(postscripts[1].right, base.left)  &&
+           almostLessThanAbs(postscripts[3].right, postscripts[1].left) &&
+           almostLessThanAbs(base.right, prescripts[0].left) &&
+           almostLessThanAbs(postscripts[0].right, base.left) &&
+           almostLessThanAbs(prescripts[2].right, prescripts[0].left),
            "incorrect horizontal positions of nonempty scripts")
 
-    assert(prescripts[1].top == postscripts[1].top &&
-           postscripts[1].top == postscripts[3].top &&
-           prescripts[0].top == postscripts[0].top &&
+    assert(almostEqualAbs(prescripts[1].top, postscripts[1].top) &&
+           almostEqualAbs(postscripts[1].top, postscripts[3].top) &&
+           almostEqualAbs(prescripts[0].top, postscripts[0].top) &&
            "incorrect horizontal alignment of nonempty scripts")
 
-    assert(prescripts[0].bottom >= prescripts[1].top,
+    assert(almostLessThanAbs(prescripts[1].top, prescripts[0].bottom),
            "subscripts should be above supscripts")
 
-    assert(prescripts[0].top > base.top && 
-           prescripts[0].bottom > base.bottom &&
-           prescripts[1].top < base.top && 
-           prescripts[1].bottom < base.bottom,
+    assert(almostLessThanAbs(base.top, prescripts[0].top)  && 
+           almostLessThanAbs(base.bottom, prescripts[0].bottom) &&
+           almostLessThanAbs(prescripts[1].top, base.top) && 
+           almostLessThanAbs(prescripts[1].bottom, base.bottom),
            "subscripts/supscripts should be lower/higher than the base")
 
     return 5;
@@ -1752,9 +1773,9 @@
 
     var math = document.getElementById("test69");
 
-    assert(math.firstElementChild.getBoundingClientRect().left - 
-           math.lastElementChild.firstElementChild.
-           getBoundingClientRect().right == 50,
+    assert(almostEqualRel(math.firstElementChild.getBoundingClientRect().left - 
+                          math.lastElementChild.firstElementChild.
+                          getBoundingClientRect().right, 5 * baseSize),
            "bad position of inner mpadded element")
 
     return 5;
@@ -2121,10 +2142,11 @@
     var box1 = document.getElementById("test90_1").getBoundingClientRect();
     var box2 = document.getElementById("test90_2").getBoundingClientRect();
 
-    assert(box1.bottom+2 <= box2.top,
+    assert(almostLessThanAbs(box1.bottom+2, box2.top),
            "123 should be above 456, with enough space to draw the line")
 
-    assert(box1.left == box2.left && box1.right == box2.right,
+    assert(almostEqualAbs(box1.left, box2.left) &&
+           almostEqualAbs(box1.right, box2.right),
            "bad alignment in mstack")
 
     return 6;
@@ -2137,14 +2159,14 @@
       box[i] = document.getElementById("test91_"+i).getBoundingClientRect();
     }
 
-    assert(box[0].width == box[1].width &&
-           box[1].width == box[2].width &&
-           box[2].width == box[3].width,
+    assert(almostEqualRel(box[0].width, box[1].width) &&
+           almostEqualRel(box[1].width, box[2].width) &&
+           almostEqualRel(box[2].width, box[3].width),
            "row should have the same width")
 
-    assert(box[0].left == box[1].left &&
-           box[2].left == box[3].left &&
-           box[0].left > box[2].left,
+    assert(almostEqualAbs(box[0].left, box[1].left) &&
+           almostEqualAbs(box[2].left, box[3].left) &&
+           almostLessThanAbs(box[2].left, box[0].left),
            "bad horizontal position (msgroup, shift)")
 
     return 6;
@@ -2156,11 +2178,14 @@
     var mn = document.getElementById("test92").firstElementChild.
       getBoundingClientRect();
     
-    assert(mstack.bottom - mn.bottom >= 30, "bad mslinethickness")
+    assert(almostLessThanRel(3*baseSize, mstack.bottom - mn.bottom),
+           "bad mslinethickness")
 
-    assert(mn.left - mstack.left == 25, "bad lefttoverhang")
+    assert(almostEqualRel(mn.left - mstack.left, 2.5*baseSize),
+           "bad lefttoverhang")
 
-    assert(mstack.right - mn.right == 50, "bad rightoverhang")
+    assert(almostEqualRel(mstack.right - mn.right, 5*baseSize),
+           "bad rightoverhang")
 
     return 6;
     },
@@ -2172,22 +2197,25 @@
       box[i] = document.getElementById("test93_"+i).getBoundingClientRect();
     }
 
-    assert(box[0].width < box[1].width &&
-           box[0].left == box[1].left, "bad alignment (stackalign=left)")
+    assert(almostLessThanRel(box[0].width, box[1].width) &&
+           almostEqualAbs(box[0].left, box[1].left),
+           "bad alignment (stackalign=left)")
 
-    assert(box[2].width < box[3].width &&
-           box[2].left + box[2].right ==
-           box[3].left + box[3].right, "bad alignment (stackalign=center)")
+    assert(almostLessThanRel(box[2].width, box[3].width) &&
+           almostLessThanAbs((box[2].left + box[2].right)/2,
+                             (box[3].left + box[3].right)/2),
+           "bad alignment (stackalign=center)")
 
-    assert(box[4].width < box[5].width &&
-           box[4].right == box[5].right, "bad alignment (stackalign=right)")
+    assert(almostLessThanRel(box[4].width, box[5].width) &&
+           almostEqualAbs(box[4].right, box[5].right),
+           "bad alignment (stackalign=right)")
 
     return 6;
     },
     function () {
     // test 94: mscarries, scriptlevel, scriptsizemultiplier
 
-    assert(almostEqualRef(
+    assert(almostEqualRel(
            document.getElementById("test94").getBoundingClientRect().width,
 			  10 * .6 * baseSize), "bad font size in mscarries")
 
@@ -2201,14 +2229,14 @@
       box[i] = document.getElementById("test95_"+i).getBoundingClientRect();
     }
 
-    assert(box[0].right < box[1].left &&
-           box[0].right < box[2].left &&
-           box[0].top > box[1].bottom &&
-           box[0].top == box[2].top, "bad positions in mlongdiv")
+    assert(almostLessThanAbs(box[0].right, box[1].left) &&
+           almostLessThanAbs(box[0].right, box[2].left) &&
+           almostLessThanAbs(box[1].bottom, box[0].top)  &&
+           almostEqualAbs(box[0].top, box[2].top), "bad positions in mlongdiv")
 
-    assert(box[2].width == box[3].width && 
-           box[2].left == box[3].left &&
-           box[2].bottom <= box[3].top,
+    assert(almostEqualRel(box[2].width, box[3].width) && 
+           almostEqualAbs(box[2].left, box[3].left) &&
+           almostLessThanAbs(box[2].bottom, box[3].top),
            "the remaining children of mlongdiv should be treated as mstack")
 
     return 6;
@@ -2221,22 +2249,22 @@
       box[i] = document.getElementById("test96_"+i).getBoundingClientRect();
     }
 
-    assert(box[2].bottom == box[0].bottom &&
-           box[2].right < box[0].left &&
-           box[0].left == box[1].left &&
-           box[0].bottom < box[1].top,
+    assert(almostEqualAbs(box[2].bottom, box[0].bottom) &&
+           almostLessThanAbs(box[2].right, box[0].left) &&
+           almostEqualAbs(box[0].left, box[1].left) &&
+           almostLessThanAbs(box[0].bottom, box[1].top),
            "bad positions in mlongdiv (longdivstyle=stackedrightright)")
 
-    assert(box[0].bottom == box[1].bottom &&
-           box[1].bottom == box[2].bottom &&
-           box[0].right < box[2].left &&
-           box[2].right < box[1].left,
+    assert(almostEqualAbs(box[0].bottom, box[1].bottom) &&
+           almostEqualAbs(box[1].bottom, box[2].bottom) &&
+           almostLessThanAbs(box[0].right, box[2].left) &&
+           almostLessThanAbs(box[2].right, box[1].left),
            "bad positions in mlongdiv (longdivstyle=left/\right)")
 
-    assert(box[2].bottom == box[0].bottom &&
-           box[0].right < box[2].left &&
-           box[0].right == box[1].right &&
-           box[0].bottom < box[1].top,
+    assert(almostEqualAbs(box[2].bottom, box[0].bottom) &&
+           almostLessThanAbs(box[0].right, box[2].left) &&
+           almostEqualAbs(box[0].right, box[1].right) &&
+           almostLessThanAbs(box[0].bottom, box[1].top),
            "bad positions in mlongdiv (longdivstyle=stackedleftleft)")
 
     return 6;
@@ -3237,12 +3265,12 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       <p>
         <!-- test 28: mtable framespacing -->
         <math id="test28_framespacing1">
-          <mtable frame="solid" framespacing="10px 15px">
+          <mtable frame="solid" framespacing="1em 1.5em">
             <mtr><mtd><mtext>X</mtext></mtd></mtr>
           </mtable>
         </math>
         <math id="test28_framespacing2">
-          <mtable frame="solid" framespacing="25px 40px">
+          <mtable frame="solid" framespacing="2.5em 4em">
             <mtr><mtd><mtext>X</mtext></mtd></mtr>
           </mtable>
         </math>
@@ -3254,18 +3282,18 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
           <mtable equalrows="true" equalcolumns="true">
             <mtr>
               <mtd id="test29_cell0">
-                <mspace width="100px" height="100px" depth="0px"/>
+                <mspace width="10em" height="10em" depth="0em"/>
               </mtd>
               <mtd id="test29_cell1">
-                <mspace width="80px" height="50px" depth="0px"/>
+                <mspace width="8em" height="5em" depth="0em"/>
               </mtd>
             </mtr>
             <mtr>
               <mtd id="test29_cell2">
-                <mspace width="20px" height="30px" depth="0px"/>
+                <mspace width="2em" height="3em" depth="0em"/>
               </mtd>
               <mtd id="test29_cell3">
-                <mspace width="40px" height="20px" depth="0px"/>
+                <mspace width="4em" height="2em" depth="0em"/>
               </mtd>
             </mtr>
           </mtable>
@@ -3475,8 +3503,8 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       <p>
         <!-- test 41: scriptlevel -->
         <math>
-          <mstyle mathsize="128em" scriptsizemultiplier=".5">
-            <mstyle scriptlevel="3">
+          <mstyle mathsize="8em" scriptsizemultiplier=".5">
+            <mstyle scriptlevel="2">
               <mtext id="test41">X</mtext>
             </mstyle>
           </mstyle>
@@ -3539,20 +3567,20 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       <p>
         <!-- test 46: mo maxsize -->
         <math>
-          <mstyle mathsize="40px">
-            <mo id="test46" maxsize="100px">|</mo>
-            <mspace height="100px" depth="100px" width="1px"/>
-          </mstyle>
+          <mrow>
+            <mo id="test46" maxsize="10em">|</mo>
+            <mspace height="10em" depth="10em"/>
+          </mrow>
         </math>
       </p>
 
       <p>
         <!-- test 47: mo minsize -->
         <math>
-          <mstyle mathsize="20px">
-            <mo id="test47" minsize="40px">(</mo>
-            <mspace height="10px" depth="10px" width="1px"/>
-          </mstyle>
+          <mrow>
+            <mo id="test47" minsize="10em">(</mo>
+            <mspace height="1em" depth="1em"/>
+          </mrow>
         </math>
       </p>
 
@@ -3657,8 +3685,8 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
      <p>
        <!-- Test 50: embellished operators -->
        <math>
-         <mstyle mathsize="20px">
-           <mspace height="20px" depth="20px"/>
+         <mrow>
+           <mspace height="10em" depth="10em"/>
            <mo id="test50_mo0">|</mo>
            <msup><mo id="test50_mo1">|</mo><mn>X</mn></msup>
            <msub><mo id="test50_mo2">|</mo><mn>X</mn></msub>
@@ -3702,7 +3730,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
            <mrow>
              <mo id="test50_mo13">|</mo>
            </mrow>
-         </mstyle>
+         </mrow>
        </math>
      </p>
 
@@ -3710,8 +3738,8 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
      <p>
        <math>
-         <mstyle mathsize="20px">
-           <mspace height="20px" depth="20px"/>
+         <mrow>
+           <mspace height="10em" depth="10em"/>
            <mrow><mo id="test51_mo0">|</mo><mtext>S</mtext></mrow>
            <mrow><mo id="test51_mo1">|</mo><mspace/></mrow>
            <mrow>
@@ -3739,7 +3767,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
            </mrow>
            <mrow><mo id="test51_mo7">|</mo><maligngroup/></mrow>
            <mrow><mo id="test51_mo8">|</mo><malignmark/></mrow>
-         </mstyle>
+         </mrow>
        </math>
      </p>
 
@@ -3844,28 +3872,28 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       <p>
         <!-- test 56: horizontal stretching in munder/mover/munderover -->
         <math>
-          <mstyle mathsize="20px">
+          <mrow>
             <munder>
-              <mspace width="40px"/>
+              <mspace width="5em"/>
               <mo id="test56_mo0">→</mo>
             </munder>
             <mover>
-              <mspace width="40px"/>
+              <mspace width="5em"/>
               <mo id="test56_mo1">→</mo>
             </mover>
             <munderover>
-              <mspace width="40px"/>
+              <mspace width="5em"/>
               <mo id="test56_mo2">→</mo>
               <mo id="test56_mo3">→</mo>
             </munderover>
             <munder>
-              <mspace width="40px"/>
+              <mspace width="5em"/>
               <msup> <!-- this is an embellished op -->
                 <mrow><mspace/><mtext></mtext><mo id="test56_mo4">→</mo></mrow>
                 <mtext></mtext>
               </msup>
             </munder>
-          </mstyle>
+          </mrow>
         </math>
       </p>
 
@@ -3931,7 +3959,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       <p>
         <!-- test 59: vertical and horizontal stretching in mtd -->
         <math>
-          <mstyle mathsize="20px">
+          <mrow>
             <mtable>
               <mtr>
                 <mtd><mi>X</mi></mtd>
@@ -3947,7 +3975,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
               </mtr>
               <mtr>
                 <mtd></mtd>
-                <mtd><mspace width="60px" height="30px" depth="30px"/></mtd>
+                <mtd><mspace width="6em" height="3em" depth="3em"/></mtd>
                 <mtd></mtd>
               </mtr>
               <mtr>
@@ -3961,7 +3989,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                 <mtd><mi>X</mi></mtd>
               </mtr>
             </mtable>
-          </mstyle>
+          </mrow>
         </math>
       </p>
 
@@ -4060,38 +4088,38 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       <p>
         <!-- test 62: operator dictionary: horizontal stretchy operators -->
         <math>
-          <mstyle id="test62" mathsize="20px">
-            <munder><mspace width="100px"/><mo>&#x005F;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x00AF;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x203E;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x2190;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x2192;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x2194;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x21A4;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x21A6;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x21A9;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x21AA;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x21BC;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x21C0;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x21C1;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x21D0;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x21D2;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x21D4;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x23B4;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x23B5;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x23DC;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x23DD;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x23DE;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x23DF;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x27F5;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x27F6;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x27F7;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x294E;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x2950;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x295B;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#x295F;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#xFE35;</mo></munder>
-            <munder><mspace width="100px"/><mo>&#xFE36;</mo></munder>
+          <mstyle id="test62">
+            <munder><mspace width="5em"/><mo>&#x005F;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x00AF;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x203E;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x2190;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x2192;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x2194;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x21A4;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x21A6;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x21A9;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x21AA;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x21BC;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x21C0;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x21C1;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x21D0;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x21D2;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x21D4;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x23B4;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x23B5;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x23DC;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x23DD;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x23DE;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x23DF;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x27F5;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x27F6;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x27F7;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x294E;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x2950;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x295B;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#x295F;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#xFE35;</mo></munder>
+            <munder><mspace width="5em"/><mo>&#xFE36;</mo></munder>
           </mstyle>
         </math>
       </p>
@@ -4361,7 +4389,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         <!-- test 69: mpadded (RTL) -->
         <math dir="rtl" id="test69">
           <mtext>X</mtext>
-          <mpadded lspace="50px">
+          <mpadded lspace="5em">
               <mtext>Y</mtext>
           </mpadded>
         </math>
@@ -4782,9 +4810,9 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         <math>
           <mstack id="test92">
             <mn>012</mn>
-            <msline leftoverhang="25px"
-                    rightoverhang="50px"
-                    mslinethickness="30px"/>
+            <msline leftoverhang="2.5em"
+                    rightoverhang="5em"
+                    mslinethickness="3em"/>
           </mstack>
         </math>
       </p>
