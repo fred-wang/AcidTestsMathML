@@ -13,8 +13,18 @@
  <body>
   <h1>The Acid3 test (description)</h1>
 
-<p><strong>Note: test 10 contains invalid markup: this is on purpose and intended to 
-check error handling!</strong></p>
+<p><strong>Test 10 contains invalid markup: this is on purpose and
+    intended to check error handling!</strong></p>
+
+<p>
+<strong>In the description of tests,
+"is equal to", "is less than", "is at most"
+etc should be understood as approximate comparisons (see below).
+In particular, there is
+no distinction between e.g. "is less than" or "is at most".
+</strong>
+</p>
+
 
 <h2>Introduction</h2>
 
@@ -43,7 +53,9 @@ the MathML Acid3 test uses a special Acid3MathML family made available as Web
 fonts. These fonts contain characters used in the tests:
 ASCII letters, mathematical alphanumeric Symbols (to test
 <code>mathvariant</code>) and for some operators from the MathML Operator
-Dictionary. Their sizes are given by the table below:</p>
+Dictionary. Their sizes are given by the table below. Test 0 verifies that
+these Web fonts are downloaded and retry several times.
+</p>
 
 <table style="margin-left: auto; margin-right: auto; text-align: center;"
        border="1">
@@ -56,31 +68,203 @@ Dictionary. Their sizes are given by the table below:</p>
     </tr>
   </thead>
   <tbody>
-    <tr><td>bold-italic            </td><td>256</td><td>1024</td><td>1/4</td></tr>
-    <tr><td>sans-serif-bold-italic </td><td>384</td><td>1024</td><td>3/8</td></tr>
-    <tr><td>bold                   </td><td>512</td><td>1024</td><td>1/2</td></tr>
-    <tr><td>bold script            </td><td>576</td><td>1024</td><td>9/16</td></tr>
-    <tr><td>bold-fraktur           </td><td>640</td><td>1024</td><td>5/8</td></tr>
-    <tr><td>sans-serif-bold        </td><td>704</td><td>1024</td><td>11/16</td></tr>
-    <tr><td>italic                 </td><td>768</td><td>1024</td><td>3/4</td></tr>
-    <tr><td>sans-serif-italic      </td><td>832</td><td>1024</td><td>13/16</td></tr>
-    <tr><td>monospace              </td><td>896</td><td>1024</td><td>7/8</td></tr>
-    <tr><td>normal                </td><td>1024</td><td>1024</td><td>1</td></tr>
-    <tr><td>script                </td><td>1088</td><td>1024</td><td>17/16</td></tr>
-    <tr><td>fraktur               </td><td>1152</td><td>1024</td><td>9/8</td></tr>
-    <tr><td>sans-serif            </td><td>1216</td><td>1024</td><td>19/16</td></tr>
-    <tr><td>double-struck         </td><td>1280</td><td>1024</td><td>5/4</td></tr>
+    <tr>
+      <td>bold-italic           </td><td>256</td><td>1024</td><td>1/4</td>
+    </tr>
+    <tr>
+      <td>sans-serif-bold-italic </td><td>384</td><td>1024</td><td>3/8</td>
+    </tr>
+    <tr>
+      <td>bold                   </td><td>512</td><td>1024</td><td>1/2</td>
+    </tr>
+    <tr>
+      <td>bold script            </td><td>576</td><td>1024</td><td>9/16</td>
+    </tr>
+    <tr>
+      <td>bold-fraktur           </td><td>640</td><td>1024</td><td>5/8</td>
+    </tr>
+    <tr>
+      <td>sans-serif-bold        </td><td>704</td><td>1024</td><td>11/16</td>
+    </tr>
+    <tr>
+      <td>italic                 </td><td>768</td><td>1024</td><td>3/4</td>
+    </tr>
+    <tr>
+      <td>sans-serif-italic      </td><td>832</td><td>1024</td><td>13/16</td>
+    </tr>
+    <tr>
+      <td>monospace              </td><td>896</td><td>1024</td><td>7/8</td>
+    </tr>
+    <tr>
+      <td>normal                </td><td>1024</td><td>1024</td><td>1</td>
+    </tr>
+    <tr>
+      <td>script                </td><td>1088</td><td>1024</td><td>17/16</td>
+    </tr>
+    <tr>
+      <td>fraktur               </td><td>1152</td><td>1024</td><td>9/8</td>
+    </tr>
+    <tr>
+      <td>sans-serif            </td><td>1216</td><td>1024</td><td>19/16</td>
+    </tr>
+    <tr>
+      <td>double-struck         </td><td>1280</td><td>1024</td><td>5/4</td>
+    </tr>
   </tbody>
 </table>
 
-<p>Some tests verify support for stretchy operators and the classical method
-to draw them is to layout several glyphs horizontally or vertically.
-Other tests rely on dimension from the MathML Operator Dictionary that are
-given in 1/18 of em. In these two cases, an accurate size can not be
-achieved because of rounding errors and other approximations. Hence the 
-equality tests are relaxed and a small error is tolerated.</p>
+<p>However, this is still not enough to get perfect measure and results might
+depend on some screen resolution, default font size, whether the page is zoom
+in/out, whether automatic screen resizing is used on some mobile platforms etc
+Hence
+the MathML Acid3 test uses only relative <code>em</code> measures. In test 0,
+a <math><mi>baseSize</mi></math> value is determined for the current
+font size of the page. This may vary according to zoom level or automatic
+screen resizing. Next, the following approximate comparison functions are
+used:</p>
 
-<p>The MathML tests are contained in a div of width 10000 pixels and this is
+<math display="block">
+<mrow>
+  <mi>almostLessThanAbs</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo>
+</mrow>
+<mo>⇔</mo>
+<mrow>
+  <mrow><mi>x</mi><mo>−</mo><mi>y</mi></mrow>
+  <mo>&lt;</mo>
+  <mi>ε</mi><mo>×</mo><mi>baseSize</mi>
+</mrow>
+</math>
+
+<math display="block">
+<mrow>
+  <mi>almostLessThanRel</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo>
+</mrow>
+<mo>⇔</mo>
+<mrow>
+  <mn>2</mn>
+  <mo>&#x2062;</mo>
+  <mfrac>
+    <mrow><mi>x</mi><mo>−</mo><mi>y</mi></mrow>
+    <mrow>
+      <mrow><mo>|</mo><mi>x</mi><mo>|</mo></mrow>
+      <mo>+</mo>
+      <mrow><mo>|</mo><mi>y</mi><mo>|</mo></mrow>
+    </mrow>
+  </mfrac>
+  <mo>&lt;</mo>
+  <mi>ε</mi>
+</mrow>
+</math>
+
+<p>where <math><mi>ε</mi><mo>=</mo><mn>0.1</mn></math>. 
+Hence
+<math>
+  <mi>almostLessThanAbs</mi>
+  <mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo>
+</math>
+means that <math><mi>x</mi><mo>&lt;</mo><mi>y</mi></math> module a small error.
+This error is "absolute" once the <math><mi>baseSize</mi></math> is fixed.
+<math><mi>almostLessThanRel</mi></math>
+is "relative" in the sense that the tolerance grows with the magnitude of
+<math><mi>x</mi><mo>,</mo><mi>y</mi></math>.
+As a rule of thumb, 
+<math><mi>almostLessThanAbs</mi></math> is used to compare coordinates
+(the tolerance should not depend on these coordinates)
+while 
+<math><mi>almostLessThanRel</mi></math> is used to compare
+sizes or distances (the tolerance is larger for big or far away objects).
+Rationale for the <math><mn>2</mn></math>: if
+<math><mi>x</mi><mo>,</mo><mi>y</mi></math> are objects of size
+<math><mi>S</mi></math> then
+
+<math>
+  <mrow>
+    <mi>almostLessThanRel</mi>
+    <mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo>
+  </mrow>
+  <mo>⇔</mo>
+  <mrow><mi>x</mi><mo>−</mo><mi>y</mi></mrow>
+  <mo>&lt;</mo>
+  <mi>ε</mi><mo>×</mo><mi>S</mi>
+</math> and this is equivalent to 
+<math>
+  <mrow>
+    <mi>almostLessThanAbs</mi>
+    <mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo>
+  </mrow>
+</math>
+for the base size.
+The value compared to <math><mi>ε</mi></math> is inspired from
+the
+<a href="https://en.wikipedia.org/wiki/Approximation_error">approximation
+errors</a> but we accomodate the fact that the document base size
+may vary (absolute case) or that we can not distinguish between the exact and
+approximative values (relative case).
+For convenience the following approximate equality functions are
+also defined:</p>
+
+<math display="block">
+<mrow>
+  <mi>almostEqualAbs</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo>
+</mrow>
+<mo>⇔</mo>
+<mrow>
+  <mrow>
+    <mi>almostLessThanAbs</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo>
+  </mrow>
+  <mo>∧</mo>
+  <mrow>
+    <mi>almostLessThanAbs</mi><mo>(</mo><mi>y</mi><mo>,</mo><mi>x</mi><mo>)</mo>
+  </mrow>
+</mrow>
+<mo>⇔</mo>
+<mrow>
+  <mrow><mo>|</mo><mi>x</mi><mo>−</mo><mi>y</mi><mo>|</mo></mrow>
+  <mo>&lt;</mo>
+  <mi>ε</mi><mo>×</mo><mi>baseSize</mi>
+</mrow>
+</math>
+
+<math display="block">
+<mrow>
+  <mi>almostEqualRel</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo>
+</mrow>
+<mo>⇔</mo>
+<mrow>
+  <mrow>
+    <mi>almostLessThanRel</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo>
+  </mrow>
+  <mo>∧</mo>
+  <mrow>
+    <mi>almostLessThanRel</mi><mo>(</mo><mi>y</mi><mo>,</mo><mi>x</mi><mo>)</mo>
+  </mrow>
+</mrow>
+<mo>⇔</mo>
+<mrow>
+  <mn>2</mn>
+  <mo>&#x2062;</mo>
+  <mfrac>
+    <mrow><mo>|</mo><mi>x</mi><mo>−</mo><mi>y</mi><mo>|</mo></mrow>
+    <mrow>
+      <mrow><mo>|</mo><mi>x</mi><mo>|</mo></mrow>
+      <mo>+</mo>
+      <mrow><mo>|</mo><mi>y</mi><mo>|</mo></mrow>
+    </mrow>
+  </mfrac>
+  <mo>&lt;</mo>
+  <mi>ε</mi>
+</mrow>
+</math>
+
+<p>Sometimes we want to tolerate even more errors
+(e.g. tests to verify support for stretchy operators, which are not
+always stretched perfectly by the classical TeX method) or want to 
+be sure that two values are really distinct (e.g. the bottom coordinate of
+a base and exponent in <code>msup</code>). The MathML Acid3 test uses a
+parameter <math><mi>ẟ</mi><mo>=</mo><mn>0.25</mn></math> for that purpose
+which should be understood as a fraction of some size (e.g. the base size).</p>
+
+<p>Finally, the MathML tests are contained in a div of width 1000em and this is
 assumed to be large enough so that automatic line breaking does not happen by
 default. Of course, tests for the line breaking use narrower containers.</p>
 
@@ -90,6 +274,8 @@ default. Of course, tests for the line breaking use narrower containers.</p>
 
 <ul>
 <li>The "JS required" message is removed.</li>
+<li>Web fonts availability is verified several times.</li>
+<li>The <math><mi>baseSize</mi></math> is computed.</li>
 <li>The namespace URI on a <code>&lt;math&gt;</code> is tested and should be
 <code>http://www.w3.org/1998/Math/MathML</code>.</li>
 <li>Test that inline math (default)
@@ -123,8 +309,8 @@ and <code>&lt;munderover&gt;</code> (left to right):</p>
           <mrow>
             <mtext>BASE</mtext>
           </mrow>
-        <math>
         </math>
+        <math>
           <msub>
             <mtext>BASE</mtext><mtext>X</mtext>
           </msub>

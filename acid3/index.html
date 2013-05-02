@@ -102,7 +102,7 @@
     font-size: 64px;
 
     /* large enough to ignore automatic linebreaking */
-    width: 10000px;
+    width: 1000em;
 
     visibility: hidden;
   }
@@ -632,7 +632,7 @@
     var space1 = document.getElementById("test14").firstElementChild.
       getBoundingClientRect();
     var space2 = document.getElementById("test14").lastElementChild.
-				  getBoundingClientRect();
+                 getBoundingClientRect();
 
     assert(almostEqualRel(space1.width, 5*baseSize) &&
            almostEqualRel(space1.height, (3+2)*baseSize) &&
@@ -859,7 +859,7 @@
            getBoundingClientRect().top -
            document.getElementById("test20_munderover11").
            getBoundingClientRect().bottom) &&
-	   almostLessThanAbs(
+           almostLessThanAbs(
            (1+delta)*(document.getElementById("test20_munderover21").
            getBoundingClientRect().top -
            document.getElementById("test20_munderover23").
@@ -1331,7 +1331,7 @@
            "bad mediumspace width")
 
     assert(almostEqualRel(
-	   document.getElementById("test48_infix").
+           document.getElementById("test48_infix").
            getBoundingClientRect().width,
            document.getElementById("test48_infix_ref").
            getBoundingClientRect().width),
@@ -2264,7 +2264,7 @@
 
     assert(almostEqualRel(
            document.getElementById("test94").getBoundingClientRect().width,
-			  10 * .6 * baseSize), "bad font size in mscarries")
+                              10 * .6 * baseSize), "bad font size in mscarries")
 
     return 6;
     },
@@ -2530,10 +2530,16 @@
 
     <div id="mathml">
       <!--  test 0: verify JS, Web fonts and
-	    test basic feature of the <math> element -->
+            test basic feature of the <math> element -->
       <div>
-	<span id="test1_Acid3MathMLA"><span>0123456789</span><span style="font-style: italic">0123456789</span></span>
-	<span id="test1_Acid3MathMLB"><span style="font-weight: bold;">0123456789</span><span style="font-weight: bold; font-style: italic;">0123456789</span></span>
+        <span id="test1_Acid3MathMLA">
+          <span>0123456789</span>
+          <span style="font-style: italic">0123456789</span>
+        </span>
+        <span id="test1_Acid3MathMLB">
+          <span style="font-weight: bold;">0123456789</span>
+          <span style="font-weight: bold; font-style: italic;">0123456789</span>
+        </span>
       </div>
       <p>
         <math id="test0"></math>
@@ -2630,22 +2636,22 @@
            twice as large as the mtext -->
       <p>
         <math>
-	  <menclose notation="circle" id="test6_menclose">
-	    <menclose notation="box">
-	      <menclose notation="circle">
-		<menclose notation="box">
-		  <mtext id="test6_mtext">XXX</mtext>
-		</menclose>
-	      </menclose>
-	    </menclose>
-	  </menclose>
-	</math>
+          <menclose notation="circle" id="test6_menclose">
+            <menclose notation="box">
+              <menclose notation="circle">
+                <menclose notation="box">
+                  <mtext id="test6_mtext">XXX</mtext>
+                </menclose>
+              </menclose>
+            </menclose>
+          </menclose>
+        </math>
       <p>
 
       <!-- test 7: menclose (equivalent constructions) -->
       <p>
         <math>
-	  <mtext id="test">XXX</mtext>
+          <mtext id="test">XXX</mtext>
           <msqrt id="test7_radical_ref"><mtext>XXX</mtext></msqrt>
         </math>
       </p>
@@ -3511,7 +3517,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       <p>
         <!-- test 40: mo largeop -->
         <math>
-	  <mstyle mathsize="5em">
+          <mstyle mathsize="5em">
             <mstyle displaystyle="true">
               <mo id="test40_sum1">∑</mo>
             </mstyle>
@@ -4914,12 +4920,13 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                     <mtext id="test98_start">START</mtext>
                     <mtext>
                       <svg width="11em" height="2em">
-			<text>SVG</text>
+                        <text>SVG</text>
                       </svg>
                     </mtext>
                     <semantics>
                       <mtext>
-			<div style="width: 7em;">HTML</div>
+                        <span style="display: inline-block;
+                                     width: 7em;">HTML</span>
                       </mtext>
                       <annotation encoding="plain/text">D</annotation>
                     </semantics>
@@ -4931,19 +4938,19 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
           </g>
         </svg>
 
-	<div style="width: 5em;">
-	  <table>
-	    <tr>
-	      <td>
-		<math>
-		  <mtext id="test98_abc">ABC</mtext>
-		  <mo>+</mo>
-		  <mtext id="test98_def">DEF</mtext>
-		</math>
-	      </td>
-	    </tr>
-	  </table>
-	</div>
+        <div style="width: 5em;">
+          <table>
+            <tr>
+              <td>
+                <math>
+                  <mtext id="test98_abc">ABC</mtext>
+                  <mo>+</mo>
+                  <mtext id="test98_def">DEF</mtext>
+                </math>
+              </td>
+            </tr>
+          </table>
+        </div>
 
       </div>
 
