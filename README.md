@@ -9,15 +9,17 @@ provide an official URL. In the meantime, online versions are available on
 GitHub:*
 
 * [MathML Acid 1](http://fred-wang.github.com/AcidTestsMathML/acid1/)
+  ([description](http://fred-wang.github.com/AcidTestsMathML/acid1/description.html))
 * [MathML Acid 2](http://fred-wang.github.com/AcidTestsMathML/acid2/)
   ([description](http://fred-wang.github.com/AcidTestsMathML/acid2/description.html))
 * [MathML Acid 3](http://fred-wang.github.com/AcidTestsMathML/acid3/)
   ([description](http://fred-wang.github.com/AcidTestsMathML/acid3/description.html))
 
 This repository contains MathML versions of the famous
-[Acid1](http://acid1.acidtests.org),
-[Acid2](http://acid2.acidtests.org) and [Acid3](http://acid3.acidtests.org)
-tests. At the time these MathML versions are published, most modern browsers
+[Acid Tests](http://www.acidtests.org/)
+([Acid1](http://acid1.acidtests.org), [Acid2](http://acid2.acidtests.org) and
+[Acid3](http://acid3.acidtests.org)).
+At the time these MathML versions are published, most modern browsers
 support the advanced HTML/CSS/SVG/Javascript/DOM features verified by the
 classical Acid tests but very few have a decent support for even the
 simplest mathematical constructions. MathML is a very old W3C standard, now
@@ -44,7 +46,7 @@ Unfortunately these tests are not automated and are very subjective. This makes
 evaluation and comparison of native MathML implementations a difficult task.
 Since the MathML Acid1 test contains very elementary MathML constructions, we
 keep this subjective evaluation method. Any rendering that looks more or less
-like the reference could be accepted.	
+like the reference and satisfies the basic requirements could be accepted.
 
 The MathML recommendation almost never describes precisely the
 rendering of elements, so exact pixel matching does not make sense in general

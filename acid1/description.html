@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+ <head>
+  <title>The Acid1 test (description)</title>
+  <meta charset="utf-8"/>
+    <style type="text/css">
+      @font-face {
+        font-family: "Acid1MathML";
+        src: url(Acid1MathML-Regular.woff);
+      }
+      @font-face {
+        font-family: "Acid1MathML";
+        font-style: italic;
+        src: url(Acid1MathML-Italic.woff);
+      }
+      math {
+        font-family: Acid1MathML;
+      }
+    </style>
+ </head>
+ <body>
+  <h1>The Acid1 test (description)</h1>
+
+  <p>The Acid1 test contains 7 mathematical expressions that should render
+    more or less as follows:</p>
+
+  <img src="reference.png" width="623" height="396"
+       alt="Reference Rendering (MathJax)"/>
+
+  <p>The basic requirements to pass the tests are:</p>
+
+  <ol>
+    <li>In general, text is layout linearly from left to right
+      with normal style (i.e. not italic), modulo the exception below.</li>
+    <li>All characters should be displayed properly, including
+      greek, fraktur and script letters (a Web font is provided to avoid
+      potential missing font support).</li>
+    <li>In test 1, "16" should be rendered as a subscript.</li>
+    <li>In test 2, 4 and 7, "old" should be rendered as an underscript.</li>
+    <li>In test 6 and 7 "sing to me," should be rendered as an overscript.</li>
+    <li>In test 7 "bar" should be rendered as an overscript.</li>
+    <li>In test 4, 80/120 and 2/3 should be rendered as fractions with
+      numerator above denominator and horizontal fraction bar aligned with the
+      equation axis.</li>
+    <li>In test 5, "2" should be rendered as a superscript.</li>
+    <li>In test 6, "square root of 44000" should be rendered as a radical
+      symbol covering the "44000".</li>
+    <li>In test 7, elements "the way", "the world ends" etc should be layout as
+      a table with 2 rows and 3 columns, vertically centered with respect to
+      the equation axis.</li>
+    <li>The greek letters should have <code>font-style: italic</code> applied
+      (compare
+      <span style="font-family: Acid1MathML; font-style: italic;">Γτρσ</span> vs
+      <span style="font-family: Acid1MathML; font-style: normal;">Γτρσ</span>).
+      Note that the fraktur h and script A are supposed to be invariant to
+      style change, most fonts render the latter slanted.
+    </li>
+    <li>The parentheses should stretch to become at least as tall as their
+      content and should render symmetrically with respect to the equation
+      axis.</li>
+    <li>The spacing around the operators, namely invisible function application
+      U+2061, parenthesis, braces, plus and equal signs,
+      should be "reasonable" in
+      some sense (neither too small nor excessively large). These operators
+      should also be correctly aligned  with respect to the equation axis.
+    </li>
+  </ol>
+
+ </body>
+</html>
