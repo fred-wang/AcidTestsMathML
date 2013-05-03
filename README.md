@@ -25,6 +25,15 @@ integrated into HTML5 and EPUB3 so browser vendors can not claim having a
 standard-compliant rendering engine when this one lacks a native MathML
 implementation.
 
+Of course these tests are not perfect, for example they do not
+capture the subjective but important notion of "good-looking mathematical
+expressions". Also, they are supposed to be executed in browsers ; the result
+for other MathML layout engines (including polyfills) should not be considered
+reliable. However, these tests have the advantage to quickly provide objective
+results to people even those without advanced knowledge of the MathML language. 
+Many tests make sense out of a browser context and could be verified by
+non-browser MathML implementers.
+
 Perhaps the most popular MathML tests are the
 [Mozilla's MathML Torture Test](https://developer.mozilla.org/en-US/docs/Mozilla_MathML_Project/MathML_Torture_Test) or
 [Joe Java's MathML test](https://eyeasme.com/Joe/MathML/MathML_browser_test)
@@ -33,8 +42,9 @@ TeX images and the [W3C's MathML test suite](http://www.w3.org/Math/testsuite)
 where a large number of features are tested against sample references.
 Unfortunately these tests are not automated and are very subjective. This makes
 evaluation and comparison of native MathML implementations a difficult task.
-This however the method used for the MathML Acid1 test in order to verify very
-elementary MathML constructions.
+Since the MathML Acid1 test contains very elementary MathML constructions, we
+keep this subjective evaluation method. Any rendering that looks more or less
+like the reference could be accepted.	
 
 The MathML recommendation almost never describes precisely the
 rendering of elements, so exact pixel matching does not make sense in general
@@ -43,23 +53,7 @@ we use MathML features like `mathbackground='yellow'` or `<mpadded>`
 whose visual renderings are clearly defined in order to draw the smiley face.
 Most other MathML features can be verified via Javascript by testing
 the relative position of boxes (e.g. the numerator is above a denominator
-in an `<mfrac>` element) and thus can just be included in the Acid3 test. Hence
-the combination of these MathML Acid2 and Acid3 tests should give a pretty
+in an `<mfrac>` element). These features are verified in the MathML Acid3 test.
+Hence the combination of these MathML Acid2 and Acid3 tests should give a pretty
 good coverage of MathML features, while still being automated and hopefully
-quite objective. This set of tests is not claimed to be perfect, for example
-the tests only work with native MathML implementations or do not capture the
-subjective but important notion of "good-looking mathematical expressions".
-However it has the advantage to quickly provide objective results to people
-even those without advanced knowledge of the MathML language. 
-
-The goal of these MathML tests is to compare native browser implementations,
-they are not supposed to be executed in other MathML layout engines. The result
-given for other MathML layout engines (including polyfills) should not be
-considered reliable.
-The design of these tests is biased: some features like `<mglyph>` or
-some `<mstyle>` attributes that are assumed to be less important in a browser
-context are not tested at all while some tests require interaction between
-MathML and other Web features.
-However, many tests make sense out of a browser
-context and could be verified by humans, in the same way as the other MathML
-tests mentioned above.
+quite objective.
