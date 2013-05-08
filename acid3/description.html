@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
  <head>
-  <title>The Acid3 test (description)</title>
+  <title>The MathML Acid3 test (description)</title>
   <meta charset="utf-8"/>
   <style type="text/css">
     .framed {
@@ -11,20 +11,7 @@
   </style>
  </head>
  <body>
-  <h1>The Acid3 test (description)</h1>
-
-<p><strong>Test 10 contains invalid markup: this is on purpose and
-    intended to check error handling!</strong></p>
-
-<p>
-<strong>In the description of tests,
-"is equal to", "is less than", "is at most"
-etc should be understood as approximate comparisons (see below).
-In particular, there is
-no distinction between e.g. "is less than" or "is at most".
-</strong>
-</p>
-
+  <h1>The MathML Acid3 test (description)</h1>
 
 <h2>Introduction</h2>
 
@@ -162,7 +149,7 @@ Hence
   <mi>almostLessThanAbs</mi>
   <mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo>
 </math>
-means that <math><mi>x</mi><mo>&lt;</mo><mi>y</mi></math> module a small error.
+means that <math><mi>x</mi><mo>&lt;</mo><mi>y</mi></math> modulo a small error.
 This error is "absolute" once the <math><mi>baseSize</mi></math> is fixed.
 <math><mi>almostLessThanRel</mi></math>
 is "relative" in the sense that the tolerance grows with the magnitude of
@@ -268,6 +255,21 @@ which should be understood as a fraction of some size (e.g. the base size).</p>
 assumed to be large enough so that automatic line breaking does not happen by
 default. Of course, tests for the line breaking use narrower containers.</p>
 
+<h3>Important Remarks</h3>
+
+<ul>
+<li>Test 10 contains invalid markup: this is on purpose and
+    intended to check error handling!</li>
+
+<li>
+From the above discussion about the test approximation, the description below
+will use "lower than", "smaller than", "nonzero" etc
+to mean with a nonnegligible difference (expressed in term of
+<math><mi>ẟ</mi></math>) while
+"at most as low", "at most as large", "zero" etc will mean modulo some
+small error (expressed in term of <math><mi>ε</mi></math>)</li>
+</ul>
+
 <h3>Test 0</h3>
 
 <p>This is a very simple test to start with:</p>
@@ -346,7 +348,9 @@ and <code>&lt;munderover&gt;</code> (left to right):</p>
 <ul>
 <li>The height of the <code>&lt;mrow&gt;</code>
   is less than the heights of the elements that have scripts
-  attached to the BASE.</li>
+  attached to the BASE. The height of elements with one script is less
+  than the height of the corresponding element with two scripts.
+</li>
 
 <li>When the scripts are positioned on the right of the
   base (<code>&lt;msub&gt;</code>,
@@ -365,13 +369,12 @@ and <code>&lt;munderover&gt;</code> (left to right):</p>
 
 <ul>
 <li>The subscripts of <code>&lt;msub&gt;</code> and
-<code>&lt;msubsup&gt;</code> should be lower than the base. This is verified
-by testing that the top (respectively bottom) of the subscripts are lower
-than the top (respectively bottom) of the base. Similarly, the test
+<code>&lt;msubsup&gt;</code> should be lower than the base.
+This is verified by testing that the top of the subscripts are lower
+than the top of the base. Similarly, the test
 checks that the supscripts of 
 <code>&lt;msup&gt;</code> and <code>&lt;msubsup&gt;</code> are higher than
-the base.
-</li>
+the base.</li>
 <li>The sub/super scripts of
   <code>&lt;msub&gt;</code>,
   <code>&lt;msup&gt;</code>, <code>&lt;msubsup&gt;</code>
@@ -384,7 +387,7 @@ the base.
   and <code>&lt;munderover&gt;</code>
 should be placed between the left and
 right coordinates of the base. The test verifies that the
-left coordinate of base is less than the left coordinate of the scripts and
+left coordinate of base is less at most the left coordinate of the scripts and
   similarly for the right coordinates.
 </li>
 <li>The under/over scripts of
@@ -412,12 +415,10 @@ Similarly for the underscripts.</li>
 <li>Numerator and denominator should be vertical aligned: 
 the test verifies that the left coordinate of the numerator
 (respectively right coordinate) matches the left coordinate of the
-denominator.</li>
+denominator (respectively right coordinate).</li>
 <li>Numerator should be above denominator
 with enough space to draw the fraction bar. The test verifies that
-the bottom of the numerator plus 3px is at most as low as the top of the
-denumerator. We assume that 3px is the minimum to draw a fraction bar
-that does not touch the numerator and denominator.
+the bottom of the numerator is at most as low as the top of the denumerator.
 </li>
 </ul>
 
@@ -427,17 +428,10 @@ that does not touch the numerator and denominator.
 element:</p>
 
 <ul>
-<li><code>&lt;msqrt&gt;</code> should be at least as large as its child
-with enough space to draw the radical. As for test 3, we assume that we need
-at least 3px to draw the top bar and the radical symbols.
-So the height and width of the <code>&lt;msqrt&gt;</code>
-should be at least 3px more than those of the child.
-</li>
 <li>The square root should be placed on the left. For that purpose we
   verify that the space on the left (the left coordinate of the
   child minus the left coordinate of the <code>&lt;msqrt&gt;</code>) is
-  larger than the space on the right (the right coordinate of the
-  <code>&lt;msqrt&gt;</code> minus the right coordinate of the child)
+  nonzero.
 </li>
 <li>The child should be inside the square root. The test verifies that
 the bottom of the child is at most at low as the bottom of the square root
@@ -457,14 +451,10 @@ element:</p>
 
 <ul>
 <li>The index should be higher than the base. The test checks that the
-top (respectively bottom) of the index is higher than the top
-(respectively bottom) of the base.
+bottom of the index is higher than the bottom of the child.
 </li>
-<li>
-The index should be on the left of the base, with enough space to draw the
-radical. We check that the right coordinate of the index plus 3px is at most
-the left coordinate of the base.</li>
-
+<li>The index should be on the left of the base. The test checks that the
+right coordinate of the index is at most the left coordinate of the child.</li>
 </ul>
 
       <p class="framed">
@@ -473,15 +463,211 @@ the left coordinate of the base.</li>
         </math>
       </p>
 
-<h3>test 6: menclose (longdiv, box, roundedbox, circle, madruwb)</h3>
+<h3>test 6: menclose (circle, box)</h3>
+
+<p>This is a simple test to verify the support for the box and circle notations
+of menclose. The test contains some nested menclose elements:
+a mtext content,
+framed with a menclose "box", circled by a menclose "circle", framed,
+and finally circled again.</p>
+
+<p>We assume here that the notations are drawn with
+rectangle and ellipse whose axis are the text horizontal/vertical axis and
+that the notations do not overlap. Hence the width and height of a menclose
+"box" should be at least those its content. Simple math shows that the width and
+height of the menclose "circle" should be at least
+<math><msqrt><mn>2</mn></msqrt></math> times as large as its content.
+With the previous nesting, the outermost menclose is 
+<math>
+  <msup><msqrt><mn>2</mn></msqrt><mn>2</mn></msup>
+  <mo>=</mo><mn>2</mn>
+</math>
+times as large as the inner mtext. Hence
+the test verifies the following properties:</p>
+
+<ul>
+<li>The mtext should be inside the menclose. This is verified by comparing the
+top, bottom, left and right coordinates.</li>
+<li>The outermost menclose should be at least twice as large as the child.
+This is done by comparing the width.
+</li>
+</ul>
+
+      <p class="framed">
+        <math>
+          <menclose notation="circle" id="test6_menclose">
+            <menclose notation="box">
+              <menclose notation="circle">
+                <menclose notation="box">
+                  <mtext id="test6_mtext">XXX</mtext>
+                </menclose>
+              </menclose>
+            </menclose>
+          </menclose>
+        </math>
+      <p>
 
 <h3>test 7: menclose (equivalent constructions)</h3>
 
+      <p>This test verifies a couple of equivalence for menclose
+	constructions:</p>
+
+<ul>
+  <li>"radical" should be equivalent to msqrt</li>
+  <li>"box" should be equivalent to "left right top bottom"</li>
+  <li>"actuarial" should be equivalent to "top right"</li>
+</ul>
+
+  <p>The test only verifies that the size of equivalent constructions are equal.
+    This is a bit lax and thus a rendering engine that does not implement
+    menclose at all might actually pass the test. Hence an additional
+    verification is done to exclude this case:
+    the width of an msqrt should not be equal to the width of its content.</p>
+
+      <p class="framed">
+        <math>
+          <msqrt id="test7_radical_ref"><mtext>XXX</mtext></msqrt>
+        </math>
+        <math>
+          <menclose notation="radical" id="test7_radical">
+            <mtext>XXX</mtext>
+          </menclose>
+        </math>
+      </p>
+
+      <p class="framed">
+        <math>
+          <menclose notation="left right top bottom" id="test7_box_ref">
+            <mtext>XXX</mtext>
+          </menclose>
+        </math>
+        <math>
+          <menclose notation="box" id="test7_box">
+            <mtext>XXX</mtext>
+          </menclose>
+        </math>
+      </p>
+
+      <p class="framed">
+        <math>
+          <menclose notation="top right" id="test7_actuarial_ref">
+            <mtext>XXX</mtext>
+          </menclose>
+        </math>
+        <math>
+          <menclose notation="actuarial" id="test7_actuarial">
+            <mtext>XXX</mtext>
+          </menclose>
+        </math>
+      </p>
+
 <h3>test 8: semantics (do not display annotations)</h3>
+
+  <p>This test contains a semantics element with an mtext child annotated
+    by annotation and annotation-xml elements of encoding "application/x-tex"
+    and "application/xhtml+xml". It is assumed that a MathML rendering engine
+    will just display the annotated mtext and hide the others. Hence the
+    test verifies that the semantics size is the same as the mtext child.</p>
+
+      <p class="framed">
+        <math>
+          <semantics id="test8_semantics">
+            <mtext>X</mtext>
+            <annotation encoding="application/x-tex">XXXXX</annotation>
+            <annotation-xml encoding="application/xhtml+xml">
+              <span>XXXXX</span>
+            </annotation-xml>
+          </semantics>
+        </math>
+      </p>
 
 <h3>test 9: maction</h3>
 
+<p>This is similar to test 8, except that an maction elements are used with
+actiontype tooltip, statusline and toggle. In the two first cases, only the
+first element must be visible. In the last case, the selection attribute is
+used to display only the second element. As in test 8, we compare the size
+of the expected visible child with the size of the maction element.</p>
+
+<p class="framed">
+        <math>
+          <maction id="test9_maction1" actiontype="tooltip">
+            <mtext>X</mtext>
+            <mtext>tooltip</mtext>
+          </maction>
+        </math>
+</p>
+<p class="framed">
+        <math>
+          <maction id="test9_maction2" actiontype="statusline">
+            <mtext>X</mtext>
+            <mtext>statusline</mtext>
+          </maction>
+        </math>
+</p>
+<p class="framed">
+        <math>
+          <maction id="test9_maction3" actiontype="toggle" selection="2">
+            <mtext>X</mtext>
+            <mtext>selection</mtext>
+          </maction>
+        </math>
+</p>
+
 <h3>test 10: mrow, mstyle, mphantom</h3>
+
+<p>This test contains a trivial verification about the mrow, mstyle and
+mphantom elements. Basically, they should have the same size as their content:
+</p>
+      <p class="framed">
+        <math>
+          <mrow id="test10_mrow"><mtext>TEXT</mtext></mrow>
+        </math>
+      </p>
+      <p class="framed">
+        <math>
+          <mstyle id="test10_mstyle"><mtext>TEXT</mtext></mstyle>
+        </math>
+      </p>
+      <p class="framed">
+        <math>
+          <mphantom id="test10_mphantom"><mtext>TEXT</mtext></mphantom>
+        </math>
+      </p>
+
+<p>These are combined with a less easy verification so that the whole test
+  won't pass in browsers without MathML support. Basically we check that
+  an msub with three mtext children generates an invalid markup message but
+  not when the two first are grouped into an mrow. Again, we verify the
+  difference by width comparison. We assume that the width of the text in
+  the error message is negligible compared to the width of the mtext elements.
+  For that purpose, the actual test contains long mtext string, rather than
+  just one "X" as below.
+</p>
+
+      <p class="framed">
+        <math>
+          <msub id="test10_noerror">
+            <mrow>
+              <mtext>X</mtext>
+              <mtext>X</mtext>
+            </mrow>
+            <mtext></mtext>
+          </msub>
+        </math>
+      </p>
+      <p class="framed">
+      <math>
+          <msub id="test10_error">
+            <mtext>X</mtext>
+            <mtext>X</mtext>
+            <mtext>
+              <!-- This msub element is intentionally invalid and should
+                   render in a different way than test10_noerror -->
+            </mtext>
+          </msub>
+        </math>
+      </p>
 
 <h3>test 11: mtable (rows)</h3>
 

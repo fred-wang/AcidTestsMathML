@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-<title>The Acid3 Test</title>
+<title>The MathML Acid3 Test</title>
 <meta charset="utf-8"/>
 
 <script type="text/javascript">
@@ -364,7 +364,7 @@
     var msqrtChild = document.getElementById("test4_msqrt").firstElementChild.
       getBoundingClientRect();
     
-    assert(almostLessThanRel(baseSize/3,
+    assert(almostLessThanRel(baseSize * delta,
                              msqrtChild.left - msqrt.left),
            "the square root should be placed on the left");
 
@@ -408,7 +408,7 @@
 
     assert(almostLessThanRel(2*mtext.width, menclose.width) &&
            almostLessThanRel(2*mtext.width, menclose.width),
-           "The outermost menclose should be at least twice as large as large");
+       "The outermost menclose should be at least twice as large as the child");
 
     return 1;
     },
@@ -2696,9 +2696,9 @@
         <math>
           <semantics id="test8_semantics">
             <mtext>X</mtext>
-            <annotation encoding="application/x-tex">X</annotation>
+            <annotation encoding="application/x-tex">XXXXX</annotation>
             <annotation-xml encoding="application/xhtml+xml">
-              <span>X</span>
+              <span>XXXXX</span>
             </annotation-xml>
           </semantics>
         </math>
@@ -2717,6 +2717,8 @@
             <mtext>X</mtext>
             <mtext>statusline</mtext>
           </maction>
+        </math>
+        <math>
           <maction id="test9_maction3" actiontype="toggle" selection="2">
             <mtext>X</mtext>
             <mtext>selection</mtext>
@@ -4963,6 +4965,18 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         </math>
       </p>
 
+    </div>
+
+
+    <div style="position: fixed; border: 1px solid grey;
+                top: 0; left: 0; width: 100%;
+		color: black; font-size: 16pt;
+                background: lightYellow;"
+         onclick="this.style.visibility = 'hidden';">
+      You are running the
+      <abbr title="Mathematical Markup Language">MathML</abbr>
+      Acid3 Test. Are you looking for the
+      <a href="http://acid3.acidtests.org/">classical version</a>?
     </div>
 
   </body>
