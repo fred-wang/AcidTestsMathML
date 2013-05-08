@@ -694,15 +694,12 @@
            "single char mi should be slanted")
 
     assert(almostEqualRel(document.getElementById("test16mi2").
-                          getBoundingClientRect().width,
-                          document.getElementById("test16mi2ref").
-                         getBoundingClientRect().width),
-           "multi char mi should not be slanted")
+                          getBoundingClientRect().width, 2*w),
+           "multiple char mi should not be slanted")
 
     var mnRect = document.getElementById("test16mn").getBoundingClientRect();
 
-    assert(almostEqualRel(mnRect.width, w) &&
-           almostEqualRel(mnRect.height, w),
+    assert(almostEqualRel(mnRect.width, w),
            "mn should have same size as mtext")
 
     return 1;
@@ -2347,7 +2344,7 @@
     mpadded.setAttribute("height", "0");
     mpadded.appendChild(mspace);
 
-    // At this point, the mstyle should will be
+    // At this point, the mstyle will be
     // <mstyle id="test97">
     //   <mrow>
     //     <mo>|</mo>
@@ -2929,7 +2926,6 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
           <mtext id="test16">X</mtext>
           <mrow id="test16mrow"><ms lquote="XXX" rquote="XX">X</ms></mrow>
           <mi id="test16mi">X</mi>
-          <mtext id="test16mi2ref">XX</mtext>
           <mi id="test16mi2">XX</mi>
           <mn id="test16mn">X</mn>
         </math>
@@ -4922,7 +4918,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                     <mtext id="test98_start">START</mtext>
                     <mtext>
                       <svg width="11em" height="2em">
-                        <text>SVG</text>
+                        <text dy="2em">SVG</text>
                       </svg>
                     </mtext>
                     <semantics>
@@ -4966,7 +4962,6 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       </p>
 
     </div>
-
 
     <div style="position: fixed; border: 1px solid grey;
                 top: 0; left: 0; width: 100%;
