@@ -713,38 +713,37 @@
       getBoundingClientRect();
     var num = document.getElementById("test17_linethickness").firstElementChild.
       getBoundingClientRect();
-    var denum = document.getElementById("test17_linethickness").
+    var denom = document.getElementById("test17_linethickness").
       lastElementChild.getBoundingClientRect();
 
     assert(almostLessThanRel(
-             num.height + 2*baseSize + denum.height, mfrac.height) &&
-           almostLessThanAbs(num.bottom + 2*baseSize, denum.top),
+             num.height + 2*baseSize + denom.height, mfrac.height) &&
+           almostLessThanAbs(num.bottom + 2*baseSize, denom.top),
            "numerator and denominator should be separated by linethickness")
 
     num = document.getElementById("test17_numalign").firstElementChild.
       getBoundingClientRect();
-    denum = document.getElementById("test17_numalign").
-      lastElementChild.getBoundingClientRect();
+    mfrac = document.getElementById("test17_numalign").getBoundingClientRect();
 
-    assert(almostEqualAbs(num.left, denum.left),
-           "numerator and denominator should be aligned left")
+    assert(almostEqualAbs(num.left, mfrac.left),
+           "numerator should be aligned left")
 
-    num = document.getElementById("test17_denomalign").firstElementChild.
+    mfrac = document.getElementById("test17_denomalign").
       getBoundingClientRect();
-    denum = document.getElementById("test17_denomalign").
+    denom = document.getElementById("test17_denomalign").
       lastElementChild.getBoundingClientRect();
 
-    assert(almostEqualAbs(num.right, denum.right),
-           "numerator and denominator should be aligned right")
+    assert(almostEqualAbs(mfrac.right, denom.right),
+           "denominator should be aligned right")
 
     num = document.getElementById("test17_bevelled").firstElementChild.
       getBoundingClientRect();
-    denum = document.getElementById("test17_bevelled").
+    denom = document.getElementById("test17_bevelled").
       lastElementChild.getBoundingClientRect();
 
-    assert(almostLessThanAbs(num.right, denum.left) &&
+    assert(almostLessThanAbs(num.right, denom.left) &&
            almostLessThanAbs(num.top*(1-delta)+num.bottom*delta,
-                             denum.top),
+                             denom.top),
            "incorrect position of mfrac children")
 
     return 2;
@@ -806,6 +805,7 @@
             success = (almostEqualAbs((baseRect.right + baseRect.left)/2,
                                       (b.right + b.left)/2));
           }
+	  // verify at least that the base is three times wider than the scripts
           success = success && almostLessThanRel(b.width, baseRect.width/3);
           assert(success,
                  "bad alignment (" + elements[i] + "_" + align[j] + ")");
@@ -1135,7 +1135,10 @@
     assert(
       almostLessThanAbs(
       document.getElementById("test34_2").getBoundingClientRect().right,
-      document.getElementById("test34_1").getBoundingClientRect().right),
+      document.getElementById("test34_1").getBoundingClientRect().right) &&
+      almostLessThanAbs(
+      document.getElementById("test34_1").getBoundingClientRect().left,
+      document.getElementById("test34_2").getBoundingClientRect().left),
       "Bad position of scripts (displaystyle=true)")
 
     assert(
@@ -1157,7 +1160,7 @@
 
     assert(
       almostEqualRel(
-        document.getElementById("test35_denum").getBoundingClientRect().width,
+        document.getElementById("test35_denom").getBoundingClientRect().width,
         10/2 * baseSize),
       "scriptlevel should be increased by 1 within denominator")
 
@@ -1169,8 +1172,8 @@
 
     assert(
       almostLessThanAbs(
-        document.getElementById("test35_denum1").getBoundingClientRect().right,
-        document.getElementById("test35_denum2").getBoundingClientRect().left),
+        document.getElementById("test35_denom1").getBoundingClientRect().right,
+        document.getElementById("test35_denom2").getBoundingClientRect().left),
       "displaystyle should be reset within denominator")
 
     return 3;
@@ -1190,7 +1193,7 @@
     return 3;
     },
     function () {
-    // test 37: msub script
+    // test 37: msup script
 
     var rect1 = document.getElementById("test37_1").getBoundingClientRect()
     var rect2 = document.getElementById("test37_2").getBoundingClientRect()
@@ -1265,7 +1268,7 @@
     var rect2 = math.lastElementChild.getBoundingClientRect()
 
     assert(almostEqualRel(rect2.left - rect1.right,
-                          3.5*baseSize + rect1.width + 4*baseSize),
+                          3.5*baseSize + baseSize + 4*baseSize),
            "bad lspace/rspace")
 
     return 3;
@@ -1288,13 +1291,13 @@
     function () {
     // test 45: mo symmetric
 
-    assert(almostLessThanRel((9+1)*baseSize,
+    assert(almostLessThanRel((9+9)*baseSize,
            document.getElementById("test45_1").getBoundingClientRect().height),
            "parenthesis should stretch symmetrically")
 
     var h = document.getElementById("test45_2").getBoundingClientRect().height;
     assert(almostLessThanRel((9+1)*baseSize, h) &&
-           almostLessThanAbs(h, (1+delta)*(9+1)*baseSize),
+           almostLessThanAbs(h, (1-delta)*(9+9)*baseSize),
            "parenthesis should not stretch symmetrically")
 
     return 3;
@@ -1522,7 +1525,7 @@
     return 4;
     },
     function () {
-    // test 61: operator dictionary: large operators
+    // test 61: operator dictionary ; large operators
 
     var math = document.getElementById("test61");
     var box = [];
@@ -1540,7 +1543,7 @@
     return 4;
     },
     function () {
-    // test 62: operator dictionary: horizontal stretchy operators
+    // test 62: operator dictionary ; horizontal stretchy operators
 
     var math = document.getElementById("test62");
     var box = [];
@@ -1558,7 +1561,7 @@
     return 4;
     },
     function () {
-    // test 63: operator dictionary: vertical stretchy operators
+    // test 63: operator dictionary ; vertical stretchy operators
 
     var math = document.getElementById("test63");
     var box = [];
@@ -1579,7 +1582,7 @@
     return 4;
     },
     function () {
-    // test 64: operator dictionary: various spacing
+    // test 64: operator dictionary ; various spacing
 
     // be sure that at least spaces are supported
     assert(document.getElementById("test64space").
@@ -1713,30 +1716,30 @@
     function () {
     // test 67: mfrac (RTL)
 
-    num = document.getElementById("test67_numalign").firstElementChild.
+    var num = document.getElementById("test67_numalign").firstElementChild.
       getBoundingClientRect();
-    denum = document.getElementById("test67_numalign").
+    var mfrac = document.getElementById("test67_numalign").
+      getBoundingClientRect();
+
+    assert(almostEqualAbs(num.left, mfrac.left),
+           "numerator should be aligned left")
+
+    mfrac = document.getElementById("test67_denomalign").
+      getBoundingClientRect();
+    denom = document.getElementById("test67_denomalign").
       lastElementChild.getBoundingClientRect();
 
-    assert(almostEqualAbs(num.left, denum.left),
-           "numerator and denominator should be aligned left")
-
-    num = document.getElementById("test67_denomalign").firstElementChild.
-      getBoundingClientRect();
-    denum = document.getElementById("test67_denomalign").
-      lastElementChild.getBoundingClientRect();
-
-    assert(almostEqualAbs(num.right, denum.right),
-           "numerator and denominator should be aligned right")
+    assert(almostEqualAbs(mfrac.right, denom.right),
+           "denominator should be aligned right")
 
     num = document.getElementById("test67_bevelled").firstElementChild.
       getBoundingClientRect();
-    denum = document.getElementById("test67_bevelled").
+    denom = document.getElementById("test67_bevelled").
       lastElementChild.getBoundingClientRect();
 
-    assert(almostLessThanAbs(denum.right, num.left) &&
+    assert(almostLessThanAbs(denom.right, num.left) &&
            almostLessThanAbs(num.top*(1-delta)+num.bottom*delta,
-                             denum.top),
+                             denom.top),
            "incorrect position of mfrac children")
 
     return 5;
@@ -1963,7 +1966,7 @@
     return 5;
     },
     function () {
-    // test 76:
+    // test 76: linebreak=nobreak
 
     var mstyle = document.getElementById("test76");
     
@@ -1982,7 +1985,7 @@
     return 5;
     },
     function () {
-    // test 77:
+    // test 77: linebreak=goodbreak, badbreak
 
     var mstyle = document.getElementById("test77");
     
@@ -2001,7 +2004,7 @@
     return 5;
     },
     function () {
-    // test 78:
+    // test 78: lineleading
 
     var mstyle = document.getElementById("test78");
 
@@ -2016,7 +2019,7 @@
     return 5;
     },
     function () {
-    // test 79:
+    // test 79: indentalign
 
     var mstyle = document.getElementById("test79");
 
@@ -2031,7 +2034,7 @@
     return 5;
     },
     function () {
-    // test 80: 
+    // test 80: indentshift
 
     var mstyle = document.getElementById("test80");
 
@@ -2049,7 +2052,7 @@
     // bucket 6: alignmark and elementary math
 
     function () {
-    // test 81:
+    // test 81: malignmark
 
     assert(almostEqualAbs(
            document.getElementById("test81_1").getBoundingClientRect().right,
@@ -2059,7 +2062,7 @@
     return 6;
     },
     function () { 
-    // test 82:
+    // test 82: groupalign
 
     assert(almostEqualAbs(
            document.getElementById("test82_1").getBoundingClientRect().right,
@@ -3421,7 +3424,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
           <mstyle mathsize="10em" scriptsizemultiplier=".5">
             <mfrac>
               <mtext id="test35_num">X</mtext>
-              <mtext id="test35_denum">X</mtext>
+              <mtext id="test35_denom">X</mtext>
             </mfrac>
           </mstyle>
         </math>
@@ -3435,8 +3438,8 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                 <mtext id="test35_num2">X</mtext>
               </munder>
               <mover>
-                <mo id="test35_denum1" movablelimits="true">X</mo>
-                <mtext id="test35_denum2">X</mtext>
+                <mo id="test35_denom1" movablelimits="true">X</mo>
+                <mtext id="test35_denom2">X</mtext>
               </mover>
             </mfrac>
           </mstyle>
