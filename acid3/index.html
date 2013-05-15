@@ -1451,8 +1451,8 @@
     // test 55: vertical stretching in mtd with rowspan
 
     var h = document.getElementById("test55_mo").getBoundingClientRect().height
-    assert(almostLessThanRel(2+2, h) &&
-           almostLessThanAbs(h, (1-delta)*6),
+    assert(almostLessThanRel((2+2)*baseSize, h) &&
+           almostLessThanAbs(h, (1-delta)*6*baseSize),
            "bad size for stretchy operator (mtd)")
     return 4;
     },
@@ -1484,8 +1484,8 @@
     // test 58: horizontal stretching in mtd with columnspan
 
     var h = document.getElementById("test58_mo").getBoundingClientRect().width
-    assert(almostLessThanRel(2+2, h) &&
-           almostLessThanAbs(h, (1-delta)*6),
+    assert(almostLessThanRel((2+2)*baseSize, h) &&
+           almostLessThanAbs(h, (1-delta)*6*baseSize),
            "bad size for stretchy operator (mtd)")
 
     return 4;
@@ -1810,7 +1810,8 @@
     var math = document.getElementById("test69");
 
     assert(almostEqualRel(math.firstElementChild.getBoundingClientRect().left - 
-                          math.lastElementChild.firstElementChild.
+                          math.firstElementChild.nextElementSibling.
+			  firstElementChild.
                           getBoundingClientRect().right, 5 * baseSize),
            "bad position of inner mpadded element")
 
@@ -1823,7 +1824,7 @@
     var msqrtChild = document.getElementById("test70_msqrt").firstElementChild.
       getBoundingClientRect();
     
-    assert(almostLessThanRel(baseSize/3,
+    assert(almostLessThanRel(baseSize * delta,
                              msqrt.right - msqrtChild.right),
            "the square root should be placed on the right");
 
@@ -2027,8 +2028,8 @@
     var box2 = mstyle.firstElementChild.nextElementSibling.
       getBoundingClientRect();
 
-    assert(almostLessThanAbs(box1.bottom, box2.bottom) &&
-           almostEqualAbs(box2.left - box1.left, 2*baseSize),
+    assert(almostLessThanAbs(box1.bottom, box2.top) &&
+           almostLessThanAbs(box1.left + 2 * baseSize, box2.left),
            "bad indentalign")
 
     return 5;
@@ -2042,8 +2043,8 @@
     var box2 = mstyle.firstElementChild.nextElementSibling.
       getBoundingClientRect();
 
-    assert(almostLessThanAbs(box1.bottom, box2.bottom) &&
-           almostEqualAbs(box2.left - box1.left, 2*baseSize),
+    assert(almostLessThanAbs(box1.bottom, box2.top) &&
+           almostLessThanAbs(box1.left + 2*baseSize, box2.left),
            "bad indentshift")
 
     return 5;
@@ -2167,18 +2168,16 @@
     // test 89:
 
     var box = [];
-    for (var i = 0; i < 4; i++) {
+    for (var i = 0; i < 3; i++) {
       box[i] = document.getElementById("test89_"+i).getBoundingClientRect();
     }
 
     assert(almostLessThanAbs(box[0].bottom, box[1].top) &&
-           almostEqualAbs(box[1].bottom, box[2].top) &&
-           almostEqualAbs(box[2].bottom, box[3].top),
+           almostEqualAbs(box[1].bottom, box[2].bottom),
            "bad vertical position in mstack")
 
-    assert(almostLessThanAbs(box[1].right, box[2].left) &&
-           almostEqualAbs(box[2].left, box[0].left) &&
-           almostEqualAbs(box[3].right, box[0].right),
+    assert(almostLessThanAbs(box[1].right, box[0].left) &&
+           almostEqualAbs(box[2].right, box[0].right),
            "bad horizontal position in mstack")
 
     return 6;
@@ -2249,8 +2248,8 @@
            "bad alignment (stackalign=left)")
 
     assert(almostLessThanRel(box[2].width, box[3].width) &&
-           almostLessThanAbs((box[2].left + box[2].right)/2,
-                             (box[3].left + box[3].right)/2),
+           almostEqualAbs((box[2].left + box[2].right)/2,
+                          (box[3].left + box[3].right)/2),
            "bad alignment (stackalign=center)")
 
     assert(almostLessThanRel(box[4].width, box[5].width) &&
@@ -3875,14 +3874,14 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                 <mo id="test55_mo" symmetric="false">|</mo>
               </mtd>
               <mtd rowspan="3">
-                <mspace height="6em" depth="0em"/>
+                <mspace height="3em" depth="3em"/>
               </mtd>
-              <mtd><mspace height="2em" depth="0em"/></mtd>
+              <mtd><mspace height="1em" depth="1em"/></mtd>
             </mtr>
             <mtr>
                 <!-- (2,1) -->
                 <!-- (2,2) -->
-                <mtd><mspace height="2em" depth="0em"/></mtd>
+                <mtd><mspace height="1em" depth="1em"/></mtd>
             </mtr>
             <mtr>
               <mtd><mtext>(3,1)</mtext></mtd>
@@ -4409,9 +4408,10 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         <!-- test 69: mpadded (RTL) -->
         <math dir="rtl" id="test69">
           <mtext>X</mtext>
-          <mpadded lspace="5em">
+          <mpadded lspace="5em" width="20em">
               <mtext>Y</mtext>
           </mpadded>
+          <mtext>Z</mtext>
         </math>
       </p>
 
@@ -4453,7 +4453,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       </p>
 
       <!-- test 73: linebreak=auto, linebreakstyle=before -->
-      <div style="width: 10em;">
+      <div style="width: 10.5em;">
         <math>
           <mstyle id="test73" mathsize="2em">
             <mtext>ABC</mtext> <!-- w1=6 -->
@@ -4468,7 +4468,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       </div>
 
       <!-- test 74: linebreak=auto, linebreakstyle=after -->
-      <div style="width: 10em;">
+      <div style="width: 10.5em;">
         <math>
           <mstyle id="test74" mathsize="2em">
             <mtext>ABC</mtext> <!-- w1=6 -->
@@ -4483,7 +4483,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       </div>
 
       <!-- test 75: linebreak=newline -->
-      <div style="width: 10em;">
+      <div style="width: 10.5em;">
         <math>
           <mstyle id="test75" mathsize="2em">
             <mtext>A</mtext>               <!--  w1=2 -->
@@ -4495,7 +4495,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       </div>
 
       <!-- test 76: linebreak=nobreak -->
-      <div style="width: 20em;">
+      <div style="width: 20.5em;">
         <math>
           <mstyle id="test76" mathsize="2em">
             <mtext>ABC</mtext>             <!--  w0=6 -->
@@ -4510,7 +4510,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       </div>
 
       <!-- test 77: linebreak=goodbreak, badbreak -->
-      <div style="width: 20em;">
+      <div style="width: 20.5em;">
         <math>
           <mstyle id="test77" mathsize="2em">
             <mtext>ABC</mtext>               <!--  w0=6 -->
@@ -4525,7 +4525,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       </div>
 
       <!-- test 78: lineleading -->
-      <div style="width: 8em;">
+      <div style="width: 8.5em;">
         <math>
           <mstyle id="test78" mathsize="2em">
             <mtext>ABC</mtext>
@@ -4537,7 +4537,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       </div>
 
       <!-- test 79: indentalign -->
-      <div style="width: 8em;">
+      <div style="width: 10.5em;">
         <math>
           <mstyle id="test79" mathsize="2em">
             <mtext>ABC</mtext>
@@ -4549,7 +4549,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       </div>
 
       <!-- test 80: indentshift -->
-      <div style="width: 8em;">
+      <div style="width: 10.5em;">
         <math>
           <mstyle id="test80" mathsize="2em">
             <mtext>ABC</mtext>
@@ -4638,14 +4638,14 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         <!-- test 84: groupalign=decimalpoint -->
         <math>
           <!--
-              AB.|.FG
+              ABC|.FG
                12|34
             -->
           <mtable columnalign="right">
             <mtr>
               <mtd>
                 <maligngroup groupalign="decimalpoint"/>
-                <mtext id="test84_1">AB..EF</mtext>
+                <mtext id="test84_1">ABC.EF</mtext>
               </mtd>
             </mtr>
             <mtr>
@@ -4718,6 +4718,8 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                 <maligngroup/><mtext id="test86_1">EF</mtext>
                 <maligngroup/><mtext id="test86_2">GHIJ</mtext>
               </mtd>
+	    </mtr>
+	    <mtr>
               <mtd groupalign="right left center">
                 <maligngroup/><mtext id="test86_3">01</mtext>
                 <maligngroup/><mtext id="test86_4">234</mtext>
@@ -4742,6 +4744,8 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                 <maligngroup/><mtext id="test87_1">EF</mtext>
                 <maligngroup/><mtext id="test87_2">GHIJ</mtext>
               </mtd>
+	    </mtr>
+	    <mtr>
               <mtd>
                 <maligngroup/><mtext id="test87_3">01</mtext>
                 <maligngroup/><mtext id="test87_4">234</mtext>
@@ -4766,6 +4770,8 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                 <maligngroup/><mtext id="test88_1">EF</mtext>
                 <maligngroup/><mtext id="test88_2">GHIJ</mtext>
               </mtd>
+	    </mtr>
+	    <mtr>
               <mtd>
                 <maligngroup/><mtext id="test88_3">01</mtext>
                 <maligngroup/><mtext id="test88_4">234</mtext>
