@@ -152,8 +152,7 @@
     // there are 6 buckets with 16 tests each,
     // plus four special tests (0, 97, 98, and 99).
 
-    // We use getBoundingClientRect and *ElementChild.
-    // Be aware of bug 109556 in Webkit and bug 491668 in Gecko.
+    // We use *ElementChild because of WebKit bug 109556.
 
     function () {
       // test 0: verify JS and test basic feature of the <math> element
