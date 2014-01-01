@@ -29,7 +29,7 @@ implementation. Incidentally, here are some references if you wish to follow the
 
 * Blink (e.g. Chrome and Opera): [Chromium Dashboard](http://www.chromestatus.com/features/5240822173794304), [Enable MathML](https://code.google.com/p/chromium/issues/detail?id=152430)
 * Gecko (e.g. Firefox): [Implementation Status](https://developer.mozilla.org/en-US/docs/Mozilla/MathML_Project/Status), [MathML 2](https://bugzilla.mozilla.org/show_bug.cgi?id=525772), [MathML 3](https://bugzilla.mozilla.org/show_bug.cgi?id=534959), [MathJax](https://bugzilla.mozilla.org/show_bug.cgi?id=687809)
-* Trident (e.g. Internet Explorer): The development is not public and all the bug reports for MathML have been resolved "by design" so far.
+* Trident (e.g. Internet Explorer): The development is not public and [all the bug reports for MathML](https://connect.microsoft.com/IE/SearchResults.aspx?SearchQuery=mathml) have been resolved "by design" so far.
 * WebKit (e.g. Safari): [Implementation Status](https://trac.webkit.org/wiki/MathML%20Status), [Master Bug](https://bugs.webkit.org/show_bug.cgi?id=3251), [Basic Support](https://bugs.webkit.org/show_bug.cgi?id=99623), [MathJax](https://bugs.webkit.org/show_bug.cgi?id=84019)
 
 Do you want to see improvements in native MathML support? Then please support [this crowdfunding project](http://www.ulule.com/mathematics-ebooks/):
