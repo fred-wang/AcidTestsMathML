@@ -3,20 +3,6 @@
  <head>
   <title>The MathML Acid1 test (description)</title>
   <meta charset="utf-8"/>
-    <style type="text/css">
-      @font-face {
-        font-family: "Acid1MathML";
-        src: url(Acid1MathML-Regular.woff);
-      }
-      @font-face {
-        font-family: "Acid1MathML";
-        font-style: italic;
-        src: url(Acid1MathML-Italic.woff);
-      }
-      math {
-        font-family: Acid1MathML;
-      }
-    </style>
  </head>
  <body>
   <h1>The MathML Acid1 test (description)</h1>
@@ -48,10 +34,7 @@
     <li>In test 7, elements "the way", "the world ends" etc should be layout as
       a table with 2 rows and 3 columns, vertically centered with respect to
       the equation axis.</li>
-    <li>The greek letters should have <code>font-style: italic</code> applied
-      (compare
-      <span style="font-family: Acid1MathML; font-style: italic;">Γτρσ</span> vs
-      <span style="font-family: Acid1MathML; font-style: normal;">Γτρσ</span>).
+    <li>The greek letters should be italic.
       Note that the fraktur h and script A are supposed to be invariant to
       style change, most fonts render the latter slanted.
     </li>

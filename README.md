@@ -32,10 +32,6 @@ implementation. Incidentally, here are some references if you wish to follow the
 * Trident (e.g. Internet Explorer): The development is not public and [all the bug reports for MathML](https://connect.microsoft.com/IE/SearchResults.aspx?SearchQuery=mathml) have been resolved "by design" so far.
 * WebKit (e.g. Safari): [Implementation Status](https://trac.webkit.org/wiki/MathML%20Status), [Master Bug](https://bugs.webkit.org/show_bug.cgi?id=3251), [Basic Support](https://bugs.webkit.org/show_bug.cgi?id=99623), [MathJax](https://bugs.webkit.org/show_bug.cgi?id=84019)
 
-Do you want to see improvements in native MathML support? Then please support [this crowdfunding project](http://www.ulule.com/mathematics-ebooks/):
-
-[![](https://drfhlmcehrc34.cloudfront.net/cache/55/cb/55cbae1648b3e5c8b41c1db73975fa42.png)](http://www.ulule.com/mathematics-ebooks/)
-
 Of course these Acid tests are not perfect, for example they do not
 capture the subjective but important notion of "good-looking mathematical
 expressions". Also, they are supposed to be executed in browsers ; the result
