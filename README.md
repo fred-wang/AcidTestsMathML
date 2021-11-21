@@ -8,12 +8,12 @@ to organizations like the Math WG or the WaSP, that could publish them and
 provide an official URL. In the meantime, online versions are available on
 GitHub:*
 
-* [MathML Acid 1](http://fred-wang.github.com/AcidTestsMathML/acid1/)
-  ([description](http://fred-wang.github.com/AcidTestsMathML/acid1/description.html))
-* [MathML Acid 2](http://fred-wang.github.com/AcidTestsMathML/acid2/)
-  ([description](http://fred-wang.github.com/AcidTestsMathML/acid2/description.html))
-* [MathML Acid 3](http://fred-wang.github.com/AcidTestsMathML/acid3/)
-  ([description](http://fred-wang.github.com/AcidTestsMathML/acid3/description.html))
+* [MathML Acid 1](http://fred-wang.github.io/AcidTestsMathML/acid1/)
+  ([description](http://fred-wang.github.io/AcidTestsMathML/acid1/description.html))
+* [MathML Acid 2](http://fred-wang.github.io/AcidTestsMathML/acid2/)
+  ([description](http://fred-wang.github.io/AcidTestsMathML/acid2/description.html))
+* [MathML Acid 3](http://fred-wang.github.io/AcidTestsMathML/acid3/)
+  ([description](http://fred-wang.github.io/AcidTestsMathML/acid3/description.html))
 
 This repository contains MathML versions of the famous
 [Acid Tests](http://www.acidtests.org/)
