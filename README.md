@@ -1,6 +1,9 @@
 MathML Acid Tests
 =================
 
+**These tests are obsolete. They were based on MathML3 features but modern
+  browsers follow the MathML Core specification instead.**
+
 *Although the creation of the tests is now complete, I expect to modify some
 of them if I get feedback or if I find errors while I write the detailed
 description below. Once the tests are considered stable, I plan to submit them 
